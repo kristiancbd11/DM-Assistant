@@ -20,6 +20,8 @@ public class MainPruebas {
 
 	public static void main(String[] args) {
 
+		//Prueba de entorno v0.2
+		
 		System.out.println("1: Crear personaje\n" + "2: Consultar personje\n" + "0: Terminar programa");
 		Scanner sc = new Scanner(System.in);
 		int condicion = sc.nextInt();
