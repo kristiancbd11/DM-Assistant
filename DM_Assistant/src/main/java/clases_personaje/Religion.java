@@ -39,4 +39,9 @@ public class Religion {
 		this.nombre = nombre;
 	}
 
+	@Override
+	public String toString() {
+		return nombre;
+	}
+
 }

@@ -1,6 +1,7 @@
 package clases_roles;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import clases_habilidades.Hechizo;
@@ -191,6 +192,11 @@ public class Clase {
 
 	public void setListaHechizo(List<Hechizo> listaHechizo) {
 		this.listaHechizo = listaHechizo;
+	}
+
+	@Override
+	public String toString() {
+		return nombre;
 	}
     
 }

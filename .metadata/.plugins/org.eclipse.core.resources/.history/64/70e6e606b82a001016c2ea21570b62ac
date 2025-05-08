@@ -1,0 +1,51 @@
+package views;
+
+import clases_partida.Mundo;
+import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+
+public class DesktopMundoView {
+
+    private ImageView imageView;
+    private final int VIEWPORT_WIDTH = 200;
+    private final int VIEWPORT_HEIGHT = 200;
+
+    public StackPane crearView(Mundo mundo) {
+        // Carga la imagen
+        Image imagen = new Image(getClass().getResourceAsStream("/images/Gartea_Ciudades.png"));
+        imageView = new ImageView(imagen);
+
+        // Aplica un viewport de tamaño fijo
+        Rectangle2D viewport = new Rectangle2D(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+        imageView.setViewport(viewport);
+        imageView.setFitWidth(VIEWPORT_WIDTH);
+        imageView.setFitHeight(VIEWPORT_HEIGHT);
+        imageView.setPreserveRatio(false); // no queremos escala, solo mostrar parte
+
+        Label titulo = new Label(mundo.getNombre());
+        titulo.getStyleClass().add("titulo-mundo");
+
+        VBox overlay = new VBox(titulo);
+        overlay.setAlignment(Pos.TOP_CENTER);
+        overlay.setPickOnBounds(false);
+
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().addAll(imageView, overlay);
+
+        // Aplica estilo
+        stackPane.getStylesheets().add(getClass().getResource("/styles/desktop_mundo.css").toExternalForm());
+
+        return stackPane;
+    }
+
+    // Método para actualizar la zona visible de la imagen
+    public void moverA(int x, int y) {
+        Rectangle2D nuevaZona = new Rectangle2D(x, y, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+        imageView.setViewport(nuevaZona);
+    }
+}

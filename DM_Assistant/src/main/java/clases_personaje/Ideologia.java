@@ -1,5 +1,7 @@
 package clases_personaje;
 
+import clases_partida.Nacion;
+import clases_partida.O_Nacion;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,31 +20,31 @@ public class Ideologia {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ideologias_gen")
     @SequenceGenerator(name = "ideologias_gen", sequenceName ="ideologias_sec", allocationSize = 1)
 	@Column (name = "idIdeologia")
-	private int idFaccion;
+	private int idIdeologia;
 	
 	@ManyToOne
-	@JoinColumn(name = "idReino", nullable = false)
-	private Reino reino;
+	@JoinColumn(name = "idNacion", nullable = false)
+	private O_Nacion nacion;
 	
 	@Column (name = "nombre")
 	private String nombre;
 	
 	public Ideologia(){}
 
-	public int getIdFaccion() {
-		return idFaccion;
+	public int getIdIdeologia() {
+		return idIdeologia;
 	}
 
-	public void setIdFaccion(int idFaccion) {
-		this.idFaccion = idFaccion;
+	public void setIdIdeologia(int idFaccion) {
+		this.idIdeologia = idFaccion;
 	}
 
-	public Reino getReino() {
-		return reino;
+	public O_Nacion getNacion() {
+		return nacion;
 	}
 
-	public void setReino(Reino reino) {
-		this.reino = reino;
+	public void setNacion(O_Nacion nacion) {
+		this.nacion = nacion;
 	}
 
 	public String getNombre() {
@@ -51,6 +53,11 @@ public class Ideologia {
 
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
+	}
+
+	@Override
+	public String toString() {
+		return nombre;
 	}
 
 }

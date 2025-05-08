@@ -41,14 +41,23 @@
 		<mapping class="clases_objetos.Armadura" />
 		<mapping class="clases_objetos.Objeto" />
 
+		<mapping class="clases_partida.Criatura" />
+		<mapping class="clases_partida.Escena" />
+		<mapping class="clases_partida.Mundo" />
+		<mapping class="clases_partida.Nacion" />
+		<mapping class="clases_partida.O_Nacion" />
+		<mapping class="clases_partida.O_Reino" />
+		<mapping class="clases_partida.Reino" />
+		<mapping class="clases_partida.Ubicacion" />	
+
 		<mapping class="clases_personaje.Arquetipo" />
 		<mapping class="clases_personaje.Ideologia" />
 		<mapping class="clases_personaje.Personaje" />
 		<mapping class="clases_personaje.Raza" />
-		<mapping class="clases_personaje.Reino" />
 		<mapping class="clases_personaje.Religion" />
 		
 		<mapping class="clases_roles.Clase" />
 		<mapping class="clases_roles.Subclase" />
+		
 	</session-factory>
 </hibernate-configuration>

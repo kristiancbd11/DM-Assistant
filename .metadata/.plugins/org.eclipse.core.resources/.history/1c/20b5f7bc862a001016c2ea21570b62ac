@@ -1,0 +1,79 @@
+// InfoView.java
+package views;
+
+import clases_partida.Mundo;
+import javafx.geometry.Insets;
+import javafx.scene.control.Label;
+import javafx.scene.control.TreeItem;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+
+public class InfoView {
+    private Label infoLabel;
+    private VBox infoBox;
+
+    public InfoView() {
+        infoLabel = new Label();
+        infoBox = new VBox(new Label("📁 InfoView"));
+        infoBox.setMinWidth(100);
+        infoBox.setStyle("-fx-padding: 10; -fx-background-color: #FFFFFF;");
+        
+//        VBox contenedor = new VBox(10);
+//        contenedor.setPadding(new Insets(20));
+//
+//        Label titulo = new Label("Ficha del Personaje");
+//        titulo.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+//
+//        Label nombre = new Label("Nombre: " + personaje.getNombre());
+//        Label clase = new Label("Clase: " + personaje.getClase());
+//        Label subclase = new Label("Subclase: " + personaje.getSubclase());
+//        Label nivel = new Label("Nivel: " + personaje.getNivel());
+//        Label experiencia = new Label("Experiencia: " + personaje.getExperiencia());
+//        Label raza = new Label("Raza: " + personaje.getRaza());
+//        Label sexo = new Label("Sexo: " + personaje.getSexo());
+//        Label religion = new Label("Religión: " + personaje.getReligion());
+//        Label nacion = new Label("Nación: " + personaje.getNacion());
+//        Label ideologia = new Label("Ideología: " + personaje.getIdeologia());
+//
+//        contenedor.getChildren().addAll(
+//            titulo, nombre, clase, subclase, nivel, experiencia,
+//            raza, sexo, religion, nacion, ideologia
+//        );
+//
+//        StackPane pane = new StackPane(contenedor);
+//        pane.setStyle("-fx-background-color: #f8f8f8;");
+//
+//        return pane;
+    }
+
+    public VBox showInfoView() {
+        return infoBox;
+    }
+
+    public void showViewMundo(TreeItem<Object> selectedItem) {
+        if (selectedItem != null && selectedItem.getValue() instanceof Mundo) {
+            Mundo mundo = (Mundo) selectedItem.getValue();
+            infoLabel.setText("Mundo seleccionado: " + mundo.getNombre());
+        } else {
+            infoLabel.setText("Selecciona un mundo para ver su información.");
+        }
+    }
+
+	public Label getInfoLabel() {
+		return infoLabel;
+	}
+
+	public void setInfoLabel(Label infoLabel) {
+		this.infoLabel = infoLabel;
+	}
+
+	public VBox getInfoBox() {
+		return infoBox;
+	}
+
+	public void setInfoBox(VBox infoBox) {
+		this.infoBox = infoBox;
+	}
+    
+    
+}

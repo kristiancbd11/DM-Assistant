@@ -1,0 +1,39 @@
+package views;
+
+import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+public class CreationWindowView extends Stage {
+
+    public CreationWindowView(CreationType type) {
+        setTitle("Nuevo " + type.name().toLowerCase());
+
+        BorderPane root = new BorderPane();
+        Scene scene = new Scene(root, 600, 400);
+
+        // Aquí se decide qué vista cargar según el tipo
+        switch (type) {
+            case PERSONAJE:
+                root.setCenter(new CreationPersonajeView());
+                break;
+            case NPC:
+                root.setCenter(new CreationNpcView());
+                break;
+            case CRIATURA:
+                root.setCenter(new CreationCriaturaView());
+                break;
+            case UBICACION:
+                root.setCenter(new CreationUbicacionView());
+                break;
+            case ESCENA:
+                root.setCenter(new CreationEscenaView());
+                break;
+        }
+
+        setScene(scene);
+        initModality(Modality.APPLICATION_MODAL); // Bloquea la ventana principal
+        showAndWait(); // Espera a que se cierre esta ventana antes de continuar
+    }
+}

@@ -1,0 +1,83 @@
+package views;
+
+import clases_partida.Nacion;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.util.Duration;
+
+public class DesktopNacionView {
+
+    private static final Rectangle2D VISTA_CUNA_KARKOS = new Rectangle2D(50, 50, 800, 500);
+    private static final Rectangle2D VISTA_NORDAST = new Rectangle2D(300, 0, 800, 500);
+
+    private ImageView imageView;
+
+    public StackPane crearView(Nacion nacion) {
+        StackPane root = new StackPane();
+        VBox layout = new VBox(10);
+        layout.setAlignment(Pos.CENTER);
+
+        Label titulo = new Label("🌍 Vista del Mundo - " + nacion.getNombre());
+
+        Image imagen = new Image(getClass().getResourceAsStream("/images/Gartea_Ciudades.png"));
+        imageView = new ImageView(imagen);
+        imageView.setPreserveRatio(true);
+        imageView.fitWidthProperty().bind(root.widthProperty());
+        imageView.fitHeightProperty().bind(root.heightProperty());
+
+        Rectangle2D vistaInicial = getVistaParaNacion(nacion.getNombre());
+        imageView.setViewport(vistaInicial);
+
+        layout.getChildren().addAll(titulo, imageView);
+        root.getChildren().add(layout);
+        return root;
+    }
+
+    private Rectangle2D getVistaParaNacion(String nombre) {
+        switch (nombre) {
+            case "Cuna de Karkos": return VISTA_CUNA_KARKOS;
+            case "Nordast": return VISTA_NORDAST;
+            default: return new Rectangle2D(0, 0, 800, 500);
+        }
+    }
+
+    public void desplazarAHacia(String nuevaNacion) {
+        Rectangle2D destino = getVistaParaNacion(nuevaNacion);
+        Rectangle2D actual = imageView.getViewport();
+
+        double startX = actual.getMinX();
+        double startY = actual.getMinY();
+        double endX = destino.getMinX();
+        double endY = destino.getMinY();
+
+        int pasos = 100;
+        double deltaX = (endX - startX) / pasos;
+        double deltaY = (endY - startY) / pasos;
+
+        Timeline timeline = new Timeline();
+
+        for (int i = 0; i <= pasos; i++) {
+            double x = startX + i * deltaX;
+            double y = startY + i * deltaY;
+
+            KeyFrame keyFrame = new KeyFrame(
+                Duration.millis(i * 15), // velocidad de fotograma
+                e -> imageView.setViewport(new Rectangle2D(x, y, 800, 500))
+            );
+
+            timeline.getKeyFrames().add(keyFrame);
+        }
+
+        timeline.setCycleCount(1);
+        timeline.play();
+    }
+
+
+}

@@ -1,0 +1,92 @@
+package views;
+
+import clases_partida.Mundo;
+import control.CreationCriaturaController;
+import control.CreationPersonajeController;
+import control.CreationUbicacionController;
+import control.CreationViewType;
+import control.ExplorerController;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.TreeItem;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+public class CreationWindow extends Stage {
+	
+	private CreationViewType type;
+	private ExplorerController explorerController;
+	private Mundo mundo;
+	private TreeItem<Object> item;
+
+    
+    
+    public CreationWindow(CreationViewType type, ExplorerController explorerController, Mundo mundo,
+			TreeItem<Object> item) {
+		super();
+		this.type = type;
+		this.explorerController = explorerController;
+		this.mundo = mundo;
+		this.item = item;
+		crearVentana();
+	}
+
+	public CreationWindow(CreationViewType type, ExplorerController explorerController, Mundo mundo) {
+		super();
+		this.type = type;
+		this.explorerController = explorerController;
+		this.mundo = mundo;
+		crearVentana();
+	}
+
+	public void crearVentana() {
+    	setTitle("Nuevo " + type.name().toLowerCase());
+
+        BorderPane root = new BorderPane();
+        Scene scene = new Scene(root, 600, 650);
+
+        StackPane contenidoConPadding = new StackPane();
+        contenidoConPadding.setPadding(new Insets(15)); // 15px de espacio por todos lados
+        
+        switch (type) {
+            case PERSONAJE:
+            	boolean npcPj = false;
+            	CreationPersonajeView viewPj = new CreationPersonajeView();
+            	CreationPersonajeController controlPj = new CreationPersonajeController(this, viewPj, explorerController, mundo, npcPj);
+                contenidoConPadding.getChildren().add(viewPj);
+                break;
+            case NPC:
+            	boolean npcNpc = true;
+            	CreationPersonajeView viewNpc = new CreationPersonajeView();
+            	CreationPersonajeController controlNpc = new CreationPersonajeController(this, viewNpc, explorerController, mundo, npcNpc);
+                contenidoConPadding.getChildren().add(viewNpc);
+                break;
+            case CRIATURA:
+            	CreationCriaturaView viewCriatura = new CreationCriaturaView();
+            	CreationCriaturaController controlCriatura = new CreationCriaturaController(this, viewCriatura, explorerController, mundo);
+                contenidoConPadding.getChildren().add(viewCriatura);
+                break;
+            case UBICACION:
+            	CreationUbicacionView viewUbicacion = new CreationUbicacionView();
+            	CreationUbicacionController controlUbicacion = new CreationUbicacionController(this, viewUbicacion, explorerController, mundo, item);
+                contenidoConPadding.getChildren().add(viewUbicacion);
+                break;
+            case ESCENA:
+                // contenidoConPadding.getChildren().add(new CreationEscenaView());
+                break;
+        }
+
+        root.setCenter(contenidoConPadding);
+
+        setScene(scene);
+        initModality(Modality.APPLICATION_MODAL); // Bloquea la ventana principal
+        showAndWait(); // Espera a que se cierre esta ventana antes de continuar
+    }
+
+	public TreeItem<Object> getItem() {
+		return item;
+	}
+	
+}

@@ -1,0 +1,23 @@
+package control;
+
+import clases_partida.Mundo;
+import javafx.scene.control.TreeItem;
+import javafx.stage.Stage;
+import views.CreationUbicacionView;
+
+public class CreationUbicacionController {
+	
+	private Stage window;
+	private CreationUbicacionView view;
+	private ExplorerController explorerController;
+	private Mundo mundo;
+	private TreeItem<Object> item;
+	
+	public CreationUbicacionController(Stage window, CreationUbicacionView view, ExplorerController explorerController,
+			Mundo mundo, TreeItem<Object> item) {
+		this.window = window;
+		this.view = view;
+		this.explorerController = explorerController;
+		this.mundo = mundo;
+	}
+}

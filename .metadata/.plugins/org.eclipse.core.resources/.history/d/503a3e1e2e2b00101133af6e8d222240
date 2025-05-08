@@ -1,0 +1,32 @@
+package control;
+
+import clases_partida.Nacion;
+import javafx.scene.layout.StackPane;
+import views.DesktopNacionView;
+import views.DesktopView;
+
+public class DesktopNacionController {
+	private final DesktopNacionView desktopNacionView;
+	private final DesktopView desktopView;
+	private final Nacion nacion;
+	
+	public DesktopNacionController(DesktopView desktopView, Nacion nacion) {
+		this.desktopView = desktopView;
+		this.desktopNacionView = new DesktopNacionView();
+		this.nacion = nacion;
+	}
+
+	public StackPane getVista() {
+		return desktopNacionView.crearView(nacion);
+	}
+	
+    public void cambiarVista(Nacion nacion) {
+        if (desktopNacionView == null) {
+            desktopNacionView = new DesktopNacionView();
+            StackPane view = desktopNacionView.crearView(nacion);
+            desktopView.setContenido(view); // suponiendo que desktopView tiene ese método
+        } else {
+            desktopNacionView.desplazarAHacia(nacion.getNombre());
+        }
+    }
+}

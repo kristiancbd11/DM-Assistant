@@ -1,0 +1,57 @@
+package views;
+
+import clases_partida.Mundo;
+import control.CreationPersonajeController;
+import control.CreationViewType;
+import control.ExplorerController;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+public class CreationWindow extends Stage {
+
+    public CreationWindow(CreationViewType type, ExplorerController explorerControler, Mundo mundo) {
+        setTitle("Nuevo " + type.name().toLowerCase());
+
+        BorderPane root = new BorderPane();
+        Scene scene = new Scene(root, 600, 650);
+
+        StackPane contenidoConPadding = new StackPane();
+        contenidoConPadding.setPadding(new Insets(15)); // 15px de espacio por todos lados
+        
+        switch (type) {
+            case PERSONAJE:
+            	boolean npcPj = false;
+            	CreationPersonajeView viewPj = new CreationPersonajeView();
+            	CreationPersonajeController controlPj = new CreationPersonajeController(this, viewPj, explorerControler, mundo, npcPj);
+                contenidoConPadding.getChildren().add(viewPj);
+                break;
+            case NPC:
+            	boolean npcNpc = true;
+            	CreationPersonajeView viewNpc = new CreationPersonajeView();
+            	CreationPersonajeController controlNpc = new CreationPersonajeController(this, viewNpc, explorerControler, mundo, npcNpc);
+                contenidoConPadding.getChildren().add(viewNpc);
+                break;
+            case CRIATURA:
+            	CreationCriaturaView viewCriatura = new CreationCriaturaView();
+            	CreationPersonajeController controlNpc = new CreationPersonajeController(this, viewNpc, explorerControler, mundo, npcNpc);
+                contenidoConPadding.getChildren().add(viewNpc);
+                break;
+            case UBICACION:
+                // contenidoConPadding.getChildren().add(new CreationUbicacionView());
+                break;
+            case ESCENA:
+                // contenidoConPadding.getChildren().add(new CreationEscenaView());
+                break;
+        }
+
+        root.setCenter(contenidoConPadding);
+
+        setScene(scene);
+        initModality(Modality.APPLICATION_MODAL); // Bloquea la ventana principal
+        showAndWait(); // Espera a que se cierre esta ventana antes de continuar
+    }
+}

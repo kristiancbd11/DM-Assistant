@@ -1,0 +1,24 @@
+package views;
+
+import clases_partida.Mundo;
+import clases_partida.Nacion;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+
+public class DesktopMundoView {
+
+	public StackPane crearView(Mundo mundo) {
+		Image imagen = new Image(getClass().getResourceAsStream("/images/Gartea_Ciudades.png"));
+		ImageView imageView = new ImageView(imagen);
+		imageView.setPreserveRatio(true);
+		imageView.setFitWidth(800); // Ajusta el tamaño según lo necesites
+
+		StackPane stackPane = new StackPane();
+		stackPane.getChildren().add(imageView);
+		return stackPane;
+	}
+}

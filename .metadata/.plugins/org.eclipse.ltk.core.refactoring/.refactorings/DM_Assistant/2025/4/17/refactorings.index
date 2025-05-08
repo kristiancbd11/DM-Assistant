@@ -1,0 +1,29 @@
+1745318479458	Rename type 'TuClaseMain'
+1745326667500	Delete element
+1745326982254	Delete element
+1745404233461	Delete element
+1745404238794	Delete element
+1745404242460	Delete element
+1745404246509	Delete element
+1745478519058	Rename local variable 'ItemNpc'
+1745478527788	Rename local variable 'ItemCriaturas'
+1745478536459	Rename local variable 'ItemReinos'
+1745573439526	Delete element
+1745573466051	Move compilation unit
+1745576122500	Rename field 'infoview'
+1745576129898	Rename field 'info'
+1745576147219	Rename field 'vboxInfo'
+1745580638550	Delete element
+1745580739568	Rename method 'recuperarRaza'
+1745580751474	Rename method 'recuperarReligion'
+1745580761232	Rename method 'recuperarReino'
+1745580774310	Rename method 'recuperarTodosReinos'
+1745580827853	Rename method 'recuperarIdeologia'
+1745580848279	Rename method 'recuperarClase'
+1745580861459	Rename method 'recuperarPersonaje'
+1745580873619	Rename method 'recuperarMundo'
+1745580885745	Rename method 'borrarMundo'
+1745580894068	Rename method 'actualizarMundo'
+1745580903562	Rename method 'recuperarTodosMundos'
+1745580911969	Rename method 'guardarMundo'
+1745580920211	Rename method 'guardarPersonaje'

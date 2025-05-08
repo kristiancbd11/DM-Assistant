@@ -1,0 +1,50 @@
+package views;
+
+import clases_partida.Criatura;
+import clases_partida.Mundo;
+import clases_partida.Nacion;
+import clases_partida.Reino;
+import clases_partida.Ubicacion;
+import clases_personaje.Personaje;
+import javafx.scene.layout.VBox;
+
+public class InfoMundoView {
+
+	private Mundo mundo;
+	
+	public VBox crearView() {
+		VBox pane = new VBox();
+		
+		String nombre = mundo.getNombre();
+		
+		int nPj = 0;
+		for(Personaje personaje : mundo.getPersonajes()) {
+			nPj++;
+		}
+		
+		int nNpc = 0;
+		for(Personaje npc : mundo.getNpcs()) {
+			nNpc++;
+		}
+		
+		int nCriaturas = 0;
+		for(Criatura criatura : mundo.getCriaturas()) {
+			nCriaturas++;
+		}
+		
+		//String fecha = "";
+		
+		int nEscenas = 0;
+		int nUbicaciones = 0;
+		for(Nacion nacion : mundo.getNaciones()) {
+			for(Reino reino : nacion.getReinos()) {
+				for(Ubicacion ubicacion : reino.getUbicaciones()) {
+					
+				}
+			}
+		}
+		
+		return pane;
+	}
+	
+}

@@ -1,0 +1,12 @@
+@font-face {
+    font-family: "Dungeon Depths";
+    src: url("/fonts/Dungeon_Depths.ttf");
+}
+
+.label.titulo-mundo {
+    -fx-font-family: "Dungeon Depths";
+    -fx-font-size: 36px;
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(one-pass-box, purple, 4, 0.7, 2, 2);
+}

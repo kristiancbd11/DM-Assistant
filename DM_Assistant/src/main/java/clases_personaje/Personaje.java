@@ -1,7 +1,8 @@
 package clases_personaje;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import clases_estadisticas.EstadoPjJson;
@@ -13,13 +14,16 @@ import clases_estadisticas.StatGeneral;
 import clases_estadisticas.StatInteligencia;
 import clases_estadisticas.StatSabiduria;
 import clases_estadisticas.ConjuntoEstadisticas;
-import clases_estados.Estado;
 import clases_habilidades.Don;
 import clases_habilidades.Hechizo;
 import clases_habilidades.Rasgo;
 import clases_habilidades.Talento;
 import clases_habilidades.Ventaja;
 import clases_objetos.Objeto;
+import clases_partida.Escena;
+import clases_partida.Mundo;
+import clases_partida.Nacion;
+import clases_partida.Ubicacion;
 import clases_roles.Clase;
 import clases_roles.Subclase;
 import jakarta.persistence.CascadeType;
@@ -33,173 +37,186 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
+import javafx.scene.control.Spinner;
 
 @Entity
-@Table (name = "PERSONAJES")
+@Table(name = "PERSONAJES")
 public class Personaje {
 
 	// DATOS ASIGNADOS MANUALMENTE:
 	// Datos temáticos
-	@Column (name = "nombre")
+	@Column(name = "nombre")
 	private String nombre;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "idRaza", nullable = false)
 	private Raza raza;
-	
-	@Column (name = "sexo")
+
+	@Column(name = "sexo")
 	private String sexo;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "idReligion", nullable = false)
 	private Religion religion;
 
 	@ManyToOne
-	@JoinColumn(name = "idReino", nullable = false)
-	private Reino reino;
+	@JoinColumn(name = "idNacion", nullable = false)
+	private Nacion nacion;
+	
+	@ManyToOne
+	@JoinColumn(name = "idIdeologia", nullable = false)
+	private Ideologia ideologia;
 
-	 @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-	    @JoinTable(
-	        name = "PERSONAJE_IDEOLOGIA",
-	        joinColumns = @JoinColumn(name = "idPersonaje"),
-	        inverseJoinColumns = @JoinColumn(name = "idIdeologia")
-	    )
-	private List<Ideologia> listaIdeo;
-
-	@Column (name = "edad")
+	@Column(name = "edad")
 	private int edad;
 
 	// Datos de clase
 	@ManyToOne
 	@JoinColumn(name = "idClase", nullable = false)
 	private Clase clase;
+	
 	@ManyToOne
 	@JoinColumn(name = "idSubclase", nullable = true)
 	private Subclase subclase; // Asignable pero no durante la instanciación
+	
+	// Datos de partida
+	@ManyToMany(mappedBy = "personajes", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+	private List<Escena> escenas = new ArrayList<>();
+	
+    @ManyToMany(mappedBy = "personajes", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+	private List<Ubicacion> ubicaciones = new ArrayList<>();
+    
+    @ManyToMany(mappedBy = "personajes", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+  	private List<Mundo> mundos = new ArrayList<>();
 
 	// DATOS CALCULADOS AUTOMÁTICAMENTE:
 	// Identificador
 	@Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "personajes_gen")
-    @SequenceGenerator(name = "personajes_gen", sequenceName = "personajes_seq", allocationSize = 1)
-	@Column (name = "idPersonaje")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "personajes_gen")
+	@SequenceGenerator(name = "personajes_gen", sequenceName = "personajes_seq", allocationSize = 1)
+	@Column(name = "idPersonaje")
 	private int idPersonaje;
-	
+
 	// Datos de estado
 	private String estadoJson;
 
 	// DATOS DE PROGRESO:
 	// Datos de habilidades, capacidades y posesiones
-	@Column (name = "oro")
+	@Column(name = "oro")
 	private int oro = 30;
-	
-	@Column (name = "experiencia")
+
+	@Column(name = "experiencia")
 	private int experiencia = 0;
-	
-	@Column (name = "nivel")
+
+	@Column(name = "nivel")
 	private int nivel = 1;
-	
+
 	// 0: No competente || 1: Competente
-    // Bit 1: Armas diestras
-    // Bit 2: Armas de duelo
-    // Bit 3: Armas de guerra
-    // Bit 4: Armas a dos manos
-    // Bit 5: Armas a distancia
+	// Bit 1: Armas diestras
+	// Bit 2: Armas de duelo
+	// Bit 3: Armas de guerra
+	// Bit 4: Armas a dos manos
+	// Bit 5: Armas a distancia
 	// Bit 6: Escudos
 	// Bit 7: Puños
 	// Bit 8: Guadañas
-	@Column (name = "armas")
+	@Column(name = "armas")
 	private byte[] competenciaArma;
-	
+
 	// 0: No competente || 1: Competente
 	// Bit 1: Armaduras ligeras
 	// Bit 2: Armaduras medias
 	// Bit 3: Armaduras pesadas
-	@Column (name = "armaduras")
+	@Column(name = "armaduras")
 	private byte[] competenciaArmadura;
-	
-	//Todos estos datos se obtendrán por JDBC en lugar de Hibernate
-	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-    @JoinTable(
-    		name = "TALENTOS_PERSONAJES",
-    		joinColumns = @JoinColumn(name = "idPersonaje"),
-    		inverseJoinColumns = @JoinColumn(name = "idTalento")
-    )
+
+	// Todos estos datos se obtendrán por JDBC en lugar de Hibernate
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+	@JoinTable(name = "TALENTOS_PERSONAJES", joinColumns = @JoinColumn(name = "idPersonaje"), inverseJoinColumns = @JoinColumn(name = "idTalento"))
 	private List<Talento> listaTalentos;
-	
-	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-    @JoinTable(
-    		name = "DONES_PERSONAJES",
-    		joinColumns = @JoinColumn(name = "idPersonaje"),
-    		inverseJoinColumns = @JoinColumn(name = "idDon")
-    )
+
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+	@JoinTable(name = "DONES_PERSONAJES", joinColumns = @JoinColumn(name = "idPersonaje"), inverseJoinColumns = @JoinColumn(name = "idDon"))
 	private List<Don> listaDones;
-	
-	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-    @JoinTable(
-    		name = "HECHIZOS_PERSONAJES",
-    		joinColumns = @JoinColumn(name = "idPersonaje"),
-    		inverseJoinColumns = @JoinColumn(name = "idHechizo")
-    )
+
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+	@JoinTable(name = "HECHIZOS_PERSONAJES", joinColumns = @JoinColumn(name = "idPersonaje"), inverseJoinColumns = @JoinColumn(name = "idHechizo"))
 	private List<Hechizo> listaHechizos;
-	
-	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-    @JoinTable(
-    		name = "VENTAJAS_PERSONAJES",
-    		joinColumns = @JoinColumn(name = "idPersonaje"),
-    		inverseJoinColumns = @JoinColumn(name = "idVentaja")
-    )
+
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+	@JoinTable(name = "VENTAJAS_PERSONAJES", joinColumns = @JoinColumn(name = "idPersonaje"), inverseJoinColumns = @JoinColumn(name = "idVentaja"))
 	private List<Ventaja> listaVentajas;
-	
-	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-    @JoinTable(
-    		name = "RASGOS_PERSONAJES",
-    		joinColumns = @JoinColumn(name = "idPersonaje"),
-    		inverseJoinColumns = @JoinColumn(name = "idRasgo")
-    )
+
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+	@JoinTable(name = "RASGOS_PERSONAJES", joinColumns = @JoinColumn(name = "idPersonaje"), inverseJoinColumns = @JoinColumn(name = "idRasgo"))
 	private List<Rasgo> listaRasgos;
-	
-	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-    @JoinTable(
-    		name = "EQUIPO_PERSONAJE",
-    		joinColumns = @JoinColumn(name = "idPersonaje"),
-    		inverseJoinColumns = @JoinColumn(name = "idObjeto")
-    )
+
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+	@JoinTable(name = "EQUIPO_PERSONAJE", joinColumns = @JoinColumn(name = "idPersonaje"), inverseJoinColumns = @JoinColumn(name = "idObjeto"))
 	private List<Objeto> equipacion;
-	
-	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-    @JoinTable(
-    		name = "INVENTARIO_PERSONAJE",
-    		joinColumns = @JoinColumn(name = "idPersonaje"),
-    		inverseJoinColumns = @JoinColumn(name = "idObjeto")
-    )
+
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+	@JoinTable(name = "INVENTARIO_PERSONAJE", joinColumns = @JoinColumn(name = "idPersonaje"), inverseJoinColumns = @JoinColumn(name = "idObjeto"))
 	private List<Objeto> inventario;
 
 	// Funciones:
 
 	// CONSTRUCTOR HIBERNATE
-	public Personaje(){}
-	
+	public Personaje() {
+	}
+
 	// CONSTRUCTOR
-	public Personaje(String nombre, Raza raza, String sexo, Religion religion, Reino reino, List<Ideologia> listaIdeo, int edad,
-			Clase clase) {
+	public Personaje(String nombre, Raza raza, String sexo, Religion religion, Nacion nacion, Ideologia ideologia,
+			int edad, Clase clase) {
 		this.nombre = nombre;
 		this.raza = raza;
 		this.sexo = sexo;
 		this.religion = religion;
-		this.reino = reino;
-		this.listaIdeo = listaIdeo;
+		this.nacion = nacion;
+		this.ideologia = ideologia;
 		this.edad = edad;
 		this.clase = clase;
 		this.competenciaArma = clase.getCompetenciaArma();
 		this.competenciaArmadura = clase.getCompetenciaArmadura();
 	}
 	
-	public void setAllStats() {
+	// CONSTRUCTOR COPIA
+	public Personaje(Personaje original) {
+	    this.nombre = original.nombre;
+	    this.raza = original.raza;
+	    this.sexo = original.sexo;
+	    this.religion = original.religion;
+	    this.nacion = original.nacion;
+	    this.ideologia = original.ideologia;
+	    this.edad = original.edad;
+	    this.clase = original.clase;
+	    this.subclase = original.subclase;
+
+	    this.estadoJson = original.estadoJson;
+
+	    this.oro = original.oro;
+	    this.experiencia = original.experiencia;
+	    this.nivel = original.nivel;
+
+	    this.competenciaArma = original.competenciaArma != null ? original.competenciaArma.clone() : null;
+	    this.competenciaArmadura = original.competenciaArmadura != null ? original.competenciaArmadura.clone() : null;
+
+	    this.listaTalentos = new ArrayList<>(original.listaTalentos);
+	    this.listaDones = new ArrayList<>(original.listaDones);
+	    this.listaHechizos = new ArrayList<>(original.listaHechizos);
+	    this.listaVentajas = new ArrayList<>(original.listaVentajas);
+	    this.listaRasgos = new ArrayList<>(original.listaRasgos);
+	    this.equipacion = new ArrayList<>(original.equipacion);
+	    this.inventario = new ArrayList<>(original.inventario);
+
+	    this.escenas = new ArrayList<>(original.escenas);
+	    this.ubicaciones = new ArrayList<>(original.ubicaciones);
+	    this.mundos = new ArrayList<>(original.mundos);
+	}
+	
+	public void setAllStats(Map<String, List<Spinner<Integer>>> subatributosSpinners) {
 		Scanner sc = new Scanner(System.in);
 		int n1 = 0;
 		int n2 = 0;
@@ -207,97 +224,105 @@ public class Personaje {
 		int n4 = 0;
 		int n5 = 0;
 		int n6 = 0;
-		
+		String stat = "";
+
 		// Parametros:
 		// Salud | Iniciativa | Aura | Movimiento | Dado de ataque
-		StatGeneral statGen = new StatGeneral(clase.getArquetipo().getConstitucion() + raza.getArquetipo().getConstitucion(),
-												clase.getArquetipo().getIniciatva() + raza.getArquetipo().getIniciatva(),
-												clase.getArquetipo().getAura() + raza.getArquetipo().getAura(), 
-												clase.getArquetipo().getMovimiento() + raza.getArquetipo().getMovimiento(),
-												clase.getDado());
-		
-		System.out.println("Asigna la fuerza | Puntos disponibles: " + 
-							(clase.getArquetipo().getFuerza() + raza.getArquetipo().getFuerza()));
-		n1 = sc.nextInt();
-		n2 = sc.nextInt();
-		n3 = sc.nextInt();
-		n4 = sc.nextInt();
-		n5 = sc.nextInt();
-		n6 = sc.nextInt();
+		StatGeneral statGen = new StatGeneral(
+				clase.getArquetipo().getConstitucion() + raza.getArquetipo().getConstitucion(),
+				clase.getArquetipo().getIniciatva() + raza.getArquetipo().getIniciatva(),
+				clase.getArquetipo().getAura() + raza.getArquetipo().getAura(),
+				clase.getArquetipo().getMovimiento() + raza.getArquetipo().getMovimiento(), clase.getDado());
+
+		// FUERZA:
+		// Impacto | Destrozo | Carga | Levantamiento | Vigor | Atletismo
+		stat = "FUERZA";
+		n1 = subatributosSpinners.get(stat).get(0).getValue();
+		n2 = subatributosSpinners.get(stat).get(1).getValue();
+		n3 = subatributosSpinners.get(stat).get(2).getValue();
+		n4 = subatributosSpinners.get(stat).get(3).getValue();
+		n5 = subatributosSpinners.get(stat).get(4).getValue();
+		n6 = subatributosSpinners.get(stat).get(5).getValue();
 		StatFuerza statFue = new StatFuerza(n1, n2, n3, n4, n5, n6);
-		
-		System.out.println("Asigna la constitución | Puntos disponibles: " + 
-							(clase.getArquetipo().getConstitucion() + raza.getArquetipo().getConstitucion()));
-		n1 = sc.nextInt();
-		n2 = sc.nextInt();
-		n3 = sc.nextInt();
-		n4 = sc.nextInt();
-		n5 = sc.nextInt();
-		n6 = sc.nextInt();
+
+		stat = "CONSTITUCIÓN";
+		n1 = subatributosSpinners.get(stat).get(0).getValue();
+		n2 = subatributosSpinners.get(stat).get(1).getValue();
+		n3 = subatributosSpinners.get(stat).get(2).getValue();
+		n4 = subatributosSpinners.get(stat).get(3).getValue();
+		n5 = subatributosSpinners.get(stat).get(4).getValue();
+		n6 = subatributosSpinners.get(stat).get(5).getValue();
 		StatConstitucion statCon = new StatConstitucion(n1, n2, n3, n4, n5, n6);
-		
-		System.out.println("Asigna la destreza | Puntos disponibles: " + 
-							(clase.getArquetipo().getDestreza() + raza.getArquetipo().getDestreza()));
-		n1 = sc.nextInt();
-		n2 = sc.nextInt();
-		n3 = sc.nextInt();
-		n4 = sc.nextInt();
-		n5 = sc.nextInt();
-		n6 = sc.nextInt();
+
+		stat = "DESTREZA";
+		n1 = subatributosSpinners.get(stat).get(0).getValue();
+		n2 = subatributosSpinners.get(stat).get(1).getValue();
+		n3 = subatributosSpinners.get(stat).get(2).getValue();
+		n4 = subatributosSpinners.get(stat).get(3).getValue();
+		n5 = subatributosSpinners.get(stat).get(4).getValue();
+		n6 = subatributosSpinners.get(stat).get(5).getValue();
 		StatDestreza statDes = new StatDestreza(n1, n2, n3, n4, n5, n6);
-		
-		System.out.println("Asigna el inteligencia | Puntos disponibles: " + 
-							(clase.getArquetipo().getInteligencia() + raza.getArquetipo().getInteligencia()));
-		n1 = sc.nextInt();
-		n2 = sc.nextInt();
-		n3 = sc.nextInt();
-		n4 = sc.nextInt();
-		n5 = sc.nextInt();
-		n6 = sc.nextInt();
+
+		stat = "INTELIGENCIA";
+		n1 = subatributosSpinners.get(stat).get(0).getValue();
+		n2 = subatributosSpinners.get(stat).get(1).getValue();
+		n3 = subatributosSpinners.get(stat).get(2).getValue();
+		n4 = subatributosSpinners.get(stat).get(3).getValue();
+		n5 = subatributosSpinners.get(stat).get(4).getValue();
+		n6 = subatributosSpinners.get(stat).get(5).getValue();
 		StatInteligencia statInte = new StatInteligencia(n1, n2, n3, n4, n5, n6);
-		
-		System.out.println("Asigna el sabiduria | Puntos disponibles: " + 
-							(clase.getArquetipo().getSabiduria() + raza.getArquetipo().getSabiduria()));
-		n1 = sc.nextInt();
-		n2 = sc.nextInt();
-		n3 = sc.nextInt();
-		n4 = sc.nextInt();
-		n5 = sc.nextInt();
-		n6 = sc.nextInt();
+
+		stat = "SABIDURÍA";
+		n1 = subatributosSpinners.get(stat).get(0).getValue();
+		n2 = subatributosSpinners.get(stat).get(1).getValue();
+		n3 = subatributosSpinners.get(stat).get(2).getValue();
+		n4 = subatributosSpinners.get(stat).get(3).getValue();
+		n5 = subatributosSpinners.get(stat).get(4).getValue();
+		n6 = subatributosSpinners.get(stat).get(5).getValue();
 		StatSabiduria statSab = new StatSabiduria(n1, n2, n3, n4, n5, n6);
-		
-		System.out.println("Asigna el carisma | Puntos disponibles: " + 
-							(clase.getArquetipo().getCarisma() + raza.getArquetipo().getCarisma()));
-		n1 = sc.nextInt();
-		n2 = sc.nextInt();
-		n3 = sc.nextInt();
-		n4 = sc.nextInt();
-		n5 = sc.nextInt();
-		n6 = sc.nextInt();
+
+		stat = "CARISMA";
+		n1 = subatributosSpinners.get(stat).get(0).getValue();
+		n2 = subatributosSpinners.get(stat).get(1).getValue();
+		n3 = subatributosSpinners.get(stat).get(2).getValue();
+		n4 = subatributosSpinners.get(stat).get(3).getValue();
+		n5 = subatributosSpinners.get(stat).get(4).getValue();
+		n6 = subatributosSpinners.get(stat).get(5).getValue();
 		StatCarisma statCar = new StatCarisma(n1, n2, n3, n4, n5, n6);
-		
-		ConjuntoEstadisticas stats = new ConjuntoEstadisticas(statGen, statFue, statCon, statDes, statInte, statSab, statCar);
+
+		ConjuntoEstadisticas stats = new ConjuntoEstadisticas(statGen, statFue, statCon, statDes, statInte, statSab,
+				statCar);
 		EstadoPjJson pjj = new EstadoPjJson(stats);
 		this.estadoJson = pjj.generarJson();
 
 	}
-	
-	public void sufrirEstados(boolean global) {}
-	
-	public int generarId() {
-		int id = 0;
 
-		// Debe conectarse a la BD para calcular el siguiente ID
-		// O que lo genere SQL
-
-		return id;
+	public void sufrirEstados(boolean global) {
 	}
-	
+
+	public int calcularNivel(int experiencia) {
+        if (experiencia < 20) {
+            return 1;
+        }
+
+        int nivel = 2;
+        int experienciaNecesaria = 20;
+        int incremento = 10;
+
+        while (experiencia >= experienciaNecesaria) {
+            nivel++;
+            experienciaNecesaria += incremento;
+            incremento += 5;
+        }
+
+        return nivel - 1; // El bucle sale cuando se pasa, así que restamos 1
+    }
+
 	public void perderTurno() {
-		//Gestionar aquí los casos en los que se pierde el turno del jugador
+		// Gestionar aquí los casos en los que se pierde el turno del jugador
 	}
-	
-	//Getters y setters
+
+	// Getters y setters
 	public String getNombre() {
 		return nombre;
 	}
@@ -330,20 +355,20 @@ public class Personaje {
 		this.religion = religion;
 	}
 
-	public Reino getReino() {
-		return reino;
+	public Nacion getNacion() {
+		return nacion;
 	}
 
-	public void setReino(Reino reino) {
-		this.reino = reino;
+	public void setNacion(Nacion nacion) {
+		this.nacion = nacion;
 	}
 
-	public List<Ideologia> getListaIdeo() {
-		return listaIdeo;
+	public Ideologia getIdeologia() {
+		return ideologia;
 	}
 
-	public void setListaIdeo(List<Ideologia> listaIdeo) {
-		this.listaIdeo = listaIdeo;
+	public void setIdeologia(Ideologia ideologia) {
+		this.ideologia = ideologia;
 	}
 
 	public int getEdad() {
@@ -400,14 +425,11 @@ public class Personaje {
 
 	public void setExperiencia(int experiencia) {
 		this.experiencia = experiencia;
+		setNivel();
 	}
 
 	public int getNivel() {
 		return nivel;
-	}
-
-	public void setNivel(int nivel) {
-		this.nivel = nivel;
 	}
 
 	public byte[] getCompetenciaArma() {
@@ -482,4 +504,53 @@ public class Personaje {
 		this.inventario = inventario;
 	}
 
+	public List<Escena> getEscenas() {
+		return escenas;
+	}
+
+	public void setEscenas(List<Escena> escenas) {
+		this.escenas = escenas;
+	}
+	
+	public void addEscena(Escena escena) {
+		this.escenas.add(escena);
+	}
+
+	public List<Ubicacion> getUbicaciones() {
+		return ubicaciones;
+	}
+
+	public void setUbicaciones(List<Ubicacion> ubicaciones) {
+		this.ubicaciones = ubicaciones;
+	}
+	
+	public void addUbicacion(Ubicacion ubicacion) {
+		this.ubicaciones.add(ubicacion);
+	}
+
+	public void setNivel() {
+		this.nivel = calcularNivel(this.experiencia);
+	}
+
+	public List<Mundo> getMundos() {
+		return mundos;
+	}
+
+	public void setMundos(List<Mundo> mundos) {
+		this.mundos = mundos;
+	}
+	
+	public void addMundo(Mundo mundo) {
+		this.mundos.add(mundo);
+	}
+	
+	public void removeMundo(Mundo mundo) {
+		mundos.remove(mundo);
+	}
+
+	@Override
+	public String toString() {
+		return nombre;
+	}
+	
 }

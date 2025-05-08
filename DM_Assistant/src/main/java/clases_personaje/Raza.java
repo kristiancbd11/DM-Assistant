@@ -66,6 +66,11 @@ public class Raza {
 		this.rasgo = rasgo;
 	}
 
+	@Override
+	public String toString() {
+		return nombre;
+	}
+
 	
 	
 }

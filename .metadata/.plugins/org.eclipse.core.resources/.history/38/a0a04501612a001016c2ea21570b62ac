@@ -1,0 +1,14 @@
+package control;
+
+import clases_partida.Mundo;
+import javafx.stage.Stage;
+import views.CreationPersonajeView;
+
+public class CreationUbicacionController {
+
+	public CreationUbicacionController(Stage window, CreationUbicacionView view, ExplorerController explorerController,
+			Mundo mundo) {
+		
+	}
+	
+}

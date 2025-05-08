@@ -1,0 +1,47 @@
+package control;
+
+import clases_personaje.Personaje;
+import dbhandlerCRUD.PersonajeCRUD;
+import javafx.scene.control.Alert;
+import javafx.scene.layout.StackPane;
+import views.DesktopPersonajeView;
+
+public class DesktopPersonajeController {
+
+    private final DesktopPersonajeView view;
+    private final Personaje original;
+    private final Personaje copiaOriginal;
+    private final PersonajeCRUD crud;
+
+    public DesktopPersonajeController(Personaje personaje) {
+        this.original = personaje;
+        this.copiaOriginal = new Personaje(personaje); // Copia para restaurar
+        this.view = new DesktopPersonajeView();
+        this.crud = new PersonajeCRUD();
+    }
+
+    public StackPane getVista() {
+        return view.crearView(original, this::guardarCambios, this::cancelarCambios);
+    }
+
+    private void guardarCambios() {
+        try {
+            original.setNombre(view.getNombre());
+            original.setExperiencia(Integer.parseInt(view.getExperiencia()));
+            original.setNivel();
+
+            crud.updatePersonaje(original.getIdPersonaje(), original);
+            view.actualizarNivel(original.getNivel());
+
+            new Alert(Alert.AlertType.INFORMATION, "Personaje actualizado correctamente.").showAndWait();
+        } catch (NumberFormatException ex) {
+            new Alert(Alert.AlertType.ERROR, "Experiencia debe ser un número válido.").showAndWait();
+        }
+    }
+
+    private void cancelarCambios() {
+        view.setNombre(copiaOriginal.getNombre());
+        view.setExperiencia(copiaOriginal.getExperiencia());
+        view.actualizarNivel(copiaOriginal.getNivel());
+    }
+}

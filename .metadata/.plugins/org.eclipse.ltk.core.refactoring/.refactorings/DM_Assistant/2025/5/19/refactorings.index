@@ -1,0 +1,15 @@
+1746428825472	Rename type 'CriaturasCRUD'
+1746439641868	Rename type 'CreationWindowView'
+1746441896182	Rename type 'CreationType'
+1746515183697	Rename type 'PersonajeView'
+1746519911433	Rename type 'CreationCriaturaControl'
+1746521453670	Delete element
+1746521463392	Rename type 'CriaturaView'
+1746523286802	Rename type 'NacionView'
+1746535313686	Rename type 'DesktopMundoControl'
+1746537132119	Rename resource 'STYLES'
+1746537144077	Move file
+1746537147618	Delete element
+1746611700254	Rename field 'vista'
+1746611711309	Rename field 'desktopview'
+1746613370207	Rename field 'view'

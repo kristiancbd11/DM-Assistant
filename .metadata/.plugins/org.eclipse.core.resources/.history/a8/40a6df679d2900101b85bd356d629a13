@@ -1,0 +1,11 @@
+package views;
+
+import javafx.scene.layout.StackPane;
+
+public class CriaturaView {
+	
+	public StackPane crearView() {
+		StackPane view = new StackPane();
+		return view;
+	}
+}

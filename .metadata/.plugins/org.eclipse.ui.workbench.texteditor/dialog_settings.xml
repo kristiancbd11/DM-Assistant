@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<item key="hasShownOverlayPopupBefore" value="true"/>
+	<section name="java.lang.Class">
+		<item key="replaceBarOpen" value="false"/>
+		<list key="findhistory">
+			<item value="hacerArra"/>
+			<item value="hacerArrast"/>
+			<item value="hacerArrasta"/>
+			<item value="Casilla"/>
+			<item value="hacerArrastrableDesdeCasilla"/>
+			<item value="for (Node child : casilla.getChildren())"/>
+			<item value="nodo.seton"/>
+			<item value="hacerArrastra"/>
+			<item value="hacerArrastar"/>
+			<item value="casilla.setOnDragDropped(event -&gt; {"/>
+			<item value="Label limpiar"/>
+			<item value="casilla.getChildren().remove(nodo);"/>
+			<item value="private Stage crearVentanaCuadricula(double x, double y, Stage[] referencias) {"/>
+			<item value="crearvE"/>
+			<item value="crear"/>
+		</list>
+	</section>
+</section>

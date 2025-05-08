@@ -1,0 +1,82 @@
+package views;
+
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.Priority;
+
+public class ExplorerView {
+    private VBox explorer;
+    private TreeItem<Object> contenedorRaiz;
+    private TreeItem<Object> raizMundos;
+    private TreeItem<Object> raizRogArchive;
+    private TreeView<Object> arbolMundos;
+
+    public ExplorerView() {
+        // Contenedor raíz invisible
+        contenedorRaiz = new TreeItem<>();
+        contenedorRaiz.setExpanded(true);
+
+        // 🌍 Mundos
+        raizMundos = crearNodoRaiz("🌍 Mundos", "+", "Agregar nuevo mundo");
+
+        // 🗂 ROG Archive
+        raizRogArchive = crearNodoRaiz("🗂 ROG Archive", "+", "Agregar nuevo archivo");
+
+        // Añadir ambos al contenedor raíz
+        contenedorRaiz.getChildren().addAll(raizMundos, raizRogArchive);
+
+        // Crear TreeView con contenedor invisible
+        arbolMundos = new TreeView<>(contenedorRaiz);
+        arbolMundos.setShowRoot(false); // Ocultar el nodo contenedor raíz
+        arbolMundos.setStyle("""
+            -fx-background-color: transparent;
+            -fx-background-insets: 0;
+            -fx-padding: 0;
+            -fx-border-width: 0;
+        """);
+
+        VBox.setVgrow(arbolMundos, Priority.ALWAYS);
+        explorer = new VBox(new Label("📁 Explorer"), arbolMundos);
+        explorer.setMinWidth(100);
+        explorer.setStyle("-fx-background-color: #DDEEFF; -fx-padding: 10;");
+    }
+
+    private TreeItem<Object> crearNodoRaiz(String labelTexto, String botonTexto, String mensajeAccion) {
+        TreeItem<Object> nodo = new TreeItem<>();
+        nodo.setExpanded(true);
+
+        HBox graphic = new HBox(5);
+        Label label = new Label(labelTexto);
+        Button boton = new Button(botonTexto);
+        boton.setStyle("-fx-font-size: 10; -fx-padding: 2 6 2 6;");
+        boton.setFocusTraversable(false);
+        boton.setOnAction(e -> System.out.println(mensajeAccion));
+
+        graphic.getChildren().addAll(label, boton);
+        nodo.setGraphic(graphic);
+
+        return nodo;
+    }
+
+
+    public TreeItem<Object> getRootMundos() {
+        return raizMundos;
+    }
+
+    public TreeItem<Object> getRootRogArchive() {
+        return raizRogArchive;
+    }
+    
+    public VBox getExplorerPane() {
+        return explorer;
+    }
+
+    public TreeView<Object> getTreeView() {
+        return arbolMundos;
+    }
+
+    public TreeItem<Object> getRootItem() {
+        return raizMundos;
+    }
+}

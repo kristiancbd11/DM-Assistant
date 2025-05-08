@@ -1,0 +1,13 @@
+package control;
+
+import clases_partida.Mundo;
+import javafx.stage.Stage;
+import views.CreationCriaturaView;
+
+public class CreationCriaturaController {
+
+	public CreationCriaturaController(Stage window, CreationCriaturaView view, ExplorerController explorerController,
+			Mundo mundo) {
+		
+	}
+}

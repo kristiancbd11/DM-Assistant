@@ -1,0 +1,62 @@
+package views;
+
+import javafx.scene.control.SplitPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.Node;
+
+public class MainView {
+    private BorderPane root;
+
+    public MainView() {
+        root = new BorderPane();
+    }
+
+    public BorderPane getRoot() {
+        return root;
+    }
+
+    public void setCenter(Node node) {
+        root.setCenter(node);
+    }
+
+    public void setTop(Node node) {
+        root.setTop(node);
+    }
+
+    public void setBottom(Node node) {
+        root.setBottom(node);
+    }
+
+    public void setLeft(Node node) {
+        root.setLeft(node);
+    }
+
+    public void setRight(Node node) {
+        root.setRight(node);
+    }
+
+    // Método para actualizar el contenido del centro cuando se termine de cargar
+    public void showMainContent(
+        ToolBarView toolBarView,
+        ExplorerView explorerView,
+        DesktopView desktopView,
+        InfoView infoView,
+        TaskBarView taskBarView
+    ) {
+        // Cuando los datos estén listos, se actualiza la vista principal
+    	Node explorer = explorerView.getExplorerPane();
+    	Node desktop = desktopView.getDesktop();
+    	Node info = infoView.getInfoBox();
+
+    	if (explorer == null || desktop == null || info == null) {
+    	    System.err.println("Uno o más componentes son null");
+    	} else {
+    	    SplitPane splitPane = new SplitPane(explorer, desktop, info);
+    	    setTop(toolBarView.getToolbar());
+            setLeft(explorerView.getExplorerPane());
+            setCenter(splitPane);
+            setRight(infoView.getInfoBox());
+            setBottom(taskBarView.getTaskbar());
+    	}
+    }
+}

@@ -1,0 +1,375 @@
+package views;
+
+import java.util.List;
+
+import clases_partida.Mundo;
+import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.control.Accordion;
+import javafx.scene.control.Label;
+import javafx.scene.control.TitledPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
+
+public class DesignerView {
+
+	private final List<StackPane> casillasSeleccionadas = new java.util.ArrayList<>();
+	private static final int FILAS = 15;
+	private static final int COLUMNAS = 25;
+	private static final int CASILLA_TAM = 40; // tamaño en píxeles
+	private Mundo mundo;
+
+	public DesignerView(Mundo mundo) {
+		this.mundo = mundo;
+	}
+
+	public void mostrar() {
+		Platform.runLater(() -> {
+			// Obtener dimensiones visibles de la pantalla
+			Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+
+			// Calcular dimensiones de la cuadrícula
+			double gridWidth = COLUMNAS * CASILLA_TAM;
+			double gridHeight = FILAS * CASILLA_TAM;
+			double paletteWidth = 200;
+			double margen = 10;
+
+			// Posición centrada para cuadrícula
+			double gridX = (screenBounds.getWidth() - (gridWidth + margen + paletteWidth)) / 2;
+			double gridY = (screenBounds.getHeight() - gridHeight) / 2;
+
+			// Crear cuadrícula y ubicarla
+			Stage cuadrícula = crearVentanaCuadricula(gridX, gridY);
+			// Crear paleta y ubicarla justo al lado derecho
+			Stage paleta = crearVentanaPaleta(gridX + gridWidth + margen, gridY);
+		});
+	}
+
+	private StackPane crearCasilla() {
+    StackPane casilla = new StackPane();
+    casilla.setPrefSize(CASILLA_TAM, CASILLA_TAM);
+    casilla.setStyle("-fx-border-color: lightgray; -fx-background-color: white;");
+    
+    // Contenedor para los elementos dentro de la casilla (personajes, NPCs, etc.)
+    StackPane contenedorElementos = new StackPane();
+    casilla.getChildren().add(contenedorElementos);
+
+    casilla.setOnMousePressed(event -> {
+        if (event.isPrimaryButtonDown()) {
+            if (!event.isShiftDown()) {
+                limpiarSeleccion(); // solo si no mantiene Shift
+            }
+            seleccionarCasilla(casilla);
+        } else if (event.isSecondaryButtonDown()) {
+            deseleccionarCasilla(casilla);
+        }
+    });
+
+    // Detectar y gestionar drag and drop como ya lo tenías
+    casilla.setOnDragDetected(event -> {
+        casilla.startFullDrag();
+        event.consume();
+    });
+
+    casilla.setOnMouseDragEntered(event -> {
+        if (event.isPrimaryButtonDown()) {
+            seleccionarCasilla(casilla);
+        }
+    });
+
+    casilla.setOnDragOver(event -> {
+        if (event.getGestureSource() != casilla && event.getDragboard().hasString()) {
+            event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+        }
+        event.consume();
+    });
+
+    casilla.setOnDragDropped(event -> {
+        var db = event.getDragboard();
+        if (db.hasString()) {
+            String tipo = db.getString();
+            Node figura = crearFigura(tipo);
+            hacerArrastrableDesdeCasilla(figura, casilla, tipo);
+            contenedorElementos.getChildren().clear();
+            contenedorElementos.getChildren().add(figura);
+            event.setDropCompleted(true);
+        } else {
+            event.setDropCompleted(false);
+        }
+        event.consume();
+    });
+
+    return casilla;
+}
+
+
+	private void limpiarSeleccion() {
+		for (StackPane casilla : casillasSeleccionadas) {
+			casilla.setStyle("-fx-border-color: lightgray; -fx-background-color: white;");
+		}
+		casillasSeleccionadas.clear();
+	}
+
+	private void deseleccionarCasilla(StackPane casilla) {
+		if (casillasSeleccionadas.remove(casilla)) {
+			casilla.setStyle("-fx-border-color: lightgray; -fx-background-color: white;");
+		}
+	}
+
+	private void seleccionarCasilla(StackPane casilla) {
+		if (!casillasSeleccionadas.contains(casilla)) {
+			casilla.setStyle("-fx-border-color: gray; -fx-background-color: lightgray;");
+			casillasSeleccionadas.add(casilla);
+		}
+	}
+
+	private void hacerArrastrableDesdeCasilla(Node nodo, StackPane casilla, String tipo) {
+		nodo.setOnDragDetected(event -> {
+			var db = nodo.startDragAndDrop(TransferMode.MOVE);
+			var content = new javafx.scene.input.ClipboardContent();
+			content.putString(tipo);
+			db.setContent(content);
+
+			Image snapshot = nodo.snapshot(null, null);
+			db.setDragView(snapshot); // Mostrar la vista del nodo arrastrado
+
+			casilla.getChildren().remove(nodo);
+			event.consume();
+		});
+
+	}
+
+	private Label crearElementoArrastrable(String tipo) {
+		Label label = new Label(tipo);
+		label.setStyle("-fx-border-color: black; -fx-background-color: lightgray; -fx-padding: 5;");
+		label.setOnDragDetected(event -> {
+			var db = label.startDragAndDrop(TransferMode.ANY);
+			var content = new javafx.scene.input.ClipboardContent();
+			content.putString(tipo);
+			db.setContent(content);
+			event.consume();
+		});
+
+		label.setOnDragDetected(event -> {
+			var db = label.startDragAndDrop(TransferMode.ANY);
+			var content = new javafx.scene.input.ClipboardContent();
+			content.putString(tipo);
+			db.setContent(content);
+
+			// Crear vista de arrastre visual
+			Node figura = crearFigura(tipo);
+			figura.snapshot(null, null); // Necesario para forzar renderizado
+
+			Image snapshot = figura.snapshot(null, null);
+			db.setDragView(snapshot); // Esta línea muestra el icono junto al puntero
+
+			event.consume();
+		});
+
+		return label;
+	}
+
+	private Node crearFigura(String tipo) {
+		Node figura;
+
+		if (esPersonaje(tipo)) {
+			Image imagen = new Image(getClass().getResourceAsStream("/images/personaje.png"));
+			ImageView imageView = new ImageView(imagen);
+			imageView.setFitWidth(CASILLA_TAM * 0.8);
+			imageView.setFitHeight(CASILLA_TAM * 0.8);
+			figura = imageView;
+		} else {
+			Rectangle rect = new Rectangle(CASILLA_TAM * 0.8, CASILLA_TAM * 0.8);
+			rect.setFill(switch (tipo.toLowerCase()) {
+			case "rojo" -> Color.RED;
+			case "azul" -> Color.BLUE;
+			case "verde" -> Color.GREEN;
+			case "amarillo" -> Color.YELLOW;
+			default -> Color.GRAY;
+			});
+			figura = rect;
+		}
+
+		return figura;
+	}
+
+	private boolean esPersonaje(String tipo) {
+		return mundo.getPersonajes().stream().map(Object::toString).anyMatch(nombre -> nombre.equalsIgnoreCase(tipo));
+	}
+
+	private Stage crearVentanaCuadricula(double x, double y) {
+		Stage stage = new Stage();
+		stage.setTitle("Cuadrícula" + COLUMNAS + "x" + FILAS);
+
+		GridPane grid = new GridPane();
+		for (int fila = 0; fila < FILAS; fila++) {
+			for (int col = 0; col < COLUMNAS; col++) {
+				StackPane celda = crearCasilla();
+				grid.add(celda, col, fila);
+			}
+		}
+
+		Scene scene = new Scene(grid);
+		stage.setScene(scene);
+		stage.setX(x);
+		stage.setY(y);
+		stage.show();
+		return stage;
+	}
+
+	private Stage crearVentanaPaleta(double x, double y) {
+		Stage stage = new Stage();
+		stage.setTitle("Paleta de Elementos");
+
+		VBox contenido = new VBox(10);
+		contenido.setPadding(new Insets(10));
+		contenido.setAlignment(Pos.TOP_CENTER);
+
+		// Crear pestañas
+		TitledPane personajesPane = crearCategoria("Personajes", mundo.getPersonajes());
+		TitledPane npcsPane = crearCategoria("NPCs", mundo.getNpcs());
+		TitledPane criaturasPane = crearCategoria("Criaturas", mundo.getCriaturas());
+		TitledPane coloresPane = crearColoresPane();
+
+		Accordion accordion = new Accordion(personajesPane, npcsPane, criaturasPane, coloresPane);
+
+		contenido.getChildren().addAll(accordion, crearSelectorDeColor());
+
+		contenido.setOnDragOver(event -> {
+			if (event.getDragboard().hasString()) {
+				event.acceptTransferModes(TransferMode.MOVE);
+			}
+			event.consume();
+		});
+
+		contenido.setOnDragDropped(event -> {
+			event.setDropCompleted(true); // no necesitamos agregar nada
+			event.consume();
+		});
+
+		Scene scene = new Scene(contenido, 200, FILAS * CASILLA_TAM);
+		stage.setScene(scene);
+		stage.setX(x);
+		stage.setY(y);
+		stage.show();
+		return stage;
+	}
+
+	private TitledPane crearCategoria(String titulo, List<?> elementos) {
+		VBox contenedor = new VBox(5);
+		contenedor.setPadding(new Insets(5));
+		contenedor.setAlignment(Pos.TOP_CENTER);
+
+		for (Object obj : elementos) {
+			String nombre = obj.toString(); // O usa otro método si quieres un nombre más específico
+			contenedor.getChildren().add(crearElementoArrastrable(nombre));
+		}
+
+		return new TitledPane(titulo, contenedor);
+	}
+
+	private TitledPane crearColoresPane() {
+	    VBox contenedor = new VBox(5);
+	    contenedor.setPadding(new Insets(5));
+	    contenedor.setAlignment(Pos.TOP_CENTER);
+
+	    // Colores para cambiar el fondo de las casillas
+	    contenedor.getChildren().addAll(crearElementoArrastrable("Rojo"), crearElementoArrastrable("Azul"),
+	            crearElementoArrastrable("Verde"), crearElementoArrastrable("Amarillo"));
+
+	    return new TitledPane("Colores", contenedor);
+	}
+
+
+	private VBox crearSelectorDeColor() {
+		VBox colores = new VBox(5);
+		colores.setAlignment(Pos.TOP_CENTER);
+		colores.setPadding(new Insets(10));
+
+		colores.getChildren().add(new Label("Colorear selección:"));
+
+		String[] nombres = { "Rojo", "Azul", "Verde", "Amarillo" };
+		Color[] coloresFx = { Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW };
+
+		Label limpiar = new Label("Limpiar");
+		limpiar.setStyle("-fx-border-color: black; -fx-background-color: white; -fx-padding: 5;");
+		limpiar.setOnMouseClicked(event -> aplicarColorASeleccion(null));
+		colores.getChildren().add(limpiar);
+
+		for (int i = 0; i < nombres.length; i++) {
+			String nombre = nombres[i];
+			Color color = coloresFx[i];
+			Label boton = new Label(nombre);
+			boton.setStyle("-fx-border-color: black; -fx-background-color: " + toCssColor(color) + "; -fx-padding: 5;");
+			boton.setOnMouseClicked(event -> aplicarColorASeleccion(color));
+			colores.getChildren().add(boton);
+		}
+
+		return colores;
+	}
+
+	private String toCssColor(Color color) {
+		return String.format("rgb(%d,%d,%d)", (int) (color.getRed() * 255), (int) (color.getGreen() * 255),
+				(int) (color.getBlue() * 255));
+	}
+
+	private void aplicarColorASeleccion(Color color) {
+	    for (StackPane casilla : casillasSeleccionadas) {
+	        Casilla casillaObj = (Casilla) casilla.getUserData(); // Obtén el objeto Casilla almacenado
+	        casillaObj.establecerColorFondo(color);
+
+	        // Cambiar el color de fondo de la casilla seleccionada
+	        casilla.setStyle("-fx-border-color: lightgray; -fx-background-color: " + toCssColor(color) + ";");
+	    }
+	    casillasSeleccionadas.clear(); // Limpiar la lista de casillas seleccionadas
+	}
+
+
+
+	private String colorToNombre(Color color) {
+		if (color.equals(Color.RED))
+			return "Rojo";
+		if (color.equals(Color.BLUE))
+			return "Azul";
+		if (color.equals(Color.GREEN))
+			return "Verde";
+		if (color.equals(Color.YELLOW))
+			return "Amarillo";
+		return "Desconocido";
+	}
+	
+	public class Casilla {
+
+	    private Color colorFondo;
+	    private StackPane contenedorElementos;
+
+	    public Casilla() {
+	        this.colorFondo = Color.WHITE; // Valor por defecto (blanco)
+	        this.contenedorElementos = new StackPane();
+	    }
+
+	    public void establecerColorFondo(Color color) {
+	        this.colorFondo = color;
+	    }
+
+	    public Color obtenerColorFondo() {
+	        return colorFondo;
+	    }
+
+	    public StackPane getContenedorElementos() {
+	        return contenedorElementos;
+	    }
+	}
+
+
+}

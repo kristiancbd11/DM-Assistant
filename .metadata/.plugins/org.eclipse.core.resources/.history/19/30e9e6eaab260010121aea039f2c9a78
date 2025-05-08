@@ -1,0 +1,20 @@
+package views;
+
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.layout.VBox;
+
+public class LoadingView extends VBox {
+
+    public LoadingView() {
+        super(15);
+        setAlignment(Pos.CENTER);
+        setStyle("-fx-background-color: white; -fx-padding: 30;");
+
+        Label label = new Label("Cargando datos...");
+        ProgressIndicator progressIndicator = new ProgressIndicator();
+
+        getChildren().addAll(progressIndicator, label);
+    }
+}

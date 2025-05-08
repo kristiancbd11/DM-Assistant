@@ -1,0 +1,42 @@
+@Override
+public void start(Stage primaryStage) {
+    LoadingView loadingView = new LoadingView();
+    loadingView.show();
+
+    // Carga en segundo plano
+    Task<Void> loadTask = new Task<>() {
+        @Override
+        protected Void call() {
+            // Aquí van las operaciones pesadas, como cargar datos desde Hibernate
+            simulateHeavyLoading();
+            return null;
+        }
+    };
+
+    loadTask.setOnSucceeded(e -> {
+        loadingView.close(); // cerrar ventana de carga
+
+        // Crear vistas y controladores
+        ToolBarView toolBarView = new ToolBarView();
+        ExplorerView explorerView = new ExplorerView();
+        DesktopView desktopView = new DesktopView();
+        InfoView infoView = new InfoView();
+        TaskBarView taskBarView = new TaskBarView();
+
+        new ToolBarController(toolBarView);
+        new ExplorerController(explorerView, infoView);
+        new DesktopController(desktopView);
+        new InfoController(infoView);
+        new TaskBarController(taskBarView);
+
+        MainView mainView = new MainView(toolBarView, explorerView, desktopView, infoView, taskBarView);
+
+        Scene mainScene = new Scene(mainView.getRoot(), 1200, 800);
+        primaryStage.setMaximized(true);
+        primaryStage.setScene(mainScene);
+        primaryStage.setTitle("DM Assistant");
+        primaryStage.show();
+    });
+
+    new Thread(loadTask).start();
+}

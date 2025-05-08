@@ -1,0 +1,44 @@
+package control;
+
+import clases_partida.Criatura;
+import clases_personaje.Personaje;
+import javafx.scene.control.TreeItem;
+import javafx.scene.layout.StackPane;
+import views.*;
+
+public class DesktopController {
+
+    private final DesktopView vista;
+
+    public DesktopController(DesktopView vista) {
+        this.vista = vista;
+    }
+
+    public StackPane getVista() {
+        return vista.getDesktop();
+    }
+
+    public void cambiarVista(DesktopViewType vistaTipo, TreeItem<Object> item) {
+        StackPane nuevaVista = switch (vistaTipo) {
+            case PERSONAJE -> {
+                DesktopPersonajeController personajeController = new DesktopPersonajeController((Personaje) item.getValue());
+                yield personajeController.getVista();
+            }
+            case CRIATURA -> {
+            	DesktopCriaturaController criaturaController = new DesktopCriaturaController((Criatura) item.getValue());
+            	yield criaturaController.getVista();
+            }
+            case NACION -> new DesktopNacionView().crearView();
+            case REINO -> new ReinoView().crearView();
+            case UBICACION -> new UbicacionView().crearView();
+            case ESCENA -> new EscenaView().crearView();
+            default -> null;
+        };
+
+        if (nuevaVista != null) {
+            vista.setContenido(nuevaVista);
+        } else {
+            System.out.println("Vista desconocida o nula: " + vistaTipo);
+        }
+    }
+}

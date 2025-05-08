@@ -1,0 +1,10 @@
+1746100806548	Rename method 'showTaskBar'
+1746103831448	Rename type 'MainView'
+1746103910857	Rename method 'getView'
+1746103925140	Rename method 'getToolBar'
+1746111198011	Delete element
+1746111228009	Delete element
+1746121925211	Rename type 'CreationPersonajeControl'
+1746122770211	Rename type 'ExplorerController'
+1746122778892	Rename type 'ExplorerControllerX'
+1746187191082	Move compilation unit

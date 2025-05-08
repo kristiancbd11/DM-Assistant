@@ -1,0 +1,10 @@
+package views;
+
+public enum CreationType {
+    PERSONAJE,
+    NPC,
+    CRIATURA,
+    UBICACION,
+    ESCENA
+}
+

@@ -1,0 +1,72 @@
+package views;
+
+import clases_personaje.Personaje;
+import control.DesktopViewType;
+import javafx.scene.control.TreeItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+
+public class DesktopView {
+
+    private final StackPane desktop;
+
+    public DesktopView() {
+        // Cargar la imagen de fondo
+        Image image = new Image(getClass().getResourceAsStream("/images/loading_logo.png"));
+        ImageView imageView = new ImageView(image);
+
+        // Centrar la imagen
+        imageView.setPreserveRatio(true);
+        imageView.setFitWidth(200); // Ajuste del tamaño de la imagen
+
+        // Crear el StackPane con la imagen de fondo
+        desktop = new StackPane(imageView);
+        desktop.setMinWidth(600);
+        desktop.setStyle("-fx-background-color: #FFFFFF; -fx-padding: 10;");
+    }
+
+    public StackPane getDesktop() {
+        return desktop;
+    }
+
+    // Método que cambia la vista según la orden recibida usando enum
+    public void cambiarVista(DesktopViewType vista, TreeItem<Object> item) {
+        StackPane nuevaVista;
+
+        switch (vista) {
+            case PERSONAJE -> {
+                DesktopPersonajeView personajeView = new DesktopPersonajeView();
+                nuevaVista = personajeView.crearView((Personaje)item.getValue());
+            }
+            case CRIATURA -> {
+                CriaturaView criaturaView = new CriaturaView();
+                nuevaVista = criaturaView.crearView();
+            }
+            case NACION -> {
+                NacionView nacionView = new NacionView();
+                nuevaVista = nacionView.crearView();
+            }
+            case REINO -> {
+                ReinoView reinoView = new ReinoView();
+                nuevaVista = reinoView.crearView();
+            }
+            case UBICACION -> {
+                UbicacionView ubicacionView = new UbicacionView();
+                nuevaVista = ubicacionView.crearView();
+            }
+            case ESCENA -> {
+                EscenaView escenaView = new EscenaView();
+                nuevaVista = escenaView.crearView();
+            }
+            default -> {
+                System.out.println("Vista desconocida: " + vista);
+                return;
+            }
+        }
+
+        // Reemplazar el contenido actual con la nueva vista
+        desktop.getChildren().clear();
+        desktop.getChildren().add(nuevaVista);
+    }
+}

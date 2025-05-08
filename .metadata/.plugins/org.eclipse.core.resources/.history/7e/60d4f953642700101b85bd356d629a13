@@ -1,0 +1,126 @@
+package clases_partida;
+
+import java.util.List;
+
+import clases_personaje.Personaje;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+
+@Entity
+@Table (name = "MUNDOS")
+public class Mundo {
+
+	@Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mundos_gen")
+    @SequenceGenerator(name = "mundos_gen", sequenceName = "mundos_seq", allocationSize = 1)
+	@Column (name = "idMundo")
+	private int idMundo;
+	
+	@Column (name = "nombre")
+	private String nombre;
+	
+    @OneToMany(mappedBy = "mundo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	private List<Nacion> naciones;
+	
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+	@JoinTable(name = "MUNDO_PERSONAJE", joinColumns = @JoinColumn(name = "idMundo"), inverseJoinColumns = @JoinColumn(name = "idPersonaje"))
+	private List<Personaje> personajes;
+
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+	@JoinTable(name = "MUNDO_NPC", joinColumns = @JoinColumn(name = "idMundo"), inverseJoinColumns = @JoinColumn(name = "idNpc"))
+	private List<Personaje> npcs;
+
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+	@JoinTable(name = "MUNDO_CRIATURA", joinColumns = @JoinColumn(name = "idMundo"), inverseJoinColumns = @JoinColumn(name = "idCriatura"))
+	private List<Criatura> criaturas;
+    
+	public Mundo(String nombre) {
+		this.nombre = nombre;
+	}
+	
+	public Mundo() {}
+
+	public int getIdMundo() {
+		return idMundo;
+	}
+
+	public void setIdMundo(int idMundo) {
+		this.idMundo = idMundo;
+	}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public List<Nacion> getNaciones() {
+		return naciones;
+	}
+
+	public void setNaciones(List<Nacion> naciones) {
+		this.naciones = naciones;
+	}
+
+	public List<Personaje> getPersonajes() {
+		return personajes;
+	}
+
+	public void setPersonajes(List<Personaje> personajes) {
+		this.personajes = personajes;
+	}
+	
+	public void addPersonaje(Personaje personaje) {
+		personaje.addMundo(this);
+		this.personajes.add(personaje);
+	}
+
+	public List<Personaje> getNpcs() {
+		return npcs;
+	}
+
+	public void setNpcs(List<Personaje> npcs) {
+		this.npcs = npcs;
+	}
+	
+	public void addNpc(Personaje personaje) {
+		personaje.addMundo(this);
+		this.npcs.add(personaje);
+	}
+
+	public List<Criatura> getCriaturas() {
+		return criaturas;
+	}
+
+	public void setCriaturas(List<Criatura> criaturas) {
+		this.criaturas = criaturas;
+	}
+	
+	public void removeElements() {
+		for(Personaje personaje : personajes) {
+			personaje.removeMundo(this);
+		}
+		for(Personaje npc : npcs) {
+			npc.removeMundo(this);
+		}
+	}
+
+	@Override
+	public String toString() {
+		return nombre;
+	}
+	
+}

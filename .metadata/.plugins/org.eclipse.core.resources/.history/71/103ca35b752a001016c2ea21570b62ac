@@ -1,0 +1,31 @@
+package views;
+
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+
+public class DesktopView {
+
+    private final StackPane desktop;
+
+    public DesktopView() {
+        Image image = new Image(getClass().getResourceAsStream("/images/ROG_logo.png"));
+        ImageView imageView = new ImageView(image);
+
+        imageView.setPreserveRatio(true);
+        imageView.setFitWidth(200);
+
+        desktop = new StackPane(imageView);
+        desktop.setMinWidth(600);
+        desktop.setStyle("-fx-background-color: #FFFFFF; -fx-padding: 10;");
+    }
+
+    public StackPane getDesktop() {
+        return desktop;
+    }
+
+    public void setContenido(StackPane nuevoContenido) {
+        desktop.getChildren().clear();
+        desktop.getChildren().add(nuevoContenido);
+    }
+}

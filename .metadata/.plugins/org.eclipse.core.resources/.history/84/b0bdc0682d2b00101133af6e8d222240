@@ -1,0 +1,19 @@
+package control;
+
+import clases_partida.Nacion;
+import javafx.scene.layout.StackPane;
+import views.DesktopNacionView;
+
+public class DesktopNacionController {
+	private final DesktopNacionView view;
+	private final Nacion nacion;
+	
+	public DesktopNacionController(Nacion nacion) {
+		this.view = new DesktopNacionView();
+		this.nacion = nacion;
+	}
+
+	public StackPane getVista() {
+		return view.crearView(nacion);
+	}
+}

@@ -1,0 +1,16 @@
+package control;
+
+import clases_partida.Criatura;
+import views.DesktopCriaturaView;
+
+public class DesktopCriaturaController {
+	
+	private final DesktopCriaturaView view;
+	private final Criatura criatura;
+	
+	public DesktopCriaturaController(DesktopCriaturaView view, Criatura criatura) {
+		this.view = view;
+		this.criatura = criatura;
+	}
+
+}

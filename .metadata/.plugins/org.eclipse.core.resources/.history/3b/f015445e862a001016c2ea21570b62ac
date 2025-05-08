@@ -1,0 +1,14 @@
+package control;
+
+import clases_partida.Mundo;
+import views.InfoMundoView;
+
+public class InfoMundoController {
+	private InfoMundoView view;
+	private Mundo mundo;
+	
+	public InfoMundoController(Mundo mundo) {
+		this.view = new InfoMundoView();
+		this.mundo = mundo;
+	}
+}

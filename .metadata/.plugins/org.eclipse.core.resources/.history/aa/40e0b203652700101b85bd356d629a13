@@ -1,0 +1,91 @@
+package dbhandlerCRUD;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
+
+import clases_partida.Criatura;
+import clases_partida.Mundo;
+
+public class MundoCRUD {
+	
+	public Mundo fetchMundo(int id) {
+		try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+			return session.get(Mundo.class, id);
+		}
+	}
+
+	// Borra un Mundo
+	public void deleteMundo(Mundo mundo) {
+		int idMundo = mundo.getIdMundo();
+		mundo.removeElements();
+		
+		Transaction transaction = null;
+		try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+			transaction = session.beginTransaction();
+			Mundo mundo = session.get(Mundo.class, idMundo);
+			if (mundo != null) {
+				session.remove(mundo);
+			}
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null)
+				transaction.rollback();
+			e.printStackTrace();
+		}
+	}
+
+	// Actualiza un Mundo existente por su ID (requiere que modifiques el objeto
+	// antes de pasarlo)
+	public void updateMundo(int idMundo, Mundo mundoActualizado) {
+		Transaction transaction = null;
+		try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+			transaction = session.beginTransaction();
+			Mundo mundo = session.get(Mundo.class, idMundo);
+			if (mundo != null) {
+				mundo.setNombre(mundoActualizado.getNombre()); // Aquí puedes añadir más campos si tienes
+				session.merge(mundo);
+			}
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null)
+				transaction.rollback();
+			e.printStackTrace();
+		}
+	}
+
+	public ArrayList<Mundo> fetchAllMundos() {
+		try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+			// Usamos una consulta HQL para recuperar todos los mundos
+			List<Mundo> lista = session.createQuery("from Mundo", Mundo.class).getResultList();
+			return new ArrayList<>(lista); // Convertimos el resultado a un ArrayList
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<>(); // En caso de error, devolver una lista vacía
+		}
+	}
+
+	public void saveMundo(Mundo mundo) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction transaction = session.beginTransaction();
+		session.merge(mundo);
+		transaction.commit();
+		session.close();
+	}
+	
+	public boolean comprobarNombreMundoValido(String nombre) {
+	    try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+	        Long count = session.createQuery(
+	                "SELECT COUNT(m) FROM Mundo m WHERE m.nombre = :nombre", Long.class)
+	                .setParameter("nombre", nombre)
+	                .uniqueResult();
+	        return count == 0;  // true si no hay ningún mundo con ese nombre
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return false;  // Por defecto, nombre inválido si ocurre un error
+	    }
+	}
+}

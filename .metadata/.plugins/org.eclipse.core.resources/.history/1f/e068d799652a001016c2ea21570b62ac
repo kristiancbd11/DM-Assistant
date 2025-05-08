@@ -1,0 +1,68 @@
+package views;
+
+import clases_partida.O_Reino;
+import clases_partida.Reino;
+import clases_partida.UbicacionType;
+import dbhandlerCRUD.NacionCRUD;
+import javafx.geometry.Insets;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+
+public class CreationUbicacionView extends VBox {
+
+    private final TextField nombreField = new TextField();
+    private final ComboBox<UbicacionType> tipoComboBox = new ComboBox<>();
+    private final ComboBox<O_Reino> comboReino = new ComboBox<>();
+    private final Button crearButton = new Button("Crear");
+    private final Button cancelarButton = new Button("Cancelar");
+    private final NacionCRUD nacionCrud = new NacionCRUD();
+
+    public CreationUbicacionView() {
+        setSpacing(10);
+        setPadding(new Insets(15));
+
+        // Campo para el nombre
+        Label nombreLabel = new Label("Nombre de la Ubicación:");
+        nombreField.setPromptText("Introduce el nombre");
+
+        // ComboBox para el tipo
+        Label tipoLabel = new Label("Tipo de Ubicación:");
+        tipoComboBox.getItems().setAll(UbicacionType.values());
+        tipoComboBox.setPromptText("Selecciona un tipo");
+
+        // Campo para el Reino
+        Label reinoLabel = new Label("Reino al que pertenece:");
+        comboReino.getItems().setAll(nacionCrud.fetchAllOReinos());
+
+        // Botones
+        HBox buttonBox = new HBox(10, crearButton, cancelarButton);
+
+        getChildren().addAll(
+            nombreLabel, nombreField,
+            tipoLabel, tipoComboBox,
+            reinoLabel, comboReino,
+            buttonBox
+        );
+    }
+
+    public TextField getNombreField() {
+        return nombreField;
+    }
+
+    public ComboBox<UbicacionType> getTipoComboBox() {
+        return tipoComboBox;
+    }
+
+    public TextField getReinoField() {
+        return comboReino;
+    }
+
+    public Button getCrearButton() {
+        return crearButton;
+    }
+
+    public Button getCancelarButton() {
+        return cancelarButton;
+    }
+}

@@ -1,0 +1,297 @@
+package control;
+
+import clases_partida.*;
+import clases_personaje.Personaje;
+import dbhandlerCRUD.CriaturaCRUD;
+import dbhandlerCRUD.MundoCRUD;
+import dbhandlerCRUD.PersonajeCRUD;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import views.CreationWindow;
+import views.ExplorerView;
+import views.InfoView;
+
+public class ExplorerController {
+	private final ExplorerView view;
+	private final MundoCRUD mundoCrud = new MundoCRUD();
+	private final PersonajeCRUD pjCrud = new PersonajeCRUD();
+	private final CriaturaCRUD criaturaCrud = new CriaturaCRUD();
+	private final InfoView infoView;
+	private final DesktopController desktopController;
+
+	public ExplorerController(ExplorerView view, InfoView infoView, DesktopController desktopController) {
+	    this.view = view;
+	    this.infoView = infoView;
+	    this.desktopController = desktopController;
+	    setupEventHandlers();
+	    refreshTreeView();
+	}
+
+
+	private CustomMenuItem crearCustomMenuItem(String texto, Runnable accion, double ancho) {
+		Label label = new Label(texto);
+		label.setPrefWidth(ancho);
+		label.setOnMouseClicked(e -> accion.run());
+		return new CustomMenuItem(label, true); // true = hide on click
+	}
+
+	private void setupEventHandlers() {
+	    TreeView<Object> arbolMundos = view.getTreeView();
+	    TreeItem<Object> raiz = view.getRootItem();
+
+	    ContextMenu contextMenuArbol = new ContextMenu();
+	    double anchoMenu = 300;
+
+	    contextMenuArbol.getItems().addAll(
+	            crearCustomMenuItem("Nuevo mundo", this::mostrarDialogoNuevoMundo, anchoMenu),
+	            crearCustomMenuItem("Nuevo personaje", () -> crearPersonaje(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
+	            crearCustomMenuItem("Nuevo npc", () -> crearNpc(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
+	            crearCustomMenuItem("Nueva criatura", () -> crearCriatura(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
+	            crearCustomMenuItem("Nueva ubicación", () -> crearUbicacion(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
+	            crearCustomMenuItem("Nueva escena", () -> crearEscena(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
+	            crearCustomMenuItem("Editar", () -> renombrarMundo(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
+	            crearCustomMenuItem("Eliminar", () -> eliminarElementoSeleccionado(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu)
+	    );
+
+	    arbolMundos.setContextMenu(contextMenuArbol);
+
+	    arbolMundos.addEventFilter(javafx.scene.input.MouseEvent.MOUSE_PRESSED, event -> {
+	        if (event.getClickCount() == 2 && event.getButton() == MouseButton.PRIMARY) {
+	            TreeItem<Object> selected = arbolMundos.getSelectionModel().getSelectedItem();
+	            if (selected != null) {
+	                event.consume(); // Bloquea la expansión automática
+	            }
+	        }
+	    });
+	    
+	    arbolMundos.setOnMouseClicked(event -> {
+	        TreeItem<Object> selected = arbolMundos.getSelectionModel().getSelectedItem();
+	        if (selected == null) return;
+
+	        if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+	            Object value = selected.getValue();
+
+	            if (value instanceof Personaje) {
+	                desktopController.cambiarVista(DesktopViewType.PERSONAJE, selected);
+	            } else if (value instanceof Criatura) {
+	                desktopController.cambiarVista(DesktopViewType.CRIATURA, selected);
+	            } else if (value instanceof Nacion) {
+	                desktopController.cambiarVista(DesktopViewType.NACION, selected);
+	            } else if (value instanceof Reino) {
+	                desktopController.cambiarVista(DesktopViewType.REINO, selected);
+	            } else if (value instanceof Ubicacion) {
+	                desktopController.cambiarVista(DesktopViewType.UBICACION, selected);
+	            } else if (value instanceof Escena) {
+	                desktopController.cambiarVista(DesktopViewType.ESCENA, selected);
+	            }
+	        } else if (event.getClickCount() == 1) {
+	            infoView.showViewMundo(selected);
+	        }
+	    });
+	}
+
+
+	public void refreshTreeView() {
+	    TreeItem<Object> raizMundos = view.getRootItem();
+	    raizMundos.getChildren().clear();
+
+	    for (Mundo mundo : mundoCrud.fetchAllMundos()) {
+	        TreeItem<Object> itemMundo = new TreeItem<>(mundo);
+	        TreeItem<Object> itemPj = new TreeItem<>("Personajes");
+	        TreeItem<Object> itemNpc = new TreeItem<>("Npc");
+	        TreeItem<Object> itemCriaturas = new TreeItem<>("Criaturas");
+	        TreeItem<Object> itemNaciones = new TreeItem<>("Naciones");
+
+	        for (Criatura criatura : mundo.getCriaturas())
+	            itemCriaturas.getChildren().add(new TreeItem<>(criatura));
+
+	        for (Personaje pj : mundo.getNpcs())
+	            itemNpc.getChildren().add(new TreeItem<>(pj));
+
+	        for (Personaje pj : mundo.getPersonajes())
+	            itemPj.getChildren().add(new TreeItem<>(pj));
+
+	        for (Nacion n : mundo.getNaciones()) {
+	            TreeItem<Object> itemNacion = new TreeItem<>(n);
+	            for (Reino r : n.getReinos()) {
+	            	TreeItem<Object> itemReino = new TreeItem<>(r);
+	            	for (Ubicacion u : r.getUbicaciones()) {
+	            		itemReino.getChildren().add(new TreeItem<>(u));
+	            	}
+	                itemNacion.getChildren().add(new TreeItem<>(itemReino));
+	            }
+	            itemNaciones.getChildren().add(itemNacion);
+	        }
+
+	        itemMundo.getChildren().addAll(itemPj, itemNpc, itemCriaturas, itemNaciones);
+	        raizMundos.getChildren().add(itemMundo);
+	    }
+	    
+	    ordenarTreeView(raizMundos);
+	}
+
+	private void mostrarDialogoNuevoMundo() {
+		Stage dialog = new Stage();
+		dialog.initModality(Modality.APPLICATION_MODAL);
+		dialog.setTitle("Nuevo Mundo");
+
+		Label label = new Label("Nombre del nuevo mundo:");
+		TextField textField = new TextField();
+		Button btnCrear = new Button("Crear");
+		Button btnCancelar = new Button("Cancelar");
+
+		btnCrear.setOnAction(e -> {
+			String nombre = textField.getText().trim();
+			if (nombre.isEmpty()) {
+				textField.setPromptText("Debe tener un nombre");
+			} else if (!mundoCrud.comprobarNombreMundoValido(nombre)) {
+				new Alert(AlertType.WARNING, "Ya existe un mundo con ese nombre.").showAndWait();
+			} else {
+				Mundo mundo = new Mundo(nombre);
+				mundoCrud.saveMundo(mundo);
+				refreshTreeView();
+				dialog.close();
+			}
+		});
+
+		btnCancelar.setOnAction(e -> dialog.close());
+
+		VBox layout = new VBox(10, label, textField, new HBox(10, btnCrear, btnCancelar));
+		layout.setPadding(new Insets(15));
+		layout.setPrefWidth(300);
+		dialog.setScene(new Scene(layout));
+		dialog.showAndWait();
+	}
+
+	private void renombrarMundo(TreeItem<Object> item) {
+		if (item == null || !(item.getValue() instanceof Mundo))
+			return;
+
+		Mundo mundo = (Mundo) item.getValue();
+		TextInputDialog dialog = new TextInputDialog(mundo.getNombre());
+		dialog.setTitle("Renombrar Mundo");
+		dialog.setHeaderText("Introduce el nuevo nombre del mundo");
+		dialog.setContentText("Nombre:");
+
+		dialog.showAndWait().ifPresent(newName -> {
+			if (!mundoCrud.comprobarNombreMundoValido(newName)) {
+				new Alert(AlertType.WARNING, "Ya existe un mundo con ese nombre.").showAndWait();
+			} else {
+				mundo.setNombre(newName);
+				mundoCrud.updateMundo(mundo.getIdMundo(), mundo);
+				item.setValue(mundo); // Actualiza el nodo
+			}
+		});
+	}
+
+	private void eliminarElementoSeleccionado(TreeItem<Object> item) {
+		if (item == null || item.getValue() == null)
+			return;
+
+		Object valor = item.getValue();
+
+		if (valor instanceof Reino || valor instanceof Nacion) {
+			new Alert(AlertType.WARNING, "Este elemento no puede ser eliminado.").showAndWait();
+			return;
+		}
+
+		Alert confirmDialog = new Alert(AlertType.CONFIRMATION);
+		confirmDialog.setTitle("Confirmar eliminación");
+		confirmDialog.setHeaderText("¿Seguro que deseas eliminar este elemento?");
+		confirmDialog.setContentText(valor.toString());
+
+		confirmDialog.showAndWait().ifPresent(response -> {
+			if (response == ButtonType.OK) {
+				if (valor instanceof Mundo mundo) {
+					mundo.removeElements();
+					mundoCrud.deleteMundo(mundo);
+				} else if (valor instanceof Personaje pj) {
+					String parent = String.valueOf(item.getParent().getValue());
+					if("Personajes".equals(parent)) {
+						fetchTreeRoot(item).removePersonaje(pj);
+						pjCrud.deletePersonaje(pj.getIdPersonaje());
+					} else if("Npc".equals(parent)) {
+						fetchTreeRoot(item).removeNpc(pj);
+						pjCrud.deletePersonaje(pj.getIdPersonaje());
+					}
+				} else if (valor instanceof Criatura criatura) {
+					fetchTreeRoot(item).removeCriatura(criatura);
+					criaturaCrud.deleteCriatura(criatura.getIdCriatura());
+				}
+
+				// Eliminar visualmente del árbol
+				TreeItem<Object> parent = item.getParent();
+				if (parent != null) {
+					parent.getChildren().remove(item);
+				}
+			}
+		});
+	}
+
+	private void crearPersonaje(TreeItem<Object> item) {
+		if (item == null) return;
+		Mundo mundo = fetchTreeRoot(item);
+		new CreationWindow(CreationViewType.PERSONAJE, this, mundo);
+	}
+
+	private void crearNpc(TreeItem<Object> item) {
+		if (item == null) return;
+		Mundo mundo = fetchTreeRoot(item);
+		new CreationWindow(CreationViewType.NPC, this, mundo);
+	}
+
+	private void crearCriatura(TreeItem<Object> item) {
+		if (item == null) return;
+		Mundo mundo = fetchTreeRoot(item);
+		new CreationWindow(CreationViewType.CRIATURA, this, mundo);
+	}
+
+	private void crearUbicacion(TreeItem<Object> item) {
+		if (item == null) return;
+		Mundo mundo = fetchTreeRoot(item);
+		new CreationWindow(CreationViewType.UBICACION, this, mundo, item);
+	}
+
+	private void crearEscena(TreeItem<Object> item) {
+		/* TODO */ }
+
+	private Mundo fetchTreeRoot(TreeItem<Object> item) {
+	    if (item == null) throw new IllegalArgumentException("Nodo nulo");
+	    TreeItem<Object> current = item;
+	    while (current.getParent() != null) {
+	        if (current.getParent().getValue() instanceof Mundo mundo) {
+	            return mundo;
+	        }
+	        if (current.getValue() instanceof Mundo mundo) {
+	            return mundo;
+	        }
+	        current = current.getParent();
+	    }
+	    throw new IllegalStateException("No se pudo determinar un mundo raíz para el nodo dado");
+	}
+	
+	private void ordenarTreeView(TreeItem<Object> item) {
+	    if (item == null || item.getChildren().isEmpty()) return;
+
+	    // Ordenar hijos
+	    item.getChildren().sort((a, b) -> {
+	        String aText = a.getValue().toString();
+	        String bText = b.getValue().toString();
+	        return aText.compareToIgnoreCase(bText);
+	    });
+
+	    // Aplicar recursivamente a los hijos
+	    for (TreeItem<Object> child : item.getChildren()) {
+	        ordenarTreeView(child);
+	    }
+	}
+
+
+}

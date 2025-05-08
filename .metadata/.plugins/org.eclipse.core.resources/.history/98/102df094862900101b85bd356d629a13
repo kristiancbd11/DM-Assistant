@@ -1,0 +1,79 @@
+package views;
+
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.Priority;
+
+public class ExplorerView {
+    private VBox explorer;
+    private TreeItem<Object> raizOculta;
+    private TreeItem<Object> nodoMundos;
+    private TreeItem<Object> nodoRog;
+    private TreeView<Object> arbolMundos;
+
+    public ExplorerView() {
+        // Raíz oculta
+        raizOculta = new TreeItem<>(""); // Oculta
+        raizOculta.setExpanded(true);
+
+        // 🌍 Nodo "Mundos"
+        nodoMundos = new TreeItem<>("");
+        nodoMundos.setExpanded(true);
+        nodoMundos.setGraphic(crearTituloConBoton("🌍 Mundos", () -> {
+            System.out.println("Agregar nuevo mundo");
+        }));
+
+        // 🗂 Nodo "ROG Archive"
+        nodoRog = new TreeItem<>("");
+        nodoRog.setExpanded(true);
+        nodoRog.setGraphic(crearTituloConBoton("🗂 ROG Archive", () -> {
+            System.out.println("Agregar nuevo archivo");
+        }));
+
+        // Añadir ambos nodos a la raíz oculta
+        raizOculta.getChildren().addAll(nodoMundos, nodoRog);
+
+        // Crear TreeView con raíz oculta
+        arbolMundos = new TreeView<>(raizOculta);
+        arbolMundos.setShowRoot(false); // Muy importante: oculta la raíz intermedia
+        arbolMundos.setStyle("""
+            -fx-background-color: transparent;
+            -fx-background-insets: 0;
+            -fx-padding: 0;
+            -fx-border-width: 0;
+        """);
+        VBox.setVgrow(arbolMundos, Priority.ALWAYS);
+
+        explorer = new VBox(new Label("📁 Explorer"), arbolMundos);
+        explorer.setMinWidth(100);
+        explorer.setStyle("-fx-background-color: #DDEEFF; -fx-padding: 10;");
+    }
+
+    private HBox crearTituloConBoton(String titulo, Runnable accionBoton) {
+        HBox box = new HBox(5);
+        Label label = new Label(titulo);
+        Button addButton = new Button("+");
+        addButton.setStyle("-fx-font-size: 10; -fx-padding: 2 6 2 6;");
+        addButton.setFocusTraversable(false);
+        addButton.setOnAction(e -> accionBoton.run());
+        box.getChildren().addAll(label, addButton);
+        return box;
+    }
+
+    public VBox getExplorerPane() {
+        return explorer;
+    }
+
+    public TreeView<Object> getTreeView() {
+        return arbolMundos;
+    }
+
+    public TreeItem<Object> getRootItemMundos() {
+        return nodoMundos;
+    }
+
+    public TreeItem<Object> getRootItemRog() {
+        return nodoRog;
+    }
+}

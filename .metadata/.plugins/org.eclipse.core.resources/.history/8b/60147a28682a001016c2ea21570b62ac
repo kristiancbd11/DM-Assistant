@@ -1,0 +1,40 @@
+package dbhandlerCRUD;
+
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
+import clases_partida.Ubicacion;
+
+public class UbicacionCRUD {
+	
+	public boolean savePersonaje(Ubicacion ubicacion) {
+	    Session session = null;
+	    Transaction transaction = null;
+	    try {
+	        // Abrir sesión y comenzar la transacción
+	        session = HibernateUtil.getSessionFactory().openSession();
+	        transaction = session.beginTransaction();
+	        
+	        // Guardar el personaje en la base de datos
+	        session.merge(personaje);
+	        
+	        // Commit de la transacción
+	        transaction.commit();
+	        
+	        // Si llegamos aquí, significa que la operación fue exitosa
+	        return true;
+	    } catch (Exception e) {
+	        // En caso de error, hacer rollback y mostrar el error
+	        if (transaction != null) {
+	            transaction.rollback();
+	        }
+	        e.printStackTrace();
+	        return false;  // Retornar false si hubo un error
+	    } finally {
+	        // Cerrar la sesión para liberar recursos
+	        if (session != null) {
+	            session.close();
+	        }
+	    }
+	}
+}

@@ -1,8 +1,22 @@
 /*DROPS DEL SCRIPT*/
+DROP TRIGGER insert_reinos_trigger;
+DROP TRIGGER insert_naciones_trigger;
+DROP TRIGGER mundos_trigger;
+DROP SEQUENCE mundos_seq;
 DROP TRIGGER ideologias_trigger;
 DROP SEQUENCE ideologias_seq;
-DROP TRIGGER reinos_trigger;
+DROP TRIGGER naciones_trigger;
+DROP SEQUENCE naciones_seq;
+DROP TRIGGER onaciones_trigger;
+DROP SEQUENCE onaciones_seq;
 DROP SEQUENCE reinos_seq;
+DROP TRIGGER reinos_trigger;
+DROP SEQUENCE oreinos_seq;
+DROP TRIGGER oreinos_trigger;
+DROP SEQUENCE ubicaciones_seq;
+DROP TRIGGER ubicaciones_trigger;
+DROP SEQUENCE escenas_seq;
+DROP TRIGGER escenas_trigger;
 DROP TRIGGER religiones_trigger;
 DROP SEQUENCE religiones_seq;
 DROP TRIGGER razas_trigger;
@@ -13,6 +27,8 @@ DROP TRIGGER habilidades_trigger;
 DROP SEQUENCE habilidades_seq;
 DROP TRIGGER personajes_trigger;
 DROP SEQUENCE personajes_seq;
+DROP TRIGGER criaturas_trigger;
+DROP SEQUENCE criaturas_seq;
 
 DROP TABLE INVENTARIO_PERSONAJE;
 DROP TABLE EQUIPO_PERSONAJE;
@@ -24,8 +40,17 @@ DROP TABLE TALENTOS_PERSONAJES;
 DROP TABLE HECHIZOS_CLASES;
 DROP TABLE RASGOS_CLASES;
 DROP TABLE RASGOS_SUBCLASES;
-DROP TABLE PERSONAJE_IDEOLOGIA;
+DROP TABLE MUNDO_PERSONAJE;
+DROP TABLE MUNDO_NPC;
+DROP TABLE MUNDO_CRIATURA;
+DROP TABLE UBICACION_PERSONAJE;
+DROP TABLE UBICACION_NPC;
+DROP TABLE UBICACION_CRIATURA;
+DROP TABLE ESCENA_PERSONAJE;
+DROP TABLE ESCENA_NPC;
+DROP TABLE ESCENA_CRIATURA; 
 
+DROP TABLE CRIATURAS;
 DROP TABLE VENTAJAS;
 DROP TABLE DONES;
 DROP TABLE TALENTOS;
@@ -37,7 +62,13 @@ DROP TABLE OBJETOS;
 DROP TABLE SUBCLASES;
 DROP TABLE CLASES;
 DROP TABLE IDEOLOGIAS;
+DROP TABLE ESCENAS;
+DROP TABLE UBICACIONES;
 DROP TABLE REINOS;
+DROP TABLE O_REINOS;
+DROP TABLE NACIONES;
+DROP TABLE O_NACIONES;
+DROP TABLE MUNDOS;
 DROP TABLE RELIGIONES;
 DROP TABLE RAZAS;
 DROP TABLE ARQUETIPOS;
@@ -86,16 +117,57 @@ CREATE TABLE RELIGIONES (
     nombre VARCHAR2(30) CONSTRAINT nn_nombre_rel NOT NULL
 );
 
+CREATE TABLE MUNDOS (
+    idMundo NUMBER CONSTRAINT pk_mundos PRIMARY KEY,
+    nombre VARCHAR2(25) CONSTRAINT un_nombre_mun UNIQUE
+);
+
+CREATE TABLE NACIONES (
+    idNacion NUMBER CONSTRAINT pk_naciones PRIMARY KEY,
+    idMundo NUMBER,
+    nombre VARCHAR2(30) CONSTRAINT nn_nombre_nac NOT NULL,
+    CONSTRAINT nacion_mundo_fk FOREIGN KEY (idMundo) REFERENCES MUNDOS(idMundo)
+);
+
+CREATE TABLE O_NACIONES (
+    idNacion NUMBER CONSTRAINT pk_o_naciones PRIMARY KEY,
+    nombre VARCHAR2(30) CONSTRAINT un_nombre_onac UNIQUE
+);
+
 CREATE TABLE REINOS (
     idReino NUMBER CONSTRAINT pk_reinos PRIMARY KEY,
-    nombre VARCHAR2(30) CONSTRAINT nn_nombre_rei NOT NULL
+    idNacion NUMBER CONSTRAINT nn_nacion_rei NOT NULL,
+    nombre VARCHAR2(30) CONSTRAINT nn_nombre_rei NOT NULL,
+    CONSTRAINT reino_nacion_fk FOREIGN KEY (idNacion) REFERENCES NACIONES(idNacion)
+);
+
+CREATE TABLE O_REINOS (
+    idReino NUMBER CONSTRAINT pk_o_reinos PRIMARY KEY,
+    nombreNacion VARCHAR2(30) CONSTRAINT nn_nacion_orei NOT NULL,
+    nombre VARCHAR2(30) CONSTRAINT nn_nombre_orei NOT NULL,
+    CONSTRAINT oreino_onacion_fk FOREIGN KEY (nombreNacion) REFERENCES O_NACIONES(nombre)
+);
+
+CREATE TABLE UBICACIONES (
+    idUbicacion NUMBER CONSTRAINT pk_ubicacion PRIMARY KEY,
+    idReino NUMBER CONSTRAINT nn_reino_ubi NOT NULL,
+    nombre VARCHAR2(30) CONSTRAINT nn_nombre_ubi NOT NULL,
+    CONSTRAINT ubicacion_reino_fk FOREIGN KEY (idReino) REFERENCES REINOS(idReino) ON DELETE CASCADE
+);
+
+CREATE TABLE ESCENAS (
+    idEscena NUMBER CONSTRAINT pk_escena PRIMARY KEY,
+    idUbicacion NUMBER CONSTRAINT nn_ubicacion_esc NOT NULL,
+    nombre VARCHAR2(30) CONSTRAINT nn_nombre_esc NOT NULL,
+    estructuraJson CLOB,
+    CONSTRAINT escena_ubicacion_fk FOREIGN KEY (idEscena) REFERENCES UBICACIONES (idUbicacion)
 );
 
 CREATE TABLE IDEOLOGIAS (
     idIdeologia NUMBER CONSTRAINT pk_ideologia PRIMARY KEY,
-    idReino NUMBER CONSTRAINT nn_reino_ide NOT NULL,
+    idNacion NUMBER CONSTRAINT nn_idnacion_ide NOT NULL,
     nombre VARCHAR2(30) CONSTRAINT nn_nombre_ide NOT NULL,
-    CONSTRAINT reino_ideologia FOREIGN KEY (idReino) REFERENCES REINOS(idReino)
+    CONSTRAINT onacion_ideologia_fk FOREIGN KEY (idNacion) REFERENCES O_NACIONES(idNacion)
 );
 
 CREATE TABLE CLASES (
@@ -155,6 +227,11 @@ CREATE TABLE HECHIZOS (
     CONSTRAINT habilidades_hechizos FOREIGN KEY (idHabilidad) REFERENCES HABILIDADES (idHabilidad)
 );
 
+CREATE TABLE CRIATURAS (
+    idCriatura NUMBER CONSTRAINT pk_criaturas PRIMARY KEY,
+    nombre VARCHAR2(25)
+);
+
 CREATE TABLE PERSONAJES (
     /*Identificador*/
     idPersonaje NUMBER CONSTRAINT pk_personaje PRIMARY KEY,
@@ -164,7 +241,8 @@ CREATE TABLE PERSONAJES (
     idRaza NUMBER CONSTRAINT nn_raza_pj NOT NULL,
     sexo VARCHAR2(255) CONSTRAINT nn_sexo_pj NOT NULL,
     idReligion NUMBER CONSTRAINT nn_religion_pj NOT NULL,
-    idReino NUMBER CONSTRAINT nn_reino_pj NOT NULL,
+    idNacion NUMBER CONSTRAINT nn_nacion_pj NOT NULL,
+    idIdeologia NUMBER CONSTRAINT nn_ideologia_pj NOT NULL,
     edad NUMBER CONSTRAINT nn_edad_pj NOT NULL,
 
     /*Datos de clase*/
@@ -189,7 +267,8 @@ CREATE TABLE PERSONAJES (
     /*RELACIÓN INVENTARIO_PERSONAJES*/
     
     /*Claves foraneas*/
-    CONSTRAINT reino_personaje_fk FOREIGN KEY (idReino) REFERENCES REINOS(idReino),
+    CONSTRAINT ideologia_personaje_fk FOREIGN KEY (idIdeologia) REFERENCES IDEOLOGIAS(idIdeologia),
+    CONSTRAINT nacion_personaje_fk FOREIGN KEY (idNacion) REFERENCES NACIONES(idNacion),
     CONSTRAINT religion_personaje_fk FOREIGN KEY (idReligion) REFERENCES RELIGIONES(idReligion),
     CONSTRAINT raza_personaje_fk FOREIGN KEY (idRaza) REFERENCES RAZAS(idRaza),
     CONSTRAINT clase_personaje_fk FOREIGN KEY (idClase) REFERENCES CLASES(idClase),
@@ -223,13 +302,6 @@ CREATE TABLE VENTAJAS (
 );
 
 /*CREACIÓN DE TABLAS RELACIONALES*/
-
-CREATE TABLE PERSONAJE_IDEOLOGIA (
-    idPersonaje NUMBER,
-    idIdeologia NUMBER,
-    CONSTRAINT personaje_ideologia_fk FOREIGN KEY (idPersonaje) REFERENCES PERSONAJES(idPersonaje) ON DELETE CASCADE,
-    CONSTRAINT ideologia_personaje_fk FOREIGN KEY (idIdeologia) REFERENCES IDEOLOGIAS(idIdeologia) ON DELETE CASCADE
-);
 
 CREATE TABLE RASGOS_SUBCLASES (
     idSubclase NUMBER,
@@ -301,6 +373,69 @@ CREATE TABLE INVENTARIO_PERSONAJE (
     CONSTRAINT personaje_invent_fk FOREIGN KEY (idPersonaje) REFERENCES PERSONAJES(idPersonaje)
 );
 
+CREATE TABLE MUNDO_PERSONAJE (
+    idMundo NUMBER,
+    idPersonaje NUMBER,
+    CONSTRAINT mundo_personaje_fk FOREIGN KEY (idMundo) REFERENCES MUNDOS(idMundo) ON DELETE CASCADE,
+    CONSTRAINT personaje_mundo_fk FOREIGN KEY (idPersonaje) REFERENCES PERSONAJES(idPersonaje) ON DELETE CASCADE
+);
+
+CREATE TABLE MUNDO_NPC (
+    idMundo NUMBER,
+    idNpc NUMBER,
+    CONSTRAINT mundo_npc_fk FOREIGN KEY (idMundo) REFERENCES MUNDOS(idMundo) ON DELETE CASCADE,
+    CONSTRAINT npc_mundo_fk FOREIGN KEY (idNpc) REFERENCES PERSONAJES(idPersonaje) ON DELETE CASCADE
+);
+
+CREATE TABLE MUNDO_CRIATURA (
+    idMundo NUMBER,
+    idCriatura NUMBER,
+    CONSTRAINT mundo_criatura_fk FOREIGN KEY (idMundo) REFERENCES MUNDOS(idMundo) ON DELETE CASCADE,
+    CONSTRAINT criatura_mundo_fk FOREIGN KEY (idCriatura) REFERENCES CRIATURAS(idCriatura) ON DELETE CASCADE
+);
+
+CREATE TABLE UBICACION_PERSONAJE (
+    idUbicacion NUMBER,
+    idPersonaje NUMBER,
+    CONSTRAINT ubicacion_personaje_fk FOREIGN KEY (idUbicacion) REFERENCES UBICACIONES (idUbicacion),
+    CONSTRAINT personaje_ubicacion_fk FOREIGN KEY (idPersonaje) REFERENCES PERSONAJES (idPersonaje)
+);
+
+CREATE TABLE UBICACION_NPC (
+    idUbicacion NUMBER,
+    idNpc NUMBER,
+    CONSTRAINT ubicacion_npc_fk FOREIGN KEY (idUbicacion) REFERENCES UBICACIONES (idUbicacion),
+    CONSTRAINT npc_ubicacion_fk FOREIGN KEY (idNpc) REFERENCES PERSONAJES (idPersonaje)
+);
+
+CREATE TABLE UBICACION_CRIATURA (
+    idUbicacion NUMBER,
+    idCriatura NUMBER,
+    CONSTRAINT ubicacion_criatura_fk FOREIGN KEY (idUbicacion) REFERENCES UBICACIONES (idUbicacion),
+    CONSTRAINT criatura_ubicacion_fk FOREIGN KEY (idCriatura) REFERENCES CRIATURAS (idCriatura)
+);
+
+CREATE TABLE ESCENA_PERSONAJE (
+    idEscena NUMBER,
+    idPersonaje NUMBER,
+    CONSTRAINT escena_personaje_fk FOREIGN KEY (idEscena) REFERENCES ESCENAS (idEscena),
+    CONSTRAINT personaje_escena_fk FOREIGN KEY (idPersonaje) REFERENCES PERSONAJES (idPersonaje)
+);
+
+CREATE TABLE ESCENA_NPC (
+    idEscena NUMBER,
+    idNpc NUMBER,
+    CONSTRAINT escena_npc_fk FOREIGN KEY (idEscena) REFERENCES ESCENAS (idEscena),
+    CONSTRAINT npc_escena_fk FOREIGN KEY (idNpc) REFERENCES PERSONAJES (idPersonaje)
+);
+
+CREATE TABLE ESCENA_CRIATURA (
+    idEscena NUMBER,
+    idCriatura NUMBER,
+    CONSTRAINT escena_criatura_fk FOREIGN KEY (idEscena) REFERENCES ESCENAS (idEscena),
+    CONSTRAINT criatura_escena_fk FOREIGN KEY (idCriatura) REFERENCES CRIATURAS (idCriatura)
+);
+
 /*CREACIÓN DE TRIGGERS Y SECUENCIAS*/
 CREATE SEQUENCE personajes_seq START WITH 1 INCREMENT BY 1;
 
@@ -310,6 +445,18 @@ FOR EACH ROW
 BEGIN
     IF :NEW.idPersonaje IS NULL THEN
         SELECT personajes_seq.NEXTVAL INTO :NEW.idPersonaje FROM DUAL;
+    END IF;
+END;
+/
+
+CREATE SEQUENCE criaturas_seq START WITH 1 INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER criaturas_trigger
+BEFORE INSERT ON CRIATURAS
+FOR EACH ROW
+BEGIN
+    IF :NEW.idCriatura IS NULL THEN
+        SELECT criaturas_seq.NEXTVAL INTO :NEW.idCriatura FROM DUAL;
     END IF;
 END;
 /
@@ -334,7 +481,7 @@ FOR EACH ROW
 BEGIN
     IF :NEW.idObjeto IS NULL THEN
         SELECT objetos_seq.NEXTVAL INTO :NEW.idObjeto FROM DUAL;
-    END IF;
+    END IF; 
 END;
 /
 
@@ -362,6 +509,30 @@ BEGIN
 END;
 /
 
+CREATE SEQUENCE naciones_seq START WITH 1 INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER naciones_trigger
+BEFORE INSERT ON NACIONES
+FOR EACH ROW
+BEGIN
+    IF :NEW.idNacion IS NULL THEN
+        SELECT naciones_seq.NEXTVAL INTO :NEW.idNacion FROM DUAL;
+    END IF;
+END;
+/
+
+CREATE SEQUENCE onaciones_seq START WITH 1 INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER onaciones_trigger
+BEFORE INSERT ON O_NACIONES
+FOR EACH ROW
+BEGIN
+    IF :NEW.idNacion IS NULL THEN
+        SELECT onaciones_seq.NEXTVAL INTO :NEW.idNacion FROM DUAL;
+    END IF;
+END;
+/
+
 CREATE SEQUENCE reinos_seq START WITH 1 INCREMENT BY 1;
 
 CREATE OR REPLACE TRIGGER reinos_trigger
@@ -370,6 +541,42 @@ FOR EACH ROW
 BEGIN
     IF :NEW.idReino IS NULL THEN
         SELECT reinos_seq.NEXTVAL INTO :NEW.idReino FROM DUAL;
+    END IF;
+END;
+/
+
+CREATE SEQUENCE oreinos_seq START WITH 1 INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER oreinos_trigger
+BEFORE INSERT ON O_REINOS
+FOR EACH ROW
+BEGIN
+    IF :NEW.idReino IS NULL THEN
+        SELECT oreinos_seq.NEXTVAL INTO :NEW.idReino FROM DUAL;
+    END IF;
+END;
+/
+
+CREATE SEQUENCE ubicaciones_seq START WITH 1 INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER ubicaciones_trigger
+BEFORE INSERT ON UBICACIONES
+FOR EACH ROW
+BEGIN
+    IF :NEW.idUbicacion IS NULL THEN
+        SELECT ubicaciones_seq.NEXTVAL INTO :NEW.idUbicacion FROM DUAL;
+    END IF;
+END;
+/
+
+CREATE SEQUENCE escenas_seq START WITH 1 INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER escenas_trigger
+BEFORE INSERT ON ESCENAS
+FOR EACH ROW
+BEGIN
+    IF :NEW.idEscena IS NULL THEN
+        SELECT escenas_seq.NEXTVAL INTO :NEW.idEscena FROM DUAL;
     END IF;
 END;
 /
@@ -383,5 +590,48 @@ BEGIN
     IF :NEW.idIdeologia IS NULL THEN
         SELECT ideologias_seq.NEXTVAL INTO :NEW.idIdeologia FROM DUAL;
     END IF;
+END;
+/
+
+CREATE SEQUENCE mundos_seq START WITH 1 INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER mundos_trigger
+BEFORE INSERT ON MUNDOS
+FOR EACH ROW
+BEGIN
+    IF :NEW.idMundo IS NULL THEN
+        SELECT mundos_seq.NEXTVAL INTO :NEW.idMundo FROM DUAL;
+    END IF;
+END;
+/
+
+CREATE OR REPLACE TRIGGER insert_naciones_trigger
+AFTER INSERT ON MUNDOS
+FOR EACH ROW
+DECLARE
+    CURSOR c_naciones IS
+        SELECT nombre FROM O_NACIONES;
+        
+BEGIN
+    -- Insertar todas las naciones del catálogo O_NACIONES
+    FOR r_nacion IN c_naciones LOOP
+        INSERT INTO NACIONES (idMundo, nombre)
+        VALUES (:NEW.idMundo, r_nacion.nombre);
+    END LOOP;
+END;
+/
+
+CREATE OR REPLACE TRIGGER insert_reinos_trigger
+AFTER INSERT ON NACIONES
+FOR EACH ROW
+DECLARE
+    CURSOR c_reinos IS
+        SELECT nombre FROM O_REINOS
+        WHERE nombreNacion = :NEW.nombre;
+BEGIN
+    FOR r_reino IN c_reinos LOOP
+        INSERT INTO REINOS (idNacion, nombre)
+        VALUES (:NEW.idNacion, r_reino.nombre);
+    END LOOP;
 END;
 /

@@ -1,0 +1,57 @@
+package control;
+
+import clases_partida.Criatura;
+import clases_partida.Mundo;
+import clases_partida.Nacion;
+import clases_personaje.Personaje;
+import javafx.scene.control.TreeItem;
+import javafx.scene.layout.StackPane;
+import views.*;
+
+public class DesktopController {
+
+    private final DesktopView desktopView;
+    private final DesktopNacionController nacionController;
+
+    public DesktopController(DesktopView vista) {
+        this.desktopView = vista;
+        this.nacionController = new DesktopNacionController(desktopView);
+    }
+
+    public StackPane getVista() {
+        return desktopView.getDesktop();
+    }
+
+    public void cambiarVista(DesktopViewType vistaTipo, TreeItem<Object> item) {
+        StackPane nuevaVista = switch (vistaTipo) {
+            case PERSONAJE -> {
+                DesktopPersonajeController personajeController = new DesktopPersonajeController((Personaje) item.getValue());
+                yield personajeController.getVista();
+            }
+            case CRIATURA -> {
+            	DesktopCriaturaController criaturaController = new DesktopCriaturaController((Criatura) item.getValue());
+            	yield criaturaController.getVista();
+            }
+            case NACION -> {
+            	nacionController.setNacion((Nacion) item.getValue());
+            	yield nacionController.getVista();
+            }
+            case MUNDO -> {
+            	DesktopMundoController mundoController = new DesktopMundoController((Mundo) item.getValue());
+            	yield mundoController.getVista();
+            }
+            case REINO -> new ReinoView().crearView();
+            case UBICACION -> new UbicacionView().crearView();
+            case ESCENA -> new EscenaView().crearView();
+            default -> null;
+        };
+
+        if (nuevaVista != null) {
+            desktopView.setContenido(nuevaVista);
+        } else {
+            System.out.println("Vista desconocida o nula: " + vistaTipo);
+        }
+    }
+    
+}
+

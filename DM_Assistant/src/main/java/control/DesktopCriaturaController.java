@@ -1,0 +1,20 @@
+package control;
+
+import clases_partida.Criatura;
+import javafx.scene.layout.StackPane;
+import views.DesktopCriaturaView;
+
+public class DesktopCriaturaController {
+	
+	private final DesktopCriaturaView view;
+	private final Criatura criatura;
+	
+	public DesktopCriaturaController(Criatura criatura) {
+		this.view = new DesktopCriaturaView();
+		this.criatura = criatura;
+	}
+
+	public StackPane getVista() {
+		return view.crearView(criatura);
+	}
+}

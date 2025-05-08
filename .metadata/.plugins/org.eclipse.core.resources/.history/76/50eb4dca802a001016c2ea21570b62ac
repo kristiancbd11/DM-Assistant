@@ -1,0 +1,35 @@
+package views;
+
+import clases_partida.Criatura;
+import clases_partida.Mundo;
+import clases_personaje.Personaje;
+import javafx.scene.layout.VBox;
+
+public class InfoMundoView {
+
+	private Mundo mundo;
+	
+	public VBox crearView() {
+		VBox pane = new VBox();
+		
+		String nombre = mundo.getNombre();
+		
+		int nPj = 0;
+		for(Personaje personaje : mundo.getPersonajes()) {
+			nPj++;
+		}
+		
+		int nNpc = 0;
+		for(Personaje npc : mundo.getNpcs()) {
+			nNpc++;
+		}
+		
+		int nCriaturas = 0;
+		for(Criatura criatura : mundo.getCriaturas()) {
+			nCriaturas++;
+		}
+		
+		return pane;
+	}
+	
+}

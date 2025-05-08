@@ -1,0 +1,27 @@
+package control;
+
+import clases_partida.Mundo;
+import javafx.scene.layout.StackPane;
+import views.DesktopMundoView;
+
+public class DesktopMundoController {
+	
+	private final DesktopMundoView view;
+	private final Mundo mundo;
+	
+	public DesktopMundoController(Mundo mundo) {
+		super();
+		this.view = new DesktopMundoView();
+		this.mundo = mundo;
+	}
+	public DesktopMundoView getView() {
+		return view;
+	}
+	public Mundo getMundo() {
+		return mundo;
+	}
+	
+	public StackPane getVista() {
+		return view.crearView(mundo);
+	}
+}
