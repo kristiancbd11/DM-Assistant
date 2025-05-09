@@ -13,3 +13,9 @@
 1746611700254	Rename field 'vista'
 1746611711309	Rename field 'desktopview'
 1746613370207	Rename field 'view'
+1746776485581	Move compilation unit
+1746778285245	Delete element
+1746783790790	Rename method 'getIdPersonaje'
+1746783811785	Rename method 'getIdCriatura'
+1746789672382	Rename method 'getId'
+1746789687899	Rename method 'getId'

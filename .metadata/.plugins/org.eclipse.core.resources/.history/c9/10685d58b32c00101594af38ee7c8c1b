@@ -1,0 +1,110 @@
+package designerView;
+
+import clases_partida.Mundo;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Accordion;
+import javafx.scene.control.TitledPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
+
+public class PaletaView {
+
+    private final Mundo mundo;
+    private final TableroView tableroView;
+
+    private CategoriaPaleta paletaPj;
+    private CategoriaPaleta paletaNpc;
+    private CategoriaPaleta paletaCriatura;
+
+    public PaletaView(Mundo mundo, TableroView tableroView) {
+        this.mundo = mundo;
+        this.tableroView = tableroView;
+
+        this.tableroView.setDropListener(nombreElemento -> {
+            actualizarEstadoElemento(nombreElemento);
+        });
+    }
+    
+    private void actualizarEstadoElemento(String nombre) {
+        boolean actualizado = false;
+
+        for (CategoriaPaleta categoria : List.of(paletaPj, paletaNpc, paletaCriatura)) {
+            Object obj = categoria.getObjetosPorNombre().get(nombre);
+            if (obj != null) {
+                int id = obtenerIdDesdeObjeto(obj);
+                categoria.getEstadoColocados().put(id, true);
+                categoria.refrescar(); // actualiza visualmente
+                actualizado = true;
+                break;
+            }
+        }
+
+        if (!actualizado) {
+            System.err.println("Elemento no encontrado: " + nombre);
+        }
+    }
+
+    private int obtenerIdDesdeObjeto(Object obj) {
+        try {
+            var method = obj.getClass().getMethod("getId");
+            return (int) method.invoke(obj);
+        } catch (Exception e) {
+            System.err.println("Error al obtener ID de objeto: " + e.getMessage());
+            return -1;
+        }
+    }
+
+    
+    public Stage crearVentana(double x, double y) {
+        VBox contenido = new VBox(10);
+        contenido.setPadding(new Insets(10));
+        contenido.setAlignment(Pos.TOP_CENTER);
+
+        // Crear las categorías
+        paletaPj = new CategoriaPaleta("Personajes", mundo.getPersonajes());
+        paletaNpc = new CategoriaPaleta("NPCs", mundo.getNpcs());
+        paletaCriatura = new CategoriaPaleta("Criaturas", mundo.getCriaturas());
+
+        // Crear TitledPanes a partir de las categorías
+        TitledPane personajesPane = new TitledPane(paletaPj.getTitulo(), paletaPj.getContenedor());
+        TitledPane npcsPane = new TitledPane(paletaNpc.getTitulo(), paletaNpc.getContenedor());
+        TitledPane criaturasPane = new TitledPane(paletaCriatura.getTitulo(), paletaCriatura.getContenedor());
+
+        contenido.getChildren().addAll(
+                new Accordion(personajesPane, npcsPane, criaturasPane),
+                crearPaletaColores()
+        );
+
+        Stage stage = new Stage();
+        stage.setTitle("Paleta de Elementos");
+        stage.setScene(new Scene(contenido, 200, 600));
+        stage.setX(x);
+        stage.setY(y);
+        stage.setResizable(false);
+        stage.show();
+        return stage;
+    }
+
+    private GridPane crearPaletaColores() {
+        GridPane grid = new GridPane();
+        grid.setHgap(5);
+        grid.setVgap(5);
+        grid.setPadding(new Insets(10));
+        Color[] colores = {
+                Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW,
+                Color.ORANGE, Color.PURPLE, Color.BROWN, Color.GRAY
+        };
+
+        for (int i = 0; i < colores.length; i++) {
+            Rectangle rect = new Rectangle(40, 40, colores[i]);
+            grid.add(rect, i % 4, i / 4);
+        }
+
+        return grid;
+    }
+}

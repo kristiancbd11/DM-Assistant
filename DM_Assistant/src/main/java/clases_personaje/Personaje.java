@@ -71,6 +71,9 @@ public class Personaje {
 
 	@Column(name = "edad")
 	private int edad;
+	
+	@Column(name = "token")
+	private String token;
 
 	// Datos de clase
 	@ManyToOne
@@ -546,6 +549,18 @@ public class Personaje {
 	
 	public void removeMundo(Mundo mundo) {
 		mundos.remove(mundo);
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public void setNivel(int nivel) {
+		this.nivel = nivel;
 	}
 
 	@Override

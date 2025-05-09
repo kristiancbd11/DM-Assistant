@@ -1,0 +1,140 @@
+package designerView;
+
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class CategoriaPaleta {
+
+    private final String titulo;
+    private final List<?> elementos;
+    private final Map<Integer, Boolean> estadoColocados = new HashMap<>();
+    private final Map<String, Object> objetosPorNombre = new HashMap<>();
+    private final VBox contenedor = new VBox(5);
+    private GridPane grid;	
+
+    private static final String RUTA_IMAGEN_DEFAULT = "/tablero/default.png";
+    private static final int COLUMNAS = 3;
+
+    public CategoriaPaleta(String titulo, List<?> elementos) {
+        this.titulo = titulo;
+        this.elementos = elementos;
+        inicializar();
+    }
+
+    private void inicializar() {
+        contenedor.setPadding(new Insets(5));
+        contenedor.setAlignment(Pos.TOP_CENTER);
+        refrescar();
+    }
+
+    public void refrescar() {
+        contenedor.getChildren().clear();
+        objetosPorNombre.clear(); // Limpia para mantenerlo sincronizado
+
+        grid = new GridPane();
+        grid.setHgap(5);
+        grid.setVgap(5);
+        grid.setAlignment(Pos.CENTER);
+
+        int fila = 0;
+        int columna = 0;
+
+        for (Object obj : elementos) {
+            String nombre = obtenerNombreDesdeObjeto(obj);
+            int id = obtenerIdDesdeObjeto(obj);
+            if (estadoColocados.getOrDefault(id, false)) {
+                continue; // ya colocado, no mostrar
+            }
+
+            objetosPorNombre.put(nombre, obj); // Usar nombre seguro como clave
+
+            StackPane item = crearItemConImagenYNombre(nombre, titulo);
+            grid.add(item, columna, fila);
+
+            columna++;
+            if (columna >= COLUMNAS) {
+                columna = 0;
+                fila++;
+            }
+        }
+
+        contenedor.getChildren().add(grid);
+    }
+
+    private StackPane crearItemConImagenYNombre(String nombre, String categoria) {
+        ImageView imagen = new ImageView(new Image(getClass().getResourceAsStream(RUTA_IMAGEN_DEFAULT)));
+        imagen.setFitWidth(60);
+        imagen.setFitHeight(60);
+
+        Label label = new Label(nombre);
+        label.setStyle("-fx-background-color: rgba(255,255,255,0.8); -fx-padding: 2px; -fx-border-color: gray;");
+        label.setUserData(Map.of("nombre", nombre, "categoria", categoria));
+
+        StackPane stack = new StackPane(imagen, label);
+        stack.setAlignment(Pos.CENTER);
+        stack.setPrefSize(60, 60);
+
+        stack.setOnDragDetected(event -> {
+            var db = stack.startDragAndDrop(TransferMode.MOVE);
+            var content = new ClipboardContent();
+            content.putString(nombre);
+            db.setContent(content);
+            db.setDragView(stack.snapshot(null, null));
+            event.consume();
+        });
+
+        return stack;
+    }
+
+    private int obtenerIdDesdeObjeto(Object obj) {
+        try {
+            var method = obj.getClass().getMethod("getId");
+            Object result = method.invoke(obj);
+            if (result instanceof Integer) {
+                return (Integer) result;
+            }
+        } catch (Exception e) {
+            System.err.println("Error al obtener ID de objeto: " + e.getMessage());
+        }
+        throw new IllegalStateException("El objeto no tiene un ID válido: " + obj);
+    }
+
+
+    private String obtenerNombreDesdeObjeto(Object obj) {
+        try {
+            var method = obj.getClass().getMethod("getNombre");
+            return (String) method.invoke(obj);
+        } catch (Exception e) {
+            System.err.println("Error al obtener nombre de objeto: " + e.getMessage());
+            return obj.toString(); // fallback
+        }
+    }
+
+    public VBox getContenedor() {
+        return contenedor;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public Map<Integer, Boolean> getEstadoColocados() {
+        return estadoColocados;
+    }
+
+    public Map<String, Object> getObjetosPorNombre() {
+        return objetosPorNombre;
+    }
+}

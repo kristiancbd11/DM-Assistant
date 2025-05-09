@@ -1,0 +1,50 @@
+package designerView;
+
+import clases_partida.Criatura;
+import clases_personaje.Personaje;
+
+public class ElementoVisual {
+    private final String nombre;
+    private final int fila;
+    private final int columna;
+    private final Object obj;
+    private final String token;
+
+    public ElementoVisual(Object obj, int fila, int columna) {
+    	if(obj instanceof Personaje personaje) {
+        	nombre = personaje.getNombre();
+        } else {
+        	nombre = ((Criatura) obj).getNombre();
+        }
+        this.fila = fila;
+        this.columna = columna;
+        this.obj = obj;
+        if(obj instanceof Personaje personaje) {
+        	token = personaje.getToken();
+        } else {
+        	token = "default.png";
+        }
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public int getFila() {
+        return fila;
+    }
+
+    public int getColumna() {
+        return columna;
+    }
+
+	public Object getObj() {
+		return obj;
+	}
+
+	public String getToken() {
+		return token;
+	}
+    
+    
+}

@@ -6,8 +6,9 @@ import dbhandlerCRUD.NacionCRUD;
 import dbhandlerCRUD.RazaCRUD;
 import dbhandlerCRUD.ReligionCRUD;
 import javafx.collections.FXCollections;
-import javafx.geometry.Pos;  // Importar para la alineación
+import javafx.geometry.Pos; // Importar para la alineación
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
 import java.util.ArrayList;
@@ -23,283 +24,309 @@ import clases_roles.Clase;
 
 public class CreationPersonajeView extends VBox {
 
-    private TextField nombreField;
-    private ComboBox<Raza> razaCombo;
-    private TextField sexoField;
-    private ComboBox<Religion> religionCombo;
-    private ComboBox<O_Nacion> nacionCombo;
-    private Spinner<Integer> edadSpinner;
-    private ComboBox<Clase> claseCombo;
-    private ComboBox<Ideologia> ideologiaCombo;
-    private RazaCRUD razaCrud = new RazaCRUD();
-    private ReligionCRUD religionCrud = new ReligionCRUD();
-    private NacionCRUD nacionCrud = new NacionCRUD();
-    private ClaseCRUD claseCrud = new ClaseCRUD();
-    private IdeologiaCRUD ideologiaCrud = new IdeologiaCRUD();
-    private Map<String, Label> atributosPrincipalesLabels = new HashMap<>();
-    private Map<String, List<Spinner<Integer>>> subatributosSpinners = new HashMap<>();
+	private TextField nombreField;
+	private ComboBox<Raza> razaCombo;
+	private TextField sexoField;
+	private ComboBox<Religion> religionCombo;
+	private ComboBox<O_Nacion> nacionCombo;
+	private Spinner<Integer> edadSpinner;
+	private ComboBox<Clase> claseCombo;
+	private ComboBox<Ideologia> ideologiaCombo;
+	private RazaCRUD razaCrud = new RazaCRUD();
+	private ReligionCRUD religionCrud = new ReligionCRUD();
+	private NacionCRUD nacionCrud = new NacionCRUD();
+	private ClaseCRUD claseCrud = new ClaseCRUD();
+	private IdeologiaCRUD ideologiaCrud = new IdeologiaCRUD();
+	private Map<String, Label> atributosPrincipalesLabels = new HashMap<>();
+	private Map<String, List<Spinner<Integer>>> subatributosSpinners = new HashMap<>();
+	private String token;
 
-    // Botones
-    private Button btnCrear;
-    private Button btnCancelar;
+	// Botones
+	private Button btnCrear;
+	private Button btnCancelar;
 
-    public CreationPersonajeView() {
-        setSpacing(10);
-        Label title = new Label("Formulario de nuevo personaje");
+	public CreationPersonajeView() {
+		setSpacing(10);
+		Label title = new Label("Formulario de nuevo personaje");
 
-        // Formulario de entrada
-        GridPane form = new GridPane();
-        form.setHgap(10);
-        form.setVgap(10);
+		// Formulario de entrada
+		GridPane form = new GridPane();
+		form.setHgap(10);
+		form.setVgap(10);
 
-        nombreField = new TextField();
-        sexoField = new TextField();
-        edadSpinner = new Spinner<>(0, 150, 18);
+		nombreField = new TextField();
+		sexoField = new TextField();
+		edadSpinner = new Spinner<>(0, 150, 18);
 
-        razaCombo = new ComboBox<>(FXCollections.observableArrayList(razaCrud.fetchAllRazas()));
-        religionCombo = new ComboBox<>(FXCollections.observableArrayList(religionCrud.fetchAllReligiones()));
-        nacionCombo = new ComboBox<>(FXCollections.observableArrayList(nacionCrud.fetchAllONaciones()));
-        claseCombo = new ComboBox<>(FXCollections.observableArrayList(claseCrud.fetchAllClases()));
-        ideologiaCombo = new ComboBox<>(FXCollections.observableArrayList(ideologiaCrud.fetchAllIdeologias()));
+		razaCombo = new ComboBox<>(FXCollections.observableArrayList(razaCrud.fetchAllRazas()));
+		religionCombo = new ComboBox<>(FXCollections.observableArrayList(religionCrud.fetchAllReligiones()));
+		nacionCombo = new ComboBox<>(FXCollections.observableArrayList(nacionCrud.fetchAllONaciones()));
+		claseCombo = new ComboBox<>(FXCollections.observableArrayList(claseCrud.fetchAllClases()));
+		ideologiaCombo = new ComboBox<>(FXCollections.observableArrayList(ideologiaCrud.fetchAllIdeologias()));
 
-        form.add(new Label("Nombre:"), 0, 0);
-        form.add(nombreField, 1, 0);
-        form.add(new Label("Raza:"), 0, 1);
-        form.add(razaCombo, 1, 1);
-        form.add(new Label("Sexo:"), 0, 2);
-        form.add(sexoField, 1, 2);
-        form.add(new Label("Religión:"), 0, 3);
-        form.add(religionCombo, 1, 3);
-        form.add(new Label("Nación:"), 0, 4);
-        form.add(nacionCombo, 1, 4);
-        form.add(new Label("Edad:"), 0, 5);
-        form.add(edadSpinner, 1, 5);
-        form.add(new Label("Clase:"), 0, 6);
-        form.add(claseCombo, 1, 6);
-        form.add(new Label("Ideología:"), 0, 7);
-        form.add(ideologiaCombo, 1, 7);
+		form.add(new Label("Nombre:"), 0, 0);
+		form.add(nombreField, 1, 0);
+		form.add(new Label("Raza:"), 0, 1);
+		form.add(razaCombo, 1, 1);
+		form.add(new Label("Sexo:"), 0, 2);
+		form.add(sexoField, 1, 2);
+		form.add(new Label("Religión:"), 0, 3);
+		form.add(religionCombo, 1, 3);
+		form.add(new Label("Nación:"), 0, 4);
+		form.add(nacionCombo, 1, 4);
+		form.add(new Label("Edad:"), 0, 5);
+		form.add(edadSpinner, 1, 5);
+		form.add(new Label("Clase:"), 0, 6);
+		form.add(claseCombo, 1, 6);
+		form.add(new Label("Ideología:"), 0, 7);
+		form.add(ideologiaCombo, 1, 7);
 
-        // Configurar los botones
-        btnCrear = new Button("Crear");
-        btnCancelar = new Button("Cancelar");
+		// Imagen del personaje
+		ImageView selectedImageView = new ImageView();
+		selectedImageView.setFitWidth(64);
+		selectedImageView.setFitHeight(64);
+		Button selectImageButton = new Button("Elegir Token");
 
-        // HBox para colocar los botones en una fila
-        HBox buttonBox = new HBox(10, btnCrear, btnCancelar);
-        buttonBox.setSpacing(10);
+		// Ruta del directorio de tokens
+		String tokenPath = getClass().getResource("/tablero/tokens").getPath();
 
-        // Añadir todo al layout
-        getChildren().addAll(title, form, buttonBox);
+		// Evento para mostrar el popup de selección
+		selectImageButton.setOnAction(e -> {
+			new ImageSelectorPopup(tokenPath, (selectedImage, fileName) -> {
+				selectedImageView.setImage(selectedImage);
+				token = fileName;  // Guardar el nombre del archivo en la variable global
+			}).showAndWait();
+		});	
 
-        // Bloques de atributos físicos y habilidades
-        String[] fueAttrs = { "Impacto", "Destrozo", "Carga", "Levantamiento", "Vigor", "Atletismo" };
-        String[] conAttrs = { "Vitalidad", "Corpulencia", "Regeneración", "Tenacidad", "Resistencia", "Motricidad" };
-        String[] desAttrs = { "Agilidad", "Presteza", "Reflejos", "Combate", "Sigilo", "Precisión" };
-        String[] intAttrs = { "Perspicacia", "Intuición", "Investigación", "Estrategia", "Memoria", "Com. Arcana" };
-        String[] carAttrs = { "Convicción", "Engaño", "Intimidación", "Liderazgo", "Jovialidad", "Seducción" };
-        String[] sabAttrs = { "Conocimiento", "Medicina", "Percepción", "Empatía", "Voluntad", "Supervivencia" };
+		HBox imageBox = new HBox(10, selectImageButton, selectedImageView);
+		imageBox.setAlignment(Pos.CENTER_LEFT);
+		form.add(new Label("Token:"), 0, 8);
+		form.add(imageBox, 1, 8);
 
-        VBox atributosBox = new VBox(10);
-        atributosBox.getChildren().addAll(crearBloqueAtributos("FUERZA", fueAttrs), crearBloqueAtributos("CONSTITUCIÓN", conAttrs),
-                crearBloqueAtributos("DESTREZA", desAttrs), crearBloqueAtributos("INTELIGENCIA", intAttrs),
-                crearBloqueAtributos("CARISMA", carAttrs), crearBloqueAtributos("SABIDURÍA", sabAttrs));
+		// Configurar los botones
+		btnCrear = new Button("Crear");
+		btnCancelar = new Button("Cancelar");
 
-        // Envolver atributosBox en un HBox para centrar el contenido
-        HBox atributosContainer = new HBox();
-        atributosContainer.setAlignment(Pos.CENTER);
-        atributosContainer.getChildren().add(atributosBox);
+		// HBox para colocar los botones en una fila
+		HBox buttonBox = new HBox(10, btnCrear, btnCancelar);
+		buttonBox.setSpacing(10);
 
-        getChildren().add(atributosContainer);
+		// Añadir todo al layout
+		getChildren().addAll(title, form, buttonBox);
 
-        // Crear ScrollPane
-        ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setFitToWidth(true); // Hace que el contenido se ajuste al ancho
-        scrollPane.setContent(atributosContainer); // Aquí solo se envuelve la parte de atributos en un ScrollPane
+		// Bloques de atributos físicos y habilidades
+		String[] fueAttrs = { "Impacto", "Destrozo", "Carga", "Levantamiento", "Vigor", "Atletismo" };
+		String[] conAttrs = { "Vitalidad", "Corpulencia", "Regeneración", "Tenacidad", "Resistencia", "Motricidad" };
+		String[] desAttrs = { "Agilidad", "Presteza", "Reflejos", "Combate", "Sigilo", "Precisión" };
+		String[] intAttrs = { "Perspicacia", "Intuición", "Investigación", "Estrategia", "Memoria", "Com. Arcana" };
+		String[] carAttrs = { "Convicción", "Engaño", "Intimidación", "Liderazgo", "Jovialidad", "Seducción" };
+		String[] sabAttrs = { "Conocimiento", "Medicina", "Percepción", "Empatía", "Voluntad", "Supervivencia" };
 
-        // Añadir el ScrollPane al layout
-        getChildren().add(scrollPane);
-    }
+		VBox atributosBox = new VBox(10);
+		atributosBox.getChildren().addAll(crearBloqueAtributos("FUERZA", fueAttrs),
+				crearBloqueAtributos("CONSTITUCIÓN", conAttrs), crearBloqueAtributos("DESTREZA", desAttrs),
+				crearBloqueAtributos("INTELIGENCIA", intAttrs), crearBloqueAtributos("CARISMA", carAttrs),
+				crearBloqueAtributos("SABIDURÍA", sabAttrs));
 
-    private VBox crearBloqueAtributos(String atributoPrincipal, String[] subatributos) {
-        VBox contenedor = new VBox(5);
+		// Envolver atributosBox en un HBox para centrar el contenido
+		HBox atributosContainer = new HBox();
+		atributosContainer.setAlignment(Pos.CENTER);
+		atributosContainer.getChildren().add(atributosBox);
 
-        // Contenedor para el nombre del atributo y su valor numérico
-        HBox encabezado = new HBox(10);
-        Label titulo = new Label(atributoPrincipal);
-        Label valorLabel = new Label("0");
-        atributosPrincipalesLabels.put(atributoPrincipal.toUpperCase(), valorLabel);
+		getChildren().add(atributosContainer);
 
+		// Crear ScrollPane
+		ScrollPane scrollPane = new ScrollPane();
+		scrollPane.setFitToWidth(true); // Hace que el contenido se ajuste al ancho
+		scrollPane.setContent(atributosContainer); // Aquí solo se envuelve la parte de atributos en un ScrollPane
 
-        titulo.setStyle("-fx-font-weight: bold;");
-        valorLabel.setStyle("-fx-font-weight: bold;");
+		// Añadir el ScrollPane al layout
+		getChildren().add(scrollPane);
+	}
 
-        // Alinear ambos labels al inicio
-        encabezado.getChildren().addAll(titulo, valorLabel);
+	private VBox crearBloqueAtributos(String atributoPrincipal, String[] subatributos) {
+		VBox contenedor = new VBox(5);
 
-        GridPane grid = new GridPane();
-        grid.setHgap(5);
-        grid.setVgap(5);
+		// Contenedor para el nombre del atributo y su valor numérico
+		HBox encabezado = new HBox(10);
+		Label titulo = new Label(atributoPrincipal);
+		Label valorLabel = new Label("0");
+		atributosPrincipalesLabels.put(atributoPrincipal.toUpperCase(), valorLabel);
 
-        // Column constraints para distribuir espacio equitativamente
-        for (int i = 0; i < subatributos.length; i++) {
-            ColumnConstraints column = new ColumnConstraints();
-            column.setPercentWidth(100.0 / subatributos.length);
-            column.setHgrow(Priority.ALWAYS);
-            grid.getColumnConstraints().add(column);
-        }
+		titulo.setStyle("-fx-font-weight: bold;");
+		valorLabel.setStyle("-fx-font-weight: bold;");
 
-        List<Spinner<Integer>> spinnersList = new ArrayList<>();
+		// Alinear ambos labels al inicio
+		encabezado.getChildren().addAll(titulo, valorLabel);
 
-        for (int i = 0; i < subatributos.length; i++) {
-            Label label = new Label(subatributos[i]);
-            Spinner<Integer> spinner = new Spinner<>(0, 100, 0);
+		GridPane grid = new GridPane();
+		grid.setHgap(5);
+		grid.setVgap(5);
 
-            // Asegura que el spinner sea expandible
-            label.setMaxWidth(Double.MAX_VALUE);
-            spinner.setMaxWidth(Double.MAX_VALUE);
-            GridPane.setHgrow(label, Priority.ALWAYS);
-            GridPane.setHgrow(spinner, Priority.ALWAYS);
+		// Column constraints para distribuir espacio equitativamente
+		for (int i = 0; i < subatributos.length; i++) {
+			ColumnConstraints column = new ColumnConstraints();
+			column.setPercentWidth(100.0 / subatributos.length);
+			column.setHgrow(Priority.ALWAYS);
+			grid.getColumnConstraints().add(column);
+		}
 
-            grid.add(label, i, 0);
-            grid.add(spinner, i, 1);
-            spinnersList.add(spinner);
-        }
+		List<Spinner<Integer>> spinnersList = new ArrayList<>();
 
-        subatributosSpinners.put(atributoPrincipal.toUpperCase(), spinnersList);
+		for (int i = 0; i < subatributos.length; i++) {
+			Label label = new Label(subatributos[i]);
+			Spinner<Integer> spinner = new Spinner<>(0, 100, 0);
 
+			// Asegura que el spinner sea expandible
+			label.setMaxWidth(Double.MAX_VALUE);
+			spinner.setMaxWidth(Double.MAX_VALUE);
+			GridPane.setHgrow(label, Priority.ALWAYS);
+			GridPane.setHgrow(spinner, Priority.ALWAYS);
 
-        contenedor.getChildren().addAll(encabezado, grid);
-        return contenedor;
-    }
+			grid.add(label, i, 0);
+			grid.add(spinner, i, 1);
+			spinnersList.add(spinner);
+		}
 
+		subatributosSpinners.put(atributoPrincipal.toUpperCase(), spinnersList);
 
-    // Métodos getter y setter para los campos (para que puedas acceder a ellos
-    // desde los controladores)
+		contenedor.getChildren().addAll(encabezado, grid);
+		return contenedor;
+	}
 
-    public TextField getNombreField() {
-        return nombreField;
-    }
+	// Métodos getter y setter para los campos (para que puedas acceder a ellos
+	// desde los controladores)
 
-    public void setNombreField(TextField nombreField) {
-        this.nombreField = nombreField;
-    }
+	public TextField getNombreField() {
+		return nombreField;
+	}
 
-    public ComboBox<Raza> getRazaCombo() {
-        return razaCombo;
-    }
+	public void setNombreField(TextField nombreField) {
+		this.nombreField = nombreField;
+	}
 
-    public void setRazaCombo(ComboBox<Raza> razaCombo) {
-        this.razaCombo = razaCombo;
-    }
+	public ComboBox<Raza> getRazaCombo() {
+		return razaCombo;
+	}
 
-    public TextField getSexoField() {
-        return sexoField;
-    }
+	public void setRazaCombo(ComboBox<Raza> razaCombo) {
+		this.razaCombo = razaCombo;
+	}
 
-    public void setSexoField(TextField sexoField) {
-        this.sexoField = sexoField;
-    }
+	public TextField getSexoField() {
+		return sexoField;
+	}
 
-    public ComboBox<Religion> getReligionCombo() {
-        return religionCombo;
-    }
+	public void setSexoField(TextField sexoField) {
+		this.sexoField = sexoField;
+	}
 
-    public void setReligionCombo(ComboBox<Religion> religionCombo) {
-        this.religionCombo = religionCombo;
-    }
+	public ComboBox<Religion> getReligionCombo() {
+		return religionCombo;
+	}
 
-    public ComboBox<O_Nacion> getNacionCombo() {
-        return nacionCombo;
-    }
+	public void setReligionCombo(ComboBox<Religion> religionCombo) {
+		this.religionCombo = religionCombo;
+	}
 
-    public void setNacionCombo(ComboBox<O_Nacion> nacionCombo) {
-        this.nacionCombo = nacionCombo;
-    }
+	public ComboBox<O_Nacion> getNacionCombo() {
+		return nacionCombo;
+	}
 
-    public Spinner<Integer> getEdadSpinner() {
-        return edadSpinner;
-    }
+	public void setNacionCombo(ComboBox<O_Nacion> nacionCombo) {
+		this.nacionCombo = nacionCombo;
+	}
 
-    public void setEdadSpinner(Spinner<Integer> edadSpinner) {
-        this.edadSpinner = edadSpinner;
-    }
+	public Spinner<Integer> getEdadSpinner() {
+		return edadSpinner;
+	}
 
-    public ComboBox<Clase> getClaseCombo() {
-        return claseCombo;
-    }
+	public void setEdadSpinner(Spinner<Integer> edadSpinner) {
+		this.edadSpinner = edadSpinner;
+	}
 
-    public void setClaseCombo(ComboBox<Clase> claseCombo) {
-        this.claseCombo = claseCombo;
-    }
+	public ComboBox<Clase> getClaseCombo() {
+		return claseCombo;
+	}
 
-    public ComboBox<Ideologia> getIdeologiaCombo() {
-        return ideologiaCombo;
-    }
+	public void setClaseCombo(ComboBox<Clase> claseCombo) {
+		this.claseCombo = claseCombo;
+	}
 
-    public void setIdeologiaCombo(ComboBox<Ideologia> ideologiaCombo) {
-        this.ideologiaCombo = ideologiaCombo;
-    }
+	public ComboBox<Ideologia> getIdeologiaCombo() {
+		return ideologiaCombo;
+	}
 
-    public RazaCRUD getRazaCrud() {
-        return razaCrud;
-    }
+	public void setIdeologiaCombo(ComboBox<Ideologia> ideologiaCombo) {
+		this.ideologiaCombo = ideologiaCombo;
+	}
 
-    public void setRazaCrud(RazaCRUD razaCrud) {
-        this.razaCrud = razaCrud;
-    }
+	public RazaCRUD getRazaCrud() {
+		return razaCrud;
+	}
 
-    public ReligionCRUD getReligionCrud() {
-        return religionCrud;
-    }
+	public void setRazaCrud(RazaCRUD razaCrud) {
+		this.razaCrud = razaCrud;
+	}
 
-    public void setReligionCrud(ReligionCRUD religionCrud) {
-        this.religionCrud = religionCrud;
-    }
+	public ReligionCRUD getReligionCrud() {
+		return religionCrud;
+	}
 
-    public NacionCRUD getNacionCrud() {
-        return nacionCrud;
-    }
+	public void setReligionCrud(ReligionCRUD religionCrud) {
+		this.religionCrud = religionCrud;
+	}
 
-    public void setNacionCrud(NacionCRUD nacionCrud) {
-        this.nacionCrud = nacionCrud;
-    }
+	public NacionCRUD getNacionCrud() {
+		return nacionCrud;
+	}
 
-    public ClaseCRUD getClaseCrud() {
-        return claseCrud;
-    }
+	public void setNacionCrud(NacionCRUD nacionCrud) {
+		this.nacionCrud = nacionCrud;
+	}
 
-    public void setClaseCrud(ClaseCRUD claseCrud) {
-        this.claseCrud = claseCrud;
-    }
+	public ClaseCRUD getClaseCrud() {
+		return claseCrud;
+	}
 
-    public IdeologiaCRUD getIdeologiaCrud() {
-        return ideologiaCrud;
-    }
+	public void setClaseCrud(ClaseCRUD claseCrud) {
+		this.claseCrud = claseCrud;
+	}
 
-    public void setIdeologiaCrud(IdeologiaCRUD ideologiaCrud) {
-        this.ideologiaCrud = ideologiaCrud;
-    }
+	public IdeologiaCRUD getIdeologiaCrud() {
+		return ideologiaCrud;
+	}
 
-    public Button getBtnCrear() {
-        return btnCrear;
-    }
+	public void setIdeologiaCrud(IdeologiaCRUD ideologiaCrud) {
+		this.ideologiaCrud = ideologiaCrud;
+	}
 
-    public void setBtnCrear(Button btnCrear) {
-        this.btnCrear = btnCrear;
-    }
+	public Button getBtnCrear() {
+		return btnCrear;
+	}
 
-    public Button getBtnCancelar() {
-        return btnCancelar;
-    }
+	public void setBtnCrear(Button btnCrear) {
+		this.btnCrear = btnCrear;
+	}
 
-    public void setBtnCancelar(Button btnCancelar) {
-        this.btnCancelar = btnCancelar;
-    }
-    
-    public Map<String, Label> getAtributosPrincipalesLabels() {
-        return atributosPrincipalesLabels;
-    }
-    
-    public Map<String, List<Spinner<Integer>>> getSubatributosSpinners() {
-        return subatributosSpinners;
-    }
+	public Button getBtnCancelar() {
+		return btnCancelar;
+	}
+
+	public void setBtnCancelar(Button btnCancelar) {
+		this.btnCancelar = btnCancelar;
+	}
+
+	public Map<String, Label> getAtributosPrincipalesLabels() {
+		return atributosPrincipalesLabels;
+	}
+
+	public Map<String, List<Spinner<Integer>>> getSubatributosSpinners() {
+		return subatributosSpinners;
+	}
+
+	public String getToken() {
+		return token;
+	}
+	
 }

@@ -1,0 +1,140 @@
+package designerView;
+
+import javafx.geometry.Point2D;
+import javafx.scene.Scene;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class TableroView {
+
+    private final int filas;
+    private final int columnas;
+    private final int tamano;
+
+    private GridPane grid;
+    private final Map<Point2D, CasillaEstado> estadoCasillas = new HashMap<>();
+    private DropListener dropListener;
+
+    public TableroView(int filas, int columnas, int tamano) {
+        this.filas = filas;
+        this.columnas = columnas;
+        this.tamano = tamano;
+    }
+
+    public Stage crearVentana(double x, double y) {
+        grid = new GridPane();
+
+        for (int fila = 0; fila < filas; fila++) {
+            for (int col = 0; col < columnas; col++) {
+                StackPane casilla = new StackPane();
+                casilla.setPrefSize(tamano, tamano);
+                casilla.setStyle("-fx-border-color: lightgray; -fx-background-color: white;");
+
+                Point2D posicion = new Point2D(col, fila);
+                estadoCasillas.put(posicion, new CasillaEstado(casilla));
+
+                grid.add(casilla, col, fila);
+                
+                casilla.setOnDragOver(event -> {
+                    if (event.getGestureSource() != casilla && !estaOcupada(col, fila)) {
+                        event.acceptTransferModes(TransferMode.MOVE);
+                    }
+                    event.consume();
+                });
+
+                casilla.setOnDragDropped(event -> {
+                    String nombre = event.getDragboard().getString();
+                    if (nombre != null && !estaOcupada(col, fila)) {
+                        colocarElemento(col, fila, nombre);
+                        if (dropListener != null) {
+                            dropListener.onElementoColocado(nombre);
+                        }
+                    }
+                    event.setDropCompleted(true);
+                    event.consume();
+                });
+
+            }
+        }
+
+        Stage stage = new Stage();
+        stage.setTitle("Cuadrícula");
+        stage.setScene(new Scene(grid));
+        stage.setX(x);
+        stage.setY(y);
+        stage.setResizable(false);
+        stage.show();
+        return stage;
+    }
+
+    public GridPane getGrid() {
+        return grid;
+    }
+
+    public CasillaEstado getEstadoCasilla(int col, int fila) {
+        return estadoCasillas.get(new Point2D(col, fila));
+    }
+
+    public void colocarElemento(int col, int fila, Object elemento) {
+        Point2D posicion = new Point2D(col, fila);
+        CasillaEstado estado = estadoCasillas.get(posicion);
+        if (estado != null && estado.estaOcupada()) return;
+
+        estado.setElemento(elemento);
+        // Aquí puedes actualizar la UI si quieres reflejar el objeto colocado
+    }
+
+    public void quitarElemento(int col, int fila) {
+        Point2D posicion = new Point2D(col, fila);
+        CasillaEstado estado = estadoCasillas.get(posicion);
+        if (estado != null) {
+            estado.setElemento(null);
+            // También podrías limpiar la representación visual
+        }
+    }
+
+    public boolean estaOcupada(int col, int fila) {
+        CasillaEstado estado = estadoCasillas.get(new Point2D(col, fila));
+        return estado != null && estado.estaOcupada();
+    }
+
+    // Clase auxiliar para representar el estado de una casilla
+    public static class CasillaEstado {
+        private final StackPane casilla;
+        private Object elemento; // puede ser null si está vacía
+
+        public CasillaEstado(StackPane casilla) {
+            this.casilla = casilla;
+        }
+
+        public boolean estaOcupada() {
+            return elemento != null;
+        }
+
+        public Object getElemento() {
+            return elemento;
+        }
+
+        public void setElemento(Object elemento) {
+            this.elemento = elemento;
+        }
+
+        public StackPane getCasilla() {
+            return casilla;
+        }
+    }
+    
+    public interface DropListener {
+        void onElementoColocado(String nombreElemento);
+    }
+
+    public void setDropListener(DropListener listener) {
+        this.dropListener = listener;
+    }
+
+}

@@ -98,6 +98,7 @@ public class CreationPersonajeController {
 		// Crear el personaje con los datos proporcionados
 		if (npc) {
 			Personaje personaje = new Personaje(nombre, raza, sexo, religion, nacion, ideologia, edad, clase);
+			personaje.setToken(view.getToken());
 			personaje.setAllStats(view.getSubatributosSpinners());
 			mundo.addNpc(personaje);
 
@@ -111,6 +112,7 @@ public class CreationPersonajeController {
 
 		} else {
 			Personaje personaje = new Personaje(nombre, raza, sexo, religion, nacion, ideologia, edad, clase);
+			personaje.setToken(view.getToken());
 			personaje.setAllStats(view.getSubatributosSpinners());
 			mundo.addPersonaje(personaje);
 

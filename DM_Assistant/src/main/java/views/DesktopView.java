@@ -18,7 +18,8 @@ public class DesktopView {
         		+ "Developer: Cristian Biergüete Domínguez\n"
         		+ "Compatibilidades:\n"
         		+ "ROG Archive 1.1\n"
-        		+ "Firebase");
+        		+ "Firebasen\n\n"
+        		+ "Asistente de mesa para RUINS OF GARTEA®");
         
         imageView.setPreserveRatio(true);
         imageView.setFitWidth(400);

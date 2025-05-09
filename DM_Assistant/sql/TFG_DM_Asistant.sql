@@ -244,6 +244,7 @@ CREATE TABLE PERSONAJES (
     idNacion NUMBER CONSTRAINT nn_nacion_pj NOT NULL,
     idIdeologia NUMBER CONSTRAINT nn_ideologia_pj NOT NULL,
     edad NUMBER CONSTRAINT nn_edad_pj NOT NULL,
+    token VARCHAR2(100),
 
     /*Datos de clase*/
     idClase NUMBER CONSTRAINT nn_idclase_pj NOT NULL, /*FOREIGN KEY*/
