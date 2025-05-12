@@ -44,7 +44,7 @@ public class Criatura {
 		
 	}
 
-	public int getIdCriatura() {
+	public int getId() {
 		return idCriatura;
 	}
 

@@ -1,47 +1,47 @@
-/*Rasgos de razas*/
+ /*Rasgos de razas*/
 INSERT INTO HABILIDADES (nombre, descripcion, activa) 
-VALUES ('Ojos de medianoche', 'No sufrirás ceguera por oscuridad o brumas', 0);
+VALUES ('Ojos de medianoche', 'No sufrirï¿½s ceguera por oscuridad o brumas', 0);
 INSERT INTO RASGOS (idHabilidad, unlockLvl)
 VALUES ((SELECT idHabilidad FROM HABILIDADES WHERE nombre = 'Ojos de medianoche'), 1);
 
 INSERT INTO HABILIDADES (nombre, descripcion, activa) 
-VALUES ('Cultura medicinal', 'Todas los desafíos de Medicina que realices tendrán un bonificador de +1d6 adicional. Además siempre que cures a un objetivo o a ti mismo curarás +1d8 extra.', 0);
+VALUES ('Cultura medicinal', 'Todas los desafï¿½os de Medicina que realices tendrï¿½n un bonificador de +1d6 adicional. Ademï¿½s siempre que cures a un objetivo o a ti mismo curarï¿½s +1d8 extra.', 0);
 INSERT INTO RASGOS (idHabilidad, unlockLvl)
 VALUES ((SELECT idHabilidad FROM HABILIDADES WHERE nombre = 'Cultura medicinal'), 1);
 
 INSERT INTO HABILIDADES (nombre, descripcion, activa) 
-VALUES ('Acero y roca', 'Obtienes 1d4 de impacto y combate con cualquier martillo que empuñes. Además, todos los hechizos de elemento montañoso que conjures aplicarán 1d4 de daño adicional por cada dado de impacto que emplee el hechizo.', 0);
+VALUES ('Acero y roca', 'Obtienes 1d4 de impacto y combate con cualquier martillo que empuï¿½es. Ademï¿½s, todos los hechizos de elemento montaï¿½oso que conjures aplicarï¿½n 1d4 de daï¿½o adicional por cada dado de impacto que emplee el hechizo.', 0);
 INSERT INTO RASGOS (idHabilidad, unlockLvl)
 VALUES ((SELECT idHabilidad FROM HABILIDADES WHERE nombre = 'Acero y roca'), 1);
 
 INSERT INTO HABILIDADES (nombre, descripcion, activa) 
-VALUES ('Fortaleza mental', 'Obtienes +1d4 a todos tus desafíos de Inteligencia. Siempre que vayas a recibir un penalizador a la Inteligencia podrás realizar un desafío de Intuición (15) para evitar recibirlo.', 0);
+VALUES ('Fortaleza mental', 'Obtienes +1d4 a todos tus desafï¿½os de Inteligencia. Siempre que vayas a recibir un penalizador a la Inteligencia podrï¿½s realizar un desafï¿½o de Intuiciï¿½n (15) para evitar recibirlo.', 0);
 INSERT INTO RASGOS (idHabilidad, unlockLvl)
 VALUES ((SELECT idHabilidad FROM HABILIDADES WHERE nombre = 'Fortaleza mental'), 1);
 
 INSERT INTO HABILIDADES (nombre, descripcion, activa) 
-VALUES ('Camuflaje natural', 'Una vez por descanso largo podrás volverte invisible durante 3 minutos', 1);
+VALUES ('Camuflaje natural', 'Una vez por descanso largo podrï¿½s volverte invisible durante 3 minutos', 1);
 INSERT INTO RASGOS (idHabilidad, unlockLvl)
 VALUES ((SELECT idHabilidad FROM HABILIDADES WHERE nombre = 'Camuflaje natural'), 1);
 
 INSERT INTO HABILIDADES (nombre, descripcion, activa) 
-VALUES ('Afortunado', 'Una vez por descanso largo podrás erepetir cualquier tirada de dado que realices.', 1);
+VALUES ('Afortunado', 'Una vez por descanso largo podrï¿½s erepetir cualquier tirada de dado que realices.', 1);
 INSERT INTO RASGOS (idHabilidad, unlockLvl)
 VALUES ((SELECT idHabilidad FROM HABILIDADES WHERE nombre = 'Afortunado'), 1);
 
 INSERT INTO HABILIDADES (nombre, descripcion, activa) 
-VALUES ('Vigor del norte', 'Podrás realizar un desafío de Resistencia (15) para ignorar cualquier estado físico que te provoquen. Si falla no podrás volver a intentar retirarlo con este método hasta tu siguiente descanso largo.', 0);
+VALUES ('Vigor del norte', 'Podrï¿½s realizar un desafï¿½o de Resistencia (15) para ignorar cualquier estado fï¿½sico que te provoquen. Si falla no podrï¿½s volver a intentar retirarlo con este mï¿½todo hasta tu siguiente descanso largo.', 0);
 INSERT INTO RASGOS (idHabilidad, unlockLvl)
 VALUES ((SELECT idHabilidad FROM HABILIDADES WHERE nombre = 'Vigor del norte'), 1);
 
 INSERT INTO HABILIDADES (nombre, descripcion, activa) 
-VALUES ('Brutalidad', 'Podrás aplicar hasta 3 bonificador de 1d6 a tus desafíos de Fuerza o Constitución por cada descanso largo.', 1);
+VALUES ('Brutalidad', 'Podrï¿½s aplicar hasta 3 bonificador de 1d6 a tus desafï¿½os de Fuerza o Constituciï¿½n por cada descanso largo.', 1);
 INSERT INTO RASGOS (idHabilidad, unlockLvl)
 VALUES ((SELECT idHabilidad FROM HABILIDADES WHERE nombre = 'Brutalidad'), 1);
 
-/*Rasgo de bárbaro*/
+/*Rasgo de bï¿½rbaro*/
 INSERT INTO HABILIDADES (nombre, descripcion, activa) 
-VALUES ('Furia de batalla', 'Cada vez que golpees a un objetivo obtendrás 2 puntos de furia hasta un máximo de 10. Podrás entrar en estado de furia para poder consumir tus puntos de furia y lanzar tus talentos de bárbaro. Una vez termine el estado de furia se perderán todos los puntos de furia. El estado de furia terminará automáticamente si no intentas golpear a un objetivo en 3 turnos (1:30 min).', 0);
+VALUES ('Furia de batalla', 'Cada vez que golpees a un objetivo obtendrï¿½s 2 puntos de furia hasta un mï¿½ximo de 10. Podrï¿½s entrar en estado de furia para poder consumir tus puntos de furia y lanzar tus talentos de bï¿½rbaro. Una vez termine el estado de furia se perderï¿½n todos los puntos de furia. El estado de furia terminarï¿½ automï¿½ticamente si no intentas golpear a un objetivo en 3 turnos (1:30 min).', 0);
 INSERT INTO RASGOS (idHabilidad, unlockLvl)
 VALUES ((SELECT idHabilidad FROM HABILIDADES WHERE nombre = 'Furia de batalla'), 1);
 
@@ -67,13 +67,13 @@ VALUES (006, 5, 5, 1, 7, 5, 7, 0, 5, 8);
 /*Arquetipo Druk*/
 INSERT INTO ARQUETIPOS (idArquetipo, fuerza, constitucion, destreza, inteligencia, sabiduria, carisma, iniciativa, aura, movimiento)
 VALUES (007, 8, 8, 5, 3, 3, 3, 0, 5, 10);
-/*Arquetipo Bárbaro*/
+/*Arquetipo Bï¿½rbaro*/
 INSERT INTO ARQUETIPOS (idArquetipo, fuerza, constitucion, destreza, inteligencia, sabiduria, carisma, iniciativa, aura, movimiento)
 VALUES (101, 4, 4, 0, 0, 0, 0, 0, 10, 0);
 /*Arquetipo Bardo*/
 INSERT INTO ARQUETIPOS (idArquetipo, fuerza, constitucion, destreza, inteligencia, sabiduria, carisma, iniciativa, aura, movimiento)
 VALUES (102, 0, 0, 0, 4, 0, 4, 0, 12, 0);
-/*Arquetipo Clérigo*/
+/*Arquetipo Clï¿½rigo*/
 INSERT INTO ARQUETIPOS (idArquetipo, fuerza, constitucion, destreza, inteligencia, sabiduria, carisma, iniciativa, aura, movimiento)
 VALUES (103, 0, 0, 0, 4, 0, 4, 0, 15, 0);
 /*Arquetipo Explorador*/
@@ -85,10 +85,10 @@ VALUES (105, 4, 0, 4, 0, 0, 0, 0, 10, 0);
 /*Arquetipo Mago*/
 INSERT INTO ARQUETIPOS (idArquetipo, fuerza, constitucion, destreza, inteligencia, sabiduria, carisma, iniciativa, aura, movimiento)
 VALUES (106, 0, 0, 0, 0, 4, 4, 0, 15, 0);
-/*Arquetipo Paladín*/
+/*Arquetipo Paladï¿½n*/
 INSERT INTO ARQUETIPOS (idArquetipo, fuerza, constitucion, destreza, inteligencia, sabiduria, carisma, iniciativa, aura, movimiento)
 VALUES (107, 0, 4, 0, 0, 0, 4, 0, 10, 0);
-/*Arquetipo Pícaro*/
+/*Arquetipo Pï¿½caro*/
 INSERT INTO ARQUETIPOS (idArquetipo, fuerza, constitucion, destreza, inteligencia, sabiduria, carisma, iniciativa, aura, movimiento)
 VALUES (108, 0, 0, 4, 4, 0, 0, 4, 10, 2);
 
@@ -112,11 +112,11 @@ VALUES ('Druk', 007, (SELECT idHabilidad FROM HABILIDADES WHERE nombre = 'Brutal
 
 /*Clases*/
 INSERT INTO CLASES (idClase, nombre, dado, idArquetipo, armas, armaduras) 
-VALUES (01, 'Bárbaro', '1d8', 101, HEXTORAW('70'), HEXTORAW('4'));
+VALUES (01, 'Bï¿½rbaro', '1d8', 101, HEXTORAW('70'), HEXTORAW('4'));
 INSERT INTO CLASES (idClase, nombre, dado, idArquetipo, armas, armaduras) 
 VALUES (02, 'Bardo', '1d4', 102, HEXTORAW('40'), HEXTORAW('0'));
 INSERT INTO CLASES (idClase, nombre, dado, idArquetipo, armas, armaduras) 
-VALUES (03, 'Clérigo', '1d6', 103, HEXTORAW('64'), HEXTORAW('6'));
+VALUES (03, 'Clï¿½rigo', '1d6', 103, HEXTORAW('64'), HEXTORAW('6'));
 INSERT INTO CLASES (idClase, nombre, dado, idArquetipo, armas, armaduras) 
 VALUES (04, 'Explorador', '1d6', 104, HEXTORAW('88'), HEXTORAW('4'));
 INSERT INTO CLASES (idClase, nombre, dado, idArquetipo, armas, armaduras) 
@@ -124,15 +124,15 @@ VALUES (05, 'Guerrero', '1d8', 105, HEXTORAW('FC'), HEXTORAW('7'));
 INSERT INTO CLASES (idClase, nombre, dado, idArquetipo, armas, armaduras) 
 VALUES (06, 'Mago', '1d4', 106, HEXTORAW('0'), HEXTORAW('4'));
 INSERT INTO CLASES (idClase, nombre, dado, idArquetipo, armas, armaduras) 
-VALUES (07, 'Paladín', '1d8', 107, HEXTORAW('74'), HEXTORAW('7'));
+VALUES (07, 'Paladï¿½n', '1d8', 107, HEXTORAW('74'), HEXTORAW('7'));
 INSERT INTO CLASES (idClase, nombre, dado, idArquetipo, armas, armaduras) 
-VALUES (08, 'Pícaro', '1d6', 108, HEXTORAW('C8'), HEXTORAW('4'));
+VALUES (08, 'Pï¿½caro', '1d6', 108, HEXTORAW('C8'), HEXTORAW('4'));
 
 /*Subclases*/
 INSERT INTO SUBCLASES (idSubclase, idClase, nombre) VALUES (001, 01, 'Berseker');
 INSERT INTO SUBCLASES (idSubclase, idClase, nombre) VALUES (002, 01, 'Tribal');
-INSERT INTO SUBCLASES (idSubclase, idClase, nombre) VALUES (003, 01, 'Hermitaño');
-INSERT INTO SUBCLASES (idSubclase, idClase, nombre) VALUES (004, 02, 'Artista académico');
+INSERT INTO SUBCLASES (idSubclase, idClase, nombre) VALUES (003, 01, 'Hermitaï¿½o');
+INSERT INTO SUBCLASES (idSubclase, idClase, nombre) VALUES (004, 02, 'Artista acadï¿½mico');
 INSERT INTO SUBCLASES (idSubclase, idClase, nombre) VALUES (005, 02, 'Artista extravagante');
 INSERT INTO SUBCLASES (idSubclase, idClase, nombre) VALUES (006, 02, 'Artista libre');
 INSERT INTO SUBCLASES (idSubclase, idClase, nombre) VALUES (007, 03, 'Devoto');
@@ -149,11 +149,11 @@ INSERT INTO SUBCLASES (idSubclase, idClase, nombre) VALUES (017, 06, 'Artifice a
 INSERT INTO SUBCLASES (idSubclase, idClase, nombre) VALUES (018, 06, 'Trascendido');
 INSERT INTO SUBCLASES (idSubclase, idClase, nombre) VALUES (019, 06, 'Adivino');
 INSERT INTO SUBCLASES (idSubclase, idClase, nombre) VALUES (020, 07, 'Jurado de lealtad');
-INSERT INTO SUBCLASES (idSubclase, idClase, nombre) VALUES (021, 07, 'Jurado de inspiración');
+INSERT INTO SUBCLASES (idSubclase, idClase, nombre) VALUES (021, 07, 'Jurado de inspiraciï¿½n');
 INSERT INTO SUBCLASES (idSubclase, idClase, nombre) VALUES (022, 07, 'Jurado de triunfo');
 INSERT INTO SUBCLASES (idSubclase, idClase, nombre) VALUES (023, 08, 'Asesino');
-INSERT INTO SUBCLASES (idSubclase, idClase, nombre) VALUES (024, 08, 'Ladrón');
-INSERT INTO SUBCLASES (idSubclase, idClase, nombre) VALUES (025, 08, 'Bribón');
+INSERT INTO SUBCLASES (idSubclase, idClase, nombre) VALUES (024, 08, 'Ladrï¿½n');
+INSERT INTO SUBCLASES (idSubclase, idClase, nombre) VALUES (025, 08, 'Bribï¿½n');
 
 INSERT INTO RELIGIONES (nombre) VALUES ('Lapidario');
 INSERT INTO RELIGIONES (nombre) VALUES ('Husave');
@@ -161,9 +161,9 @@ INSERT INTO RELIGIONES (nombre) VALUES ('Seguidor de los Tres Grandes');
 INSERT INTO RELIGIONES (nombre) VALUES ('Triunvitario');
 INSERT INTO RELIGIONES (nombre) VALUES ('Hereje Antiguo');
 INSERT INTO RELIGIONES (nombre) VALUES ('Orador de Borus');
-INSERT INTO RELIGIONES (nombre) VALUES ('Herético Insentiente');
+INSERT INTO RELIGIONES (nombre) VALUES ('Herï¿½tico Insentiente');
 INSERT INTO RELIGIONES (nombre) VALUES ('Adorador del Retorno');
-INSERT INTO RELIGIONES (nombre) VALUES ('Testígos del Último Heroe');
+INSERT INTO RELIGIONES (nombre) VALUES ('Testï¿½gos del ï¿½ltimo Heroe');
 INSERT INTO RELIGIONES (nombre) VALUES ('Jaoblita');
 INSERT INTO RELIGIONES (nombre) VALUES ('Sendas Domerin');
 INSERT INTO RELIGIONES (nombre) VALUES ('Orador de Ascuas');
@@ -179,7 +179,7 @@ INSERT INTO O_NACIONES (nombre) VALUES ('Patria Nagi');
 INSERT INTO O_NACIONES (nombre) VALUES ('Santuario');
 INSERT INTO O_NACIONES (nombre) VALUES ('Cuna de Karkos');
 INSERT INTO O_NACIONES (nombre) VALUES ('Islas de Mend Hevak');
-INSERT INTO O_NACIONES (nombre) VALUES ('Archipiélago Coralino');
+INSERT INTO O_NACIONES (nombre) VALUES ('Archipiï¿½lago Coralino');
 INSERT INTO O_NACIONES (nombre) VALUES ('Shival Rag');
 
 INSERT INTO O_REINOS (nombreNacion, nombre) VALUES ((SELECT nombre FROM O_NACIONES WHERE idNacion = '1'), 'Illsur');
@@ -211,23 +211,23 @@ INSERT INTO O_REINOS (nombreNacion, nombre) VALUES ((SELECT nombre FROM O_NACION
 INSERT INTO O_REINOS (nombreNacion, nombre) VALUES ((SELECT nombre FROM O_NACIONES WHERE idNacion = '7'), 'Nagihara');
 INSERT INTO O_REINOS (nombreNacion, nombre) VALUES ((SELECT nombre FROM O_NACIONES WHERE idNacion = '7'), 'Zezerin');
 INSERT INTO O_REINOS (nombreNacion, nombre) VALUES ((SELECT nombre FROM O_NACIONES WHERE idNacion = '8'), 'Santuario');
-INSERT INTO O_REINOS (nombreNacion, nombre) VALUES ((SELECT nombre FROM O_NACIONES WHERE idNacion = '9'), 'Témerax');
+INSERT INTO O_REINOS (nombreNacion, nombre) VALUES ((SELECT nombre FROM O_NACIONES WHERE idNacion = '9'), 'Tï¿½merax');
 INSERT INTO O_REINOS (nombreNacion, nombre) VALUES ((SELECT nombre FROM O_NACIONES WHERE idNacion = '9'), 'Orgona');
-INSERT INTO O_REINOS (nombreNacion, nombre) VALUES ((SELECT nombre FROM O_NACIONES WHERE idNacion = '9'), 'Cénetra');
+INSERT INTO O_REINOS (nombreNacion, nombre) VALUES ((SELECT nombre FROM O_NACIONES WHERE idNacion = '9'), 'Cï¿½netra');
 INSERT INTO O_REINOS (nombreNacion, nombre) VALUES ((SELECT nombre FROM O_NACIONES WHERE idNacion = '9'), 'Gargatra');
-INSERT INTO O_REINOS (nombreNacion, nombre) VALUES ((SELECT nombre FROM O_NACIONES WHERE idNacion = '9'), 'Apátrax');
-INSERT INTO O_REINOS (nombreNacion, nombre) VALUES ((SELECT nombre FROM O_NACIONES WHERE idNacion = '9'), 'Krotórax');
+INSERT INTO O_REINOS (nombreNacion, nombre) VALUES ((SELECT nombre FROM O_NACIONES WHERE idNacion = '9'), 'Apï¿½trax');
+INSERT INTO O_REINOS (nombreNacion, nombre) VALUES ((SELECT nombre FROM O_NACIONES WHERE idNacion = '9'), 'Krotï¿½rax');
 INSERT INTO O_REINOS (nombreNacion, nombre) VALUES ((SELECT nombre FROM O_NACIONES WHERE idNacion = '9'), 'Krin');
 INSERT INTO O_REINOS (nombreNacion, nombre) VALUES ((SELECT nombre FROM O_NACIONES WHERE idNacion = '9'), 'Omn');
 INSERT INTO O_REINOS (nombreNacion, nombre) VALUES ((SELECT nombre FROM O_NACIONES WHERE idNacion = '9'), 'Umbramar');
-INSERT INTO O_REINOS (nombreNacion, nombre) VALUES ((SELECT nombre FROM O_NACIONES WHERE idNacion = '9'), 'Sufráxis');
+INSERT INTO O_REINOS (nombreNacion, nombre) VALUES ((SELECT nombre FROM O_NACIONES WHERE idNacion = '9'), 'Sufrï¿½xis');
 INSERT INTO O_REINOS (nombreNacion, nombre) VALUES ((SELECT nombre FROM O_NACIONES WHERE idNacion = '10'), 'Tierras de la Peste');
-INSERT INTO O_REINOS (nombreNacion, nombre) VALUES ((SELECT nombre FROM O_NACIONES WHERE idNacion = '11'), 'Archipiélago Coralino');
+INSERT INTO O_REINOS (nombreNacion, nombre) VALUES ((SELECT nombre FROM O_NACIONES WHERE idNacion = '11'), 'Archipiï¿½lago Coralino');
 INSERT INTO O_REINOS (nombreNacion, nombre) VALUES ((SELECT nombre FROM O_NACIONES WHERE idNacion = '12'), 'Shival Rag');
 
 INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Nordast'), 'Unionista');
 INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Nordast'), 'Independentista de Voran');
-INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Nordast'), 'Fiel a la nueva monarquía');
+INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Nordast'), 'Fiel a la nueva monarquï¿½a');
 INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Nordast'), 'Varmosano');
 INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Nordast'), 'Tyrisano');
 INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Nordast'), 'Merysano');
@@ -262,7 +262,7 @@ INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACION
 INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Dornan'), 'Duse-Derargo');
 INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Dornan'), 'Ketorog');
 INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Dornan'), 'Okug-Odeku');
-INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Dornan'), 'Moöug');
+INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Dornan'), 'Moï¿½ug');
 INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Dornan'), 'Diekrug-Ook''Ug');
 INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Imperio Sirivi'), 'Ha-mullsar');
 INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Imperio Sirivi'), 'Ha-tahal');
@@ -279,7 +279,7 @@ INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACION
 INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Imperio Sirivi'), 'El Dictamen');
 INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Imperio Sirivi'), 'Camara Husavek');
 INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Imperio Sirivi'), 'Mano de Mun-Yair');
-INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Imperio Sirivi'), 'Hijo de la República');
+INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Imperio Sirivi'), 'Hijo de la Repï¿½blica');
 INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Santuario'), 'Explorador de Fronteras');
 INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Santuario'), 'Preservador de Vidas');
 INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Santuario'), 'Buscador de Verdad');

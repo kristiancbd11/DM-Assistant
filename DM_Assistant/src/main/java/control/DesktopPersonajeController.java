@@ -30,7 +30,7 @@ public class DesktopPersonajeController {
             original.setExperiencia(Integer.parseInt(view.getExperiencia()));
             original.setNivel();
 
-            crud.updatePersonaje(original.getIdPersonaje(), original);
+            crud.updatePersonaje(original.getId(), original);
             view.actualizarNivel(original.getNivel());
 
             new Alert(Alert.AlertType.INFORMATION, "Personaje actualizado correctamente.").showAndWait();

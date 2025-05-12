@@ -2,8 +2,7 @@ package designerView;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
 import java.util.HashMap;
@@ -16,7 +15,7 @@ public class CategoriaPaleta {
     private final List<?> elementos;
     private final Map<Integer, Boolean> estadoColocados = new HashMap<>();
     private final Map<String, Object> objetosPorNombre = new HashMap<>();
-    private final VBox contenedor = new VBox(5);
+    private final GridPane contenedor = new GridPane(); // Usamos GridPane en lugar de VBox
 
     public CategoriaPaleta(String titulo, List<?> elementos) {
         this.titulo = titulo;
@@ -25,51 +24,47 @@ public class CategoriaPaleta {
     }
 
     private void inicializar() {
-    contenedor.setPadding(new Insets(5));
-    contenedor.setAlignment(Pos.TOP_CENTER);
+        // Ajustamos el padding y la alineación del contenedor
+        contenedor.setPadding(new Insets(5));
+        contenedor.setHgap(10);  // Espacio entre las columnas
+        contenedor.setVgap(10);  // Espacio entre las filas
+        contenedor.setAlignment(Pos.TOP_CENTER);
 
-    int fila = 0;
-    int columna = 0;
+        // Recorremos los elementos y los agregamos al contenedor
+        int fila = 0, columna = 0;
+        for (Object obj : elementos) {
+            String nombre = obj.toString();
+            int id = obtenerIdDesdeObjeto(obj);
+            objetosPorNombre.put(nombre, obj);
+            estadoColocados.put(id, false);
 
-    for (Object obj : elementos) {
-        String nombre = obj.toString();
-        int id = obtenerIdDesdeObjeto(obj);
-        objetosPorNombre.put(nombre, obj);
-        estadoColocados.put(id, false);
+            // Obtenemos el nodo visual de ElementoVisual
+            ElementoVisual ev = new ElementoVisual(obj, 0, 0);
 
-        ElementoVisual ev = new ElementoVisual(obj, fila, columna);
+            // Agregamos el nodo visual al contenedor en la posición adecuada
+            contenedor.add(ev.getNodoVisual(), columna, fila);
 
-        // Crear etiqueta del nombre
-        Label nombreLabel = new Label(ev.getNombre());
-        nombreLabel.setStyle("-fx-font-weight: bold;");
+            // Aumentamos la columna y fila, respetando el número de columnas por fila
+            columna++;
+            if (columna >= 4) {  // Si hay 4 elementos por fila, pasamos a la siguiente fila
+                columna = 0;
+                fila++;
+            }
 
-        // Cargar imagen
-        String imagePath = "/tablero/tokens/" + ev.getToken();
-        ImageView imageView = new ImageView(new javafx.scene.image.Image(imagePath, 64, 64, true, true));
+            // Soporte para arrastrar (seguimos usando el mismo sistema)
+            ev.getNodoVisual().setOnDragDetected(event -> {
+                var db = ev.getNodoVisual().startDragAndDrop(javafx.scene.input.TransferMode.COPY);
+                var content = new javafx.scene.input.ClipboardContent();
 
-        // Contenedor visual del elemento
-        VBox itemBox = new VBox(2, nombreLabel, imageView);
-        itemBox.setAlignment(Pos.CENTER);
-        itemBox.setStyle("-fx-border-color: gray; -fx-padding: 5px;");
-        itemBox.setUserData(Map.of("nombre", ev.getNombre(), "categoria", titulo));
+                // Guardar el nombre para búsqueda
+                content.putString(ev.getNombre());
 
-        // Soporte para arrastrar
-        itemBox.setOnDragDetected(event -> {
-            var db = itemBox.startDragAndDrop(javafx.scene.input.TransferMode.MOVE);
-            var content = new javafx.scene.input.ClipboardContent();
-            content.putString(ev.getNombre());
-            db.setContent(content);
-            db.setDragView(itemBox.snapshot(null, null));
-            event.consume();
-        });
-
-        contenedor.getChildren().add(itemBox);
-
-        // Incrementar fila/columna (puedes adaptar esta lógica si necesitas un layout en grilla)
-        fila++;
+                db.setContent(content);
+                db.setDragView(ev.getNodoVisual().snapshot(null, null));
+                event.consume();
+            });
+        }
     }
-}
-
 
     private int obtenerIdDesdeObjeto(Object obj) {
         try {
@@ -80,8 +75,39 @@ public class CategoriaPaleta {
             return -1;
         }
     }
+    
+    public void reinsertarObjeto(Object obj) {
+        String nombre = obj.toString();
+        int id = obtenerIdDesdeObjeto(obj);
 
-    public VBox getContenedor() {
+        // Solo volver a insertar si estaba marcado como colocado
+        if (estadoColocados.containsKey(id) && estadoColocados.get(id)) {
+            estadoColocados.put(id, false);  // Ya no está colocado
+
+            // Crear nuevo ElementoVisual
+            ElementoVisual ev = new ElementoVisual(obj, 0, 0);
+            VBox nodo = ev.getNodoVisual();
+
+            // Hacerlo arrastrable
+            nodo.setOnDragDetected(event -> {
+                var db = nodo.startDragAndDrop(javafx.scene.input.TransferMode.COPY);
+                var content = new javafx.scene.input.ClipboardContent();
+                content.putString(nombre);
+                db.setContent(content);
+                db.setDragView(nodo.snapshot(null, null));
+                event.consume();
+            });
+
+            // Calcular posición libre en el GridPane (por filas y columnas)
+            int total = contenedor.getChildren().size();
+            int fila = total / 4;
+            int columna = total % 4;
+
+            contenedor.add(nodo, columna, fila);
+        }
+    }
+
+    public GridPane getContenedor() {
         return contenedor;
     }
 

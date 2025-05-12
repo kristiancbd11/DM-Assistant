@@ -398,7 +398,7 @@ public class Personaje {
 		this.subclase = subclase;
 	}
 
-	public int getIdPersonaje() {
+	public int getId() {
 		return idPersonaje;
 	}
 

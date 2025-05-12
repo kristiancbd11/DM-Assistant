@@ -226,14 +226,14 @@ public class ExplorerController {
 					String parent = String.valueOf(item.getParent().getValue());
 					if("Personajes".equals(parent)) {
 						fetchTreeRoot(item).removePersonaje(pj);
-						pjCrud.deletePersonaje(pj.getIdPersonaje());
+						pjCrud.deletePersonaje(pj.getId());
 					} else if("Npc".equals(parent)) {
 						fetchTreeRoot(item).removeNpc(pj);
-						pjCrud.deletePersonaje(pj.getIdPersonaje());
+						pjCrud.deletePersonaje(pj.getId());
 					}
 				} else if (valor instanceof Criatura criatura) {
 					fetchTreeRoot(item).removeCriatura(criatura);
-					criaturaCrud.deleteCriatura(criatura.getIdCriatura());
+					criaturaCrud.deleteCriatura(criatura.getId());
 				} else if (valor instanceof Ubicacion ubicacion) {
 					ubicacion.getReino().removeUbicacion(ubicacion);
 					ubicacionCrud.deleteUbicacion(ubicacion);

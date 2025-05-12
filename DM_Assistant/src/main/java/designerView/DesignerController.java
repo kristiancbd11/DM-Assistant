@@ -17,26 +17,28 @@ public class DesignerController {
     }
 
     public void iniciar() {
-        Platform.runLater(() -> {
-            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-            int casillaTam = 40;
-            int filas = 15, columnas = 25;
-            double gridWidth = columnas * casillaTam;
-            double gridHeight = filas * casillaTam;
-            double paletteWidth = 200;
-            double margen = 10;
+    	Platform.runLater(() -> {
+    	    Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+    	    
+    	    double gridWidth = 1024;
+    	    double gridHeight = 768;
+    	    double paletteWidth = 200;
+    	    double margen = 10;
 
-            double gridX = (screenBounds.getWidth() - (gridWidth + margen + paletteWidth)) / 2;
-            double gridY = (screenBounds.getHeight() - gridHeight) / 2;
+    	    double gridX = (screenBounds.getWidth() - (gridWidth + margen + paletteWidth)) / 2;
+    	    double gridY = (screenBounds.getHeight() - gridHeight) / 2;
 
-            tableroView = new TableroView(filas, columnas, casillaTam);
-            paletaView = new PaletaView(mundo, tableroView);
+    	    tableroView = new TableroView(gridWidth, gridHeight, 0); // '0' o elimina el parámetro si ya no se usa
+    	    paletaView = new PaletaView(mundo, tableroView);
+    	    tableroView.setPaletaView(paletaView);
 
-            Stage stageTablero = tableroView.crearVentana(gridX, gridY);
-            Stage stagePaleta = paletaView.crearVentana(gridX + gridWidth + margen, gridY);
+    	    Stage stageTablero = tableroView.crearVentana(gridX, gridY);
+    	    Stage stagePaleta = paletaView.crearVentana(gridX + gridWidth + margen, gridY);
 
-            stageTablero.setOnCloseRequest(e -> stagePaleta.close());
-            stagePaleta.setOnCloseRequest(e -> stageTablero.close());
-        });
+    	    stageTablero.setOnCloseRequest(e -> stagePaleta.close());
+    	    stagePaleta.setOnCloseRequest(e -> stageTablero.close());
+    	});
+
     }
+
 }
