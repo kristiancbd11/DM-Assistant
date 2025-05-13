@@ -19,12 +19,6 @@ import jakarta.persistence.Transient;
 @Table (name = "HECHIZOS")
 public class Hechizo extends Habilidad {
 	
-//	@Id
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hechizos_gen")
-//    @SequenceGenerator(name = "hechizos_gen", sequenceName = "hechizos_seq", allocationSize = 1)
-//	@Column (name = "idHechizo")
-//	private int idHechizo;
-//	
 	@Id
 	@OneToOne
 	@JoinColumn (name = "idHabilidad", nullable = false)

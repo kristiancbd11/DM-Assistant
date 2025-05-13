@@ -16,8 +16,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import views.CreationViewType;
 import views.CreationWindow;
+import views.DesktopViewType;
 import views.ExplorerView;
+import views.InfoViewType;
 
 public class ExplorerController {
 	private final ExplorerView view;
@@ -56,7 +59,7 @@ public class ExplorerController {
 	            crearCustomMenuItem("Nuevo personaje", () -> crearPersonaje(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
 	            crearCustomMenuItem("Nuevo npc", () -> crearNpc(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
 	            crearCustomMenuItem("Nueva criatura", () -> crearCriatura(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
-	            crearCustomMenuItem("Nueva ubicación", () -> crearUbicacion(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
+	            crearCustomMenuItem("Nueva ubicación", () -> crearZona(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
 	            crearCustomMenuItem("Nueva escena", () -> crearEscena(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
 	            crearCustomMenuItem("Editar", () -> renombrarMundo(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
 	            crearCustomMenuItem("Eliminar", () -> eliminarElementoSeleccionado(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu)
@@ -266,17 +269,13 @@ public class ExplorerController {
 		new CreationWindow(CreationViewType.CRIATURA, this, mundo);
 	}
 
-	private void crearUbicacion(TreeItem<Object> item) {
+	private void crearZona(TreeItem<Object> item) {
 		if (item == null) return;
 		Mundo mundo = fetchTreeRoot(item);
 		new CreationWindow(CreationViewType.UBICACION, this, mundo, item);
 	}
 
 	private void crearEscena(TreeItem<Object> item) {
-		if (item == null) return;
-		Mundo mundo = fetchTreeRoot(item);
-		DesignerController dc = new DesignerController(mundo);
-		dc.iniciar();
 	}
 
 	private Mundo fetchTreeRoot(TreeItem<Object> item) {

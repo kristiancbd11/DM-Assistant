@@ -15,8 +15,6 @@ DROP SEQUENCE oreinos_seq;
 DROP TRIGGER oreinos_trigger;
 DROP SEQUENCE ubicaciones_seq;
 DROP TRIGGER ubicaciones_trigger;
-DROP SEQUENCE escenas_seq;
-DROP TRIGGER escenas_trigger;
 DROP TRIGGER religiones_trigger;
 DROP SEQUENCE religiones_seq;
 DROP TRIGGER razas_trigger;
@@ -49,6 +47,7 @@ DROP TABLE UBICACION_CRIATURA;
 DROP TABLE ESCENA_PERSONAJE;
 DROP TABLE ESCENA_NPC;
 DROP TABLE ESCENA_CRIATURA; 
+DROP TABLE TIENDA_OBJETOS;
 
 DROP TABLE CRIATURAS;
 DROP TABLE VENTAJAS;
@@ -62,6 +61,7 @@ DROP TABLE OBJETOS;
 DROP TABLE SUBCLASES;
 DROP TABLE CLASES;
 DROP TABLE IDEOLOGIAS;
+DROP TABLE TIENDAS;
 DROP TABLE ESCENAS;
 DROP TABLE UBICACIONES;
 DROP TABLE REINOS;
@@ -155,12 +155,16 @@ CREATE TABLE UBICACIONES (
     CONSTRAINT ubicacion_reino_fk FOREIGN KEY (idReino) REFERENCES REINOS(idReino) ON DELETE CASCADE
 );
 
+CREATE TABLE TIENDAS (
+    idUbicacion NUMBER CONSTRAINT pk_tienda PRIMARY KEY,
+    fondos NUMBER,
+    CONSTRAINT tienda_ubicacion FOREIGN KEY (idUbicacion) REFERENCES UBICACIONES(idUbicacion) ON DELETE CASCADE
+);
+
 CREATE TABLE ESCENAS (
-    idEscena NUMBER CONSTRAINT pk_escena PRIMARY KEY,
-    idUbicacion NUMBER CONSTRAINT nn_ubicacion_esc NOT NULL,
-    nombre VARCHAR2(30) CONSTRAINT nn_nombre_esc NOT NULL,
-    estructuraJson CLOB,
-    CONSTRAINT escena_ubicacion_fk FOREIGN KEY (idEscena) REFERENCES UBICACIONES (idUbicacion)
+    idUbicacion NUMBER CONSTRAINT pk_escena PRIMARY KEY,
+    tableroJson CLOB,
+    CONSTRAINT escena_ubicacion_fk FOREIGN KEY (idUbicacion) REFERENCES UBICACIONES (idUbicacion)
 );
 
 CREATE TABLE IDEOLOGIAS (
@@ -201,14 +205,14 @@ CREATE TABLE OBJETOS (
 );
 
 CREATE TABLE ARMAS (
-    idObjeto NUMBER CONSTRAINT un_idobjeto_arm UNIQUE,
+    idObjeto NUMBER CONSTRAINT pk_idobjeto_arm PRIMARY KEY,
     dado VARCHAR2(5) CONSTRAINT nn_dado_arma NOT NULL,
     tipoDanio VARCHAR(20) CONSTRAINT nn_tipod_arma NOT NULL,
     CONSTRAINT objetos_armas_fk FOREIGN KEY (idObjeto) REFERENCES OBJETOS(idObjeto)
 );
 
 CREATE TABLE ARMADURAS (
-    idObjeto NUMBER CONSTRAINT un_idobjeto_armd UNIQUE,
+    idObjeto NUMBER CONSTRAINT pk_idobjeto_armd PRIMARY KEY,
     tipo VARCHAR2(20) CONSTRAINT nn_tipo_armd NOT NULL,
     resistencia RAW(2),
     CONSTRAINT objetos_armaduras_fk FOREIGN KEY (idObjeto) REFERENCES OBJETOS(idObjeto)
@@ -309,6 +313,15 @@ CREATE TABLE RASGOS_SUBCLASES (
     idRasgo NUMBER,
     CONSTRAINT rasgos_subclases_fk FOREIGN KEY (idRasgo) REFERENCES RASGOS (idHabilidad),
     CONSTRAINT subclase_rasgo_fk FOREIGN KEY (idSubclase) REFERENCES SUBCLASES (idSubclase)
+);
+
+CREATE TABLE TIENDA_OBJETOS (
+    idTienda NUMBER,
+    idObjeto NUMBER,
+    cantidad NUMBER,
+    CONSTRAINT tienda_objeto_pk PRIMARY KEY (idTienda, idObjeto),
+    CONSTRAINT tienda_objeto_fk FOREIGN KEY (idTienda) REFERENCES TIENDAS (idUbicacion),
+    CONSTRAINT objeto_tienda_fk FOREIGN KEY (idObjeto) REFERENCES OBJETOS (idObjeto)
 );
 
 CREATE TABLE RASGOS_CLASES (
@@ -419,21 +432,21 @@ CREATE TABLE UBICACION_CRIATURA (
 CREATE TABLE ESCENA_PERSONAJE (
     idEscena NUMBER,
     idPersonaje NUMBER,
-    CONSTRAINT escena_personaje_fk FOREIGN KEY (idEscena) REFERENCES ESCENAS (idEscena),
+    CONSTRAINT escena_personaje_fk FOREIGN KEY (idEscena) REFERENCES ESCENAS (idUbicacion),
     CONSTRAINT personaje_escena_fk FOREIGN KEY (idPersonaje) REFERENCES PERSONAJES (idPersonaje)
 );
 
 CREATE TABLE ESCENA_NPC (
     idEscena NUMBER,
     idNpc NUMBER,
-    CONSTRAINT escena_npc_fk FOREIGN KEY (idEscena) REFERENCES ESCENAS (idEscena),
+    CONSTRAINT escena_npc_fk FOREIGN KEY (idEscena) REFERENCES ESCENAS (idUbicacion),
     CONSTRAINT npc_escena_fk FOREIGN KEY (idNpc) REFERENCES PERSONAJES (idPersonaje)
 );
 
 CREATE TABLE ESCENA_CRIATURA (
     idEscena NUMBER,
     idCriatura NUMBER,
-    CONSTRAINT escena_criatura_fk FOREIGN KEY (idEscena) REFERENCES ESCENAS (idEscena),
+    CONSTRAINT escena_criatura_fk FOREIGN KEY (idEscena) REFERENCES ESCENAS (idUbicacion),
     CONSTRAINT criatura_escena_fk FOREIGN KEY (idCriatura) REFERENCES CRIATURAS (idCriatura)
 );
 
@@ -566,18 +579,6 @@ FOR EACH ROW
 BEGIN
     IF :NEW.idUbicacion IS NULL THEN
         SELECT ubicaciones_seq.NEXTVAL INTO :NEW.idUbicacion FROM DUAL;
-    END IF;
-END;
-/
-
-CREATE SEQUENCE escenas_seq START WITH 1 INCREMENT BY 1;
-
-CREATE OR REPLACE TRIGGER escenas_trigger
-BEFORE INSERT ON ESCENAS
-FOR EACH ROW
-BEGIN
-    IF :NEW.idEscena IS NULL THEN
-        SELECT escenas_seq.NEXTVAL INTO :NEW.idEscena FROM DUAL;
     END IF;
 END;
 /

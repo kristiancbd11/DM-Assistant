@@ -3,6 +3,7 @@ package control;
 import clases_partida.Criatura;
 import clases_partida.Mundo;
 import clases_partida.Nacion;
+import clases_partida.Ubicacion;
 import clases_personaje.Personaje;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.StackPane;
@@ -44,7 +45,11 @@ public class DesktopController {
             	yield mundoController.getVista();
             }
             case REINO -> new ReinoView().crearView();
-            case UBICACION -> new UbicacionView().crearView();
+            case UBICACION -> {
+            	nacionController.setNacion(null);
+            	DesktopUbicacionView ubicacionView = new DesktopUbicacionView((Ubicacion) item.getValue());
+            	yield ubicacionView.getVista();
+            }
             case ESCENA -> new EscenaView().crearView();
             default -> null;
         };

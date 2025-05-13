@@ -12,10 +12,6 @@ import jakarta.persistence.Table;
 @Table (name = "DONES")
 public class Don extends Habilidad {
 
-//	@Id
-//	@Column (name = "idDon")
-//	private int idDon;
-//
 	@Id
 	@OneToOne
 	@JoinColumn (name = "idHabilidad", nullable = false)

@@ -4,21 +4,21 @@
 	<section name="java.lang.Class">
 		<item key="replaceBarOpen" value="false"/>
 		<list key="findhistory">
-			<item value="malla"/>
-			<item value="crear"/>
-			<item value="manejarDr"/>
-			<item value="crearVentana"/>
-			<item value="getId"/>
-			<item value="getIdPero"/>
+			<item value="ev.getNodoVisual()"/>
+			<item value="json"/>
+			<item value="refres"/>
+			<item value="ADDuBICAICON"/>
+			<item value="fasterxml"/>
+			<item value="fetchElementosAux"/>
+			<item value="Ubicacion"/>
+			<item value="agregar"/>
 			<item value="manejarDragDropped"/>
-			<item value="manejardragdr"/>
-			<item value="a"/>
-			<item value="crearNodoVisual"/>
+			<item value="obtenerIdDesdeObjeto"/>
+			<item value="elementos"/>
+			<item value="estadoColocados"/>
 			<item value="getObjetosPorNombre"/>
-			<item value="getObject"/>
-			<item value="var db = itemBox.startDragAndDrop(javafx.scene.input.TransferMode.MOVE);"/>
-			<item value="itemBox.setOn"/>
-			<item value="panelVisual."/>
+			<item value="fetch"/>
+			<item value="crearCate"/>
 		</list>
 	</section>
 </section>

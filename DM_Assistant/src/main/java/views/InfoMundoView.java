@@ -1,5 +1,6 @@
 package views;
 
+import clases_partida.Escena;
 import clases_partida.Mundo;
 import clases_partida.Nacion;
 import clases_partida.Reino;
@@ -26,12 +27,17 @@ public class InfoMundoView {
 		int nCriaturas = mundo.getCriaturas().size();	
 		int nUbicaciones = 0;
 		int nEscenas = 0;
+		int nTiendas = 0;
 
 		for (Nacion nacion : mundo.getNaciones()) {
 			for (Reino reino : nacion.getReinos()) {
 				nUbicaciones += reino.getUbicaciones().size();
 				for (Ubicacion ubicacion : reino.getUbicaciones()) {
-					nEscenas += ubicacion.getEscenas().size();
+					if(ubicacion instanceof Escena escena) {
+						nEscenas++;
+					} else {
+						nTiendas++;
+					}
 				}
 			}
 		}
@@ -43,9 +49,10 @@ public class InfoMundoView {
 		Label lblCriaturas = new Label("Número de criaturas: " + nCriaturas);
 		Label lblUbicaciones = new Label("Número de ubicaciones: " + nUbicaciones);
 		Label lblEscenas = new Label("Número de escenas: " + nEscenas);
+		Label lblTiendas = new Label("Número de tiendas: " + nTiendas);
 
 		// Agregar etiquetas al VBox
-		pane.getChildren().addAll(lblNombre, lblCriaturas, lblUbicaciones, lblEscenas);
+		pane.getChildren().addAll(lblNombre, lblCriaturas, lblUbicaciones, lblEscenas, lblTiendas);
 
 		return pane;
 	}

@@ -12,6 +12,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -21,6 +23,7 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "UBICACIONES")
 public class Ubicacion {
 
@@ -40,9 +43,6 @@ public class Ubicacion {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "tipo")
 	private UbicacionType tipo;
-
-	@OneToMany(mappedBy = "ubicacion", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-	private List<Escena> escenas;
 
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
 	@JoinTable(name = "UBICACION_PERSONAJE", joinColumns = @JoinColumn(name = "idUbicacion"), inverseJoinColumns = @JoinColumn(name = "idPersonaje"))
@@ -96,14 +96,6 @@ public class Ubicacion {
 
 	public void setTipo(UbicacionType tipo) {
 		this.tipo = tipo;
-	}
-
-	public List<Escena> getEscenas() {
-		return escenas;
-	}
-
-	public void setEscenas(List<Escena> escenas) {
-		this.escenas = escenas;
 	}
 
 	public List<Personaje> getPersonajes() {

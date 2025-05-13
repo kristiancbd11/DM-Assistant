@@ -34,4 +34,46 @@ public class Objeto {
 	//Constructores:
 	
 	public Objeto(){}
+
+	public int getIdObjeto() {
+		return idObjeto;
+	}
+
+	public void setIdObjeto(int idObjeto) {
+		this.idObjeto = idObjeto;
+	}
+
+	public String getRareza() {
+		return rareza;
+	}
+
+	public void setRareza(String rareza) {
+		this.rareza = rareza;
+	}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public int getValor() {
+		return valor;
+	}
+
+	public void setValor(int valor) {
+		this.valor = valor;
+	}
+
+	public int getPeso() {
+		return peso;
+	}
+
+	public void setPeso(int peso) {
+		this.peso = peso;
+	}
+	
+	
 }

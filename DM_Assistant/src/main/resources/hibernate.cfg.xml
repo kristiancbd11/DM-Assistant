@@ -48,6 +48,8 @@
 		<mapping class="clases_partida.O_Nacion" />
 		<mapping class="clases_partida.O_Reino" />
 		<mapping class="clases_partida.Reino" />
+		<mapping class="clases_partida.Tienda" />
+		<mapping class="clases_partida.TiendaObjeto" />
 		<mapping class="clases_partida.Ubicacion" />	
 
 		<mapping class="clases_personaje.Arquetipo" />

@@ -293,5 +293,27 @@ INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACION
 INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Thurimgard'), 'Grumble');
 INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Thurimgard'), 'Pacto de la Forja');
 
+INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Común', 'Poción', 10, 1);
+INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Raro', 'Espada Larga', 150, 5);
+INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Épico', 'Armadura Dragón', 500, 20);
+INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Común', 'Antorcha', 5, 2);
+INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Raro', 'Amuleto Místico', 200, 1);
+INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Épico', 'Cetro del Vacío', 750, 3);
+INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Común', 'Botas de Cuero', 25, 1);
+INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Raro', 'Libro de Hechizos', 120, 4);
+INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Épico', 'Anillo de Poder', 1000, 0.5);
+INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Común', 'Cuerda', 15, 2);
+
+INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (32, 1, 2);
+INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (32, 2, 2);
+INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (32, 3, 3);
+INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (32, 3, 4);
+INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (32, 3, 5);
+INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (32, 3, 6);
+INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (32, 3, 7);
+INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (32, 3, 8);
+INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (32, 3, 9);
+INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (32, 3, 10);
+
 COMMIT;
 

@@ -4,7 +4,6 @@ import clases_partida.Mundo;
 import control.CreationCriaturaController;
 import control.CreationPersonajeController;
 import control.CreationUbicacionController;
-import control.CreationViewType;
 import control.ExplorerController;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;

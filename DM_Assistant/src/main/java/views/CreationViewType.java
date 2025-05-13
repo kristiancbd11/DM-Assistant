@@ -1,4 +1,4 @@
-package control;
+package views;
 
 public enum CreationViewType {
     PERSONAJE,

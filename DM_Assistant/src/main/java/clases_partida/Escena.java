@@ -3,6 +3,7 @@ package clases_partida;
 import java.util.List;
 
 import clases_personaje.Personaje;
+import designerView.Tablero;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,25 +15,18 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
 @Table (name = "ESCENAS")
-public class Escena {
-
+public class Escena extends Ubicacion {
+	
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "escena_gen")
-	@SequenceGenerator(name = "escena_gen", sequenceName = "escena_sec", allocationSize = 1)
-	@Column(name = "idEscena")
-	private int idEscena;
-
-	@ManyToOne
-	@JoinColumn(name = "idUbicacion", nullable = false)
+	@OneToOne
+	@JoinColumn (name = "idUbicacion", nullable = false)
 	private Ubicacion ubicacion;
-
-	@Column(name = "nombre")
-	private String nombre;
 
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
 	@JoinTable(name = "ESCENA_PERSONAJE", joinColumns = @JoinColumn(name = "idEscena"), inverseJoinColumns = @JoinColumn(name = "idPersonaje"))
@@ -45,19 +39,14 @@ public class Escena {
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
 	@JoinTable(name = "ESCENA_CRIATURA", joinColumns = @JoinColumn(name = "idEscena"), inverseJoinColumns = @JoinColumn(name = "idCriatura"))
 	private List<Criatura> criaturas;
-
-	@Column (name = "estruturaJson")
-	private String estructuraJson;
 	
+	private String tableroJson;
+	
+	public Escena(Reino reino, String nombre, UbicacionType tipo) {
+		super(reino, nombre, tipo);
+	}
+
 	public Escena() {
-	}
-
-	public int getIdEscena() {
-		return idEscena;
-	}
-
-	public void setIdEscena(int idEscena) {
-		this.idEscena = idEscena;
 	}
 
 	public Ubicacion getUbicacion() {
@@ -68,17 +57,17 @@ public class Escena {
 		this.ubicacion = ubicacion;
 	}
 
-	public String getNombre() {
-		return nombre;
+	public String getTableroJson() {
+		return tableroJson;
 	}
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
+	public void setTableroJson(String tableroJson) {
+		this.tableroJson = tableroJson;
 	}
 
 	@Override
 	public String toString() {
-		return nombre;
+		return getNombre();
 	};
 
 }

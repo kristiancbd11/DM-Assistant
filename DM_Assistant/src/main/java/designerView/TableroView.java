@@ -2,7 +2,6 @@ package designerView;
 
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
@@ -78,10 +77,10 @@ public class TableroView {
 			} else {
 				ev = new ElementoVisual(obj, 0, 0); // para personajes, NPCs, criaturas
 			}
-
+			
 			elementosColocados.add(ev);
 
-			VBox nodoVisual = ev.getNodoVisual();
+			VBox nodoVisual = ElementoVisualBuilder.construirNodoVisual(ev);
 			nodoVisual.setLayoutX(x);
 			nodoVisual.setLayoutY(y);
 
@@ -107,55 +106,57 @@ public class TableroView {
 	}
 
 	private void agregarEventoArrastre(VBox nodoVisual, ElementoVisual ev) {
-		nodoVisual.setOnMousePressed((MouseEvent event) -> {
-			ev.setPosInicialX(event.getSceneX());
-			ev.setPosInicialY(event.getSceneY());
-		});
+    nodoVisual.setOnMousePressed((MouseEvent event) -> {
+        ev.setPosInicialX(event.getSceneX());
+        ev.setPosInicialY(event.getSceneY());
+        ev.setDragging(true); // Establecer que se está arrastrando
+    });
 
-		nodoVisual.setOnMouseDragged((MouseEvent event) -> {
-			double deltaX = event.getSceneX() - ev.getPosInicialX();
-			double deltaY = event.getSceneY() - ev.getPosInicialY();
+    nodoVisual.setOnMouseDragged((MouseEvent event) -> {
+        double deltaX = event.getSceneX() - ev.getPosInicialX();
+        double deltaY = event.getSceneY() - ev.getPosInicialY();
 
-			double nuevaX = nodoVisual.getLayoutX() + deltaX;
-			double nuevaY = nodoVisual.getLayoutY() + deltaY;
+        double nuevaX = nodoVisual.getLayoutX() + deltaX;
+        double nuevaY = nodoVisual.getLayoutY() + deltaY;
 
-			// Limitar dentro del tablero
-			double maxX = width - nodoVisual.getWidth();
-			double maxY = height - nodoVisual.getHeight();
+        // Limitar dentro del tablero
+        double maxX = width - nodoVisual.getWidth();
+        double maxY = height - nodoVisual.getHeight();
 
-			// Clamp (restringe) la posición dentro de los límites
-			nuevaX = Math.max(0, Math.min(nuevaX, maxX));
-			nuevaY = Math.max(0, Math.min(nuevaY, maxY));
+        // Clamp (restringe) la posición dentro de los límites
+        nuevaX = Math.max(0, Math.min(nuevaX, maxX));
+        nuevaY = Math.max(0, Math.min(nuevaY, maxY));
 
-			nodoVisual.setLayoutX(nuevaX);
-			nodoVisual.setLayoutY(nuevaY);
+        nodoVisual.setLayoutX(nuevaX);
+        nodoVisual.setLayoutY(nuevaY);
 
-			ev.setPosInicialX(event.getSceneX());
-			ev.setPosInicialY(event.getSceneY());
-		});
+        ev.setPosInicialX(event.getSceneX());
+        ev.setPosInicialY(event.getSceneY());
+    });
 
-		nodoVisual.setOnMouseReleased(event -> {
-			// Nada adicional, ya se mantiene donde se suelta dentro del área válida
-		});
+    nodoVisual.setOnMouseReleased(event -> {
+        ev.setDragging(false); // Establecer que ya no se está arrastrando
+    });
 
-		ContextMenu contextMenu = new ContextMenu();
-		MenuItem eliminarItem = new MenuItem("Eliminar");
-		contextMenu.getItems().add(eliminarItem);
+    ContextMenu contextMenu = new ContextMenu();
+    MenuItem eliminarItem = new MenuItem("Eliminar");
+    contextMenu.getItems().add(eliminarItem);
 
-		nodoVisual.setOnContextMenuRequested(e -> {
-			contextMenu.show(nodoVisual, e.getScreenX(), e.getScreenY());
-		});
+    nodoVisual.setOnContextMenuRequested(e -> {
+        contextMenu.show(nodoVisual, e.getScreenX(), e.getScreenY());
+    });
 
-		eliminarItem.setOnAction(e -> {
-			panelVisual.getChildren().remove(nodoVisual);
-			elementosColocados.remove(ev);
+    eliminarItem.setOnAction(e -> {
+        panelVisual.getChildren().remove(nodoVisual);
+        elementosColocados.remove(ev);
 
-			// Volver a mostrarlo en la paleta si corresponde
-			if (ev.getObj() instanceof clases_personaje.Personaje) {
-				paletaView.reinsertarElemento(ev.getObj());
-			}
-		});
-	}
+        // Volver a mostrarlo en la paleta si corresponde
+        if (ev.getObj() instanceof clases_personaje.Personaje) {
+            paletaView.reinsertarElemento(ev.getObj());
+        }
+    });
+}
+
 
 	private int obtenerIdDesdeObjeto(Object obj) {
 		try {
@@ -175,6 +176,14 @@ public class TableroView {
 
 	public void setPaletaView(PaletaView paletaView) {
 		this.paletaView = paletaView;
+	}
+	
+	public Pane getPanelVisual() {
+		return panelVisual;
+	}
+
+	public void setPanelVisual(Pane panelVisual) {
+		this.panelVisual = panelVisual;
 	}
 
 	public List<ElementoVisual> getElementosColocados() {

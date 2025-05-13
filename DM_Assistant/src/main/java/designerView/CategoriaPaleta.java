@@ -40,9 +40,10 @@ public class CategoriaPaleta {
 
             // Obtenemos el nodo visual de ElementoVisual
             ElementoVisual ev = new ElementoVisual(obj, 0, 0);
+            VBox nodo = ElementoVisualBuilder.construirNodoVisual(ev);
 
             // Agregamos el nodo visual al contenedor en la posición adecuada
-            contenedor.add(ev.getNodoVisual(), columna, fila);
+            contenedor.add(nodo, columna, fila);
 
             // Aumentamos la columna y fila, respetando el número de columnas por fila
             columna++;
@@ -52,15 +53,15 @@ public class CategoriaPaleta {
             }
 
             // Soporte para arrastrar (seguimos usando el mismo sistema)
-            ev.getNodoVisual().setOnDragDetected(event -> {
-                var db = ev.getNodoVisual().startDragAndDrop(javafx.scene.input.TransferMode.COPY);
+            nodo.setOnDragDetected(event -> {
+                var db = nodo.startDragAndDrop(javafx.scene.input.TransferMode.COPY);
                 var content = new javafx.scene.input.ClipboardContent();
 
                 // Guardar el nombre para búsqueda
                 content.putString(ev.getNombre());
 
                 db.setContent(content);
-                db.setDragView(ev.getNodoVisual().snapshot(null, null));
+                db.setDragView(nodo.snapshot(null, null));
                 event.consume();
             });
         }
@@ -86,7 +87,7 @@ public class CategoriaPaleta {
 
             // Crear nuevo ElementoVisual
             ElementoVisual ev = new ElementoVisual(obj, 0, 0);
-            VBox nodo = ev.getNodoVisual();
+            VBox nodo = ElementoVisualBuilder.construirNodoVisual(ev);
 
             // Hacerlo arrastrable
             nodo.setOnDragDetected(event -> {
