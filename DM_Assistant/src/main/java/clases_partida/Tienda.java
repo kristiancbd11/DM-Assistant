@@ -40,12 +40,20 @@ public class Tienda extends Ubicacion {
 	    return objetosConCantidad;
 	}
 
+	public Tienda() {}
+	
 	public void setObjetosConCantidad(List<TiendaObjeto> objetosConCantidad) {
 	    this.objetosConCantidad = objetosConCantidad;
 	}
-
-	public Tienda() {}
 	
+	public void removeTiendaObjeto(TiendaObjeto tiendaObjeto) {
+		this.objetosConCantidad.remove(tiendaObjeto);
+	}
+	
+	public void addTiendaObjeto(TiendaObjeto tiendaObjeto) {
+		this.objetosConCantidad.add(tiendaObjeto);
+	}
+
 	public Ubicacion getZona() {
 		return ubicacion;
 	}

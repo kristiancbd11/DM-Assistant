@@ -293,27 +293,27 @@ INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACION
 INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Thurimgard'), 'Grumble');
 INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Thurimgard'), 'Pacto de la Forja');
 
-INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Común', 'Poción', 10, 1);
+INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Comï¿½n', 'Pociï¿½n', 10, 1);
 INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Raro', 'Espada Larga', 150, 5);
-INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Épico', 'Armadura Dragón', 500, 20);
-INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Común', 'Antorcha', 5, 2);
-INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Raro', 'Amuleto Místico', 200, 1);
-INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Épico', 'Cetro del Vacío', 750, 3);
-INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Común', 'Botas de Cuero', 25, 1);
+INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('ï¿½pico', 'Armadura Dragï¿½n', 500, 20);
+INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Comï¿½n', 'Antorcha', 5, 2);
+INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Raro', 'Amuleto Mï¿½stico', 200, 1);
+INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('ï¿½pico', 'Cetro del Vacï¿½o', 750, 3);
+INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Comï¿½n', 'Botas de Cuero', 25, 1);
 INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Raro', 'Libro de Hechizos', 120, 4);
-INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Épico', 'Anillo de Poder', 1000, 0.5);
-INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Común', 'Cuerda', 15, 2);
+INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('ï¿½pico', 'Anillo de Poder', 1000, 0.5);
+INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Comï¿½n', 'Cuerda', 15, 2);
 
-INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (32, 1, 2);
-INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (32, 2, 2);
-INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (32, 3, 3);
-INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (32, 3, 4);
-INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (32, 3, 5);
-INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (32, 3, 6);
-INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (32, 3, 7);
-INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (32, 3, 8);
-INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (32, 3, 9);
-INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (32, 3, 10);
+INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (1, 1, 2);
+INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (1, 2, 2);
+INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (1, 3, 3);
+INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (1, 4, 4);
+INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (1, 5, 5);
+INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (1, 6, 6);
+INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (1, 7, 7);
+INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (1, 8, 8);
+INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (1, 9, 9);
+INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (1, 10, 10);
 
 COMMIT;
 

@@ -4,6 +4,13 @@
 	<section name="java.lang.Class">
 		<item key="replaceBarOpen" value="false"/>
 		<list key="findhistory">
+			<item value="TiendaObjeto tiendaObjeto = new TiendaObjeto(tienda, objetoSeleccionado, cantidad);"/>
+			<item value="anadirBtn.setOnAction(e -&gt; {"/>
+			<item value="TIENDA"/>
+			<item value="getOro"/>
+			<item value="getPerson"/>
+			<item value="vista de tien"/>
+			<item value="cantidadLab"/>
 			<item value="ev.getNodoVisual()"/>
 			<item value="json"/>
 			<item value="refres"/>
@@ -12,13 +19,6 @@
 			<item value="fetchElementosAux"/>
 			<item value="Ubicacion"/>
 			<item value="agregar"/>
-			<item value="manejarDragDropped"/>
-			<item value="obtenerIdDesdeObjeto"/>
-			<item value="elementos"/>
-			<item value="estadoColocados"/>
-			<item value="getObjetosPorNombre"/>
-			<item value="fetch"/>
-			<item value="crearCate"/>
 		</list>
 	</section>
 </section>

@@ -98,7 +98,7 @@ public class TiendaObjeto {
         public void setIdObjeto(int idObjeto) {
             this.idObjeto = idObjeto;
         }
-
+        
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;

@@ -320,6 +320,10 @@ public class Personaje {
 
         return nivel - 1; // El bucle sale cuando se pasa, así que restamos 1
     }
+	
+	public void aniadirObjeto(Objeto objeto) {
+		this.inventario.add(objeto);
+	}
 
 	public void perderTurno() {
 		// Gestionar aquí los casos en los que se pierde el turno del jugador
