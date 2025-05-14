@@ -162,7 +162,7 @@ public class Personaje {
 
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
 	@JoinTable(name = "INVENTARIO_PERSONAJE", joinColumns = @JoinColumn(name = "idPersonaje"), inverseJoinColumns = @JoinColumn(name = "idObjeto"))
-	private List<Objeto> inventario;
+	private List<Objeto> inventario = new ArrayList<Objeto>();
 
 	// Funciones:
 

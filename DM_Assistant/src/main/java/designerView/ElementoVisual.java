@@ -4,11 +4,11 @@ import clases_partida.Criatura;
 import clases_personaje.Personaje;
 
 public class ElementoVisual {
-    private final String nombre;
+    private String nombre;
     private int fila;
     private int columna;
-    private final Object obj;
-    private final String token;
+    private Object obj;
+    private String token;
     private double rotateAngle = 0;
 
     private double posInicialX;
@@ -39,6 +39,8 @@ public class ElementoVisual {
             token = "/tablero/tokens/268894-Giant Spider Black.png";
         }
     }
+    
+    public ElementoVisual() {};
 
     // Getters y setters
 

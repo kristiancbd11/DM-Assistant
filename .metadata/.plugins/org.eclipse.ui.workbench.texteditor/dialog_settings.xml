@@ -4,6 +4,14 @@
 	<section name="java.lang.Class">
 		<item key="replaceBarOpen" value="false"/>
 		<list key="findhistory">
+			<item value="desdeJson"/>
+			<item value="cargarDesde"/>
+			<item value="marcoIma"/>
+			<item value="actualizarFondo"/>
+			<item value="marcoI"/>
+			<item value="tablero"/>
+			<item value="construirNodoVisual"/>
+			<item value="inventari"/>
 			<item value="TiendaObjeto tiendaObjeto = new TiendaObjeto(tienda, objetoSeleccionado, cantidad);"/>
 			<item value="anadirBtn.setOnAction(e -&gt; {"/>
 			<item value="TIENDA"/>
@@ -11,14 +19,6 @@
 			<item value="getPerson"/>
 			<item value="vista de tien"/>
 			<item value="cantidadLab"/>
-			<item value="ev.getNodoVisual()"/>
-			<item value="json"/>
-			<item value="refres"/>
-			<item value="ADDuBICAICON"/>
-			<item value="fasterxml"/>
-			<item value="fetchElementosAux"/>
-			<item value="Ubicacion"/>
-			<item value="agregar"/>
 		</list>
 	</section>
 </section>

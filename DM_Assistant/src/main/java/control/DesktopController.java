@@ -13,6 +13,7 @@ public class DesktopController {
 
     private final DesktopView desktopView;
     private final DesktopNacionController nacionController;
+    private ExplorerController explorerController;
 
     public DesktopController(DesktopView vista) {
         this.desktopView = vista;
@@ -47,7 +48,7 @@ public class DesktopController {
             case REINO -> new ReinoView().crearView();
             case UBICACION -> {
             	nacionController.setNacion(null);
-            	DesktopUbicacionView ubicacionView = new DesktopUbicacionView((Ubicacion) item.getValue());
+            	DesktopUbicacionView ubicacionView = new DesktopUbicacionView((Ubicacion) item.getValue(), explorerController);
             	yield ubicacionView.getVista();
             }
             case ESCENA -> new EscenaView().crearView();
@@ -64,5 +65,15 @@ public class DesktopController {
 	public DesktopNacionController getDesktopNacionController() {
 		return nacionController;
 	}
+
+	public ExplorerController getExplorerController() {
+		return explorerController;
+	}
+
+	public void setExplorerController(ExplorerController explorerController) {
+		this.explorerController = explorerController;
+	}
+	
+	
 }
 

@@ -1,5 +1,7 @@
 package designerView;
 
+import java.util.ArrayList;
+
 import clases_partida.Escena;
 import clases_partida.Mundo;
 import control.ExplorerController;
@@ -11,72 +13,94 @@ import javafx.stage.Stage;
 
 public class DesignerController {
 
-    private final Mundo mundo;
-    private ExplorerController explorerController;
-    private TableroView tableroView;
-    private PaletaView paletaView;
-    private Tablero tablero;
-    private Escena nuevaZona;
-    private UbicacionCRUD ubicacionCrud;
+	private double gridWidth = 1024;
+	private double gridHeight = 768;
+	private double paletteWidth = 200;
+	private double margen = 10;
 
-    // Referencias a los stages
-    private Stage stageTablero;
-    private Stage stagePaleta;
+	private final Mundo mundo;
+	private ExplorerController explorerController;
+	private TableroView tableroView = new TableroView(gridWidth, gridHeight, 0);
+	private PaletaView paletaView;
+	private Tablero tablero;
+	private Escena nuevaZona;
+	private UbicacionCRUD ubicacionCrud;
 
-    public DesignerController(Mundo mundo, Escena nuevaZona, ExplorerController explorerController) {
-        this.mundo = mundo;
-        this.nuevaZona = nuevaZona;
-        this.explorerController = explorerController;
-    }
+	// Referencias a los stages
+	private Stage stageTablero;
+	private Stage stagePaleta;
 
-    public void iniciar() {
-        Platform.runLater(() -> {
-            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+	public DesignerController(Mundo mundo, Escena nuevaZona, ExplorerController explorerController) {
+		this.mundo = mundo;
+		this.nuevaZona = nuevaZona;
+		this.explorerController = explorerController;
+	}
 
-            double gridWidth = 1024;
-            double gridHeight = 768;
-            double paletteWidth = 200;
-            double margen = 10;
+	public void iniciar() {
+		Platform.runLater(() -> {
+			// Crear ventana
+			Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+			double gridX = (screenBounds.getWidth() - (gridWidth + margen + paletteWidth)) / 2;
+			double gridY = (screenBounds.getHeight() - gridHeight) / 2;
 
-            double gridX = (screenBounds.getWidth() - (gridWidth + margen + paletteWidth)) / 2;
-            double gridY = (screenBounds.getHeight() - gridHeight) / 2;
+			paletaView = new PaletaView(mundo, tableroView);
+			paletaView.getGuardarButton().setOnAction(event -> {
+				guardarTablero();
+			});
+			tableroView.setPaletaView(paletaView);
 
-            tableroView = new TableroView(gridWidth, gridHeight, 0);
-            paletaView = new PaletaView(mundo, tableroView);
-            paletaView.getGuardarButton().setOnAction(event -> {
-                guardarTablero();
-            });
-            tableroView.setPaletaView(paletaView);
+			// Establecer el tablero de la escena en el tableroView
+			String tableroJson = nuevaZona.getTableroJson();
+			Tablero tablero;
+			if (tableroJson != null) {
+				try {
+					tablero = Tablero.desdeJson(tableroJson);
+				} catch (Exception e) {
+					System.err.println("Error al cargar el tablero desde JSON, se creará uno en blanco.");
+					e.printStackTrace();
+					tablero = new Tablero("", new ArrayList<>());
+				}
+			} else {
+				tablero = new Tablero("", new ArrayList<>()); // fondo vacío y sin elementos
+			}
 
-            // Guardar referencias a los stages
-            stageTablero = tableroView.crearVentana(gridX, gridY);
-            stagePaleta = paletaView.crearVentana(gridX + gridWidth + margen, gridY);
+			tableroView.cargarDesdeTablero(tablero);
 
-            stageTablero.setOnCloseRequest(e -> stagePaleta.close());
-            stagePaleta.setOnCloseRequest(e -> stageTablero.close());
-        });
-    }
+			// Crear ventanas
+			stageTablero = tableroView.crearVentana(gridX, gridY);
+			stagePaleta = paletaView.crearVentana(gridX + gridWidth + margen, gridY);
 
-    public void guardarTablero() {
-        String fondo = tableroView.getPanelVisual().getStyle();
-        Tablero tablero = new Tablero(fondo, tableroView.getElementosColocados());
+			stageTablero.setOnCloseRequest(e -> stagePaleta.close());
+			stagePaleta.setOnCloseRequest(e -> stageTablero.close());
+		});
+	}
 
-        try {
-            nuevaZona.setTableroJson(tablero.generarJson());
-            ubicacionCrud = new UbicacionCRUD();
+	public void guardarTablero() {
+		String fondo = tableroView.getPanelVisual().getStyle();
+		Tablero tablero = new Tablero(fondo, tableroView.getElementosColocados());
 
-            boolean exito = ubicacionCrud.saveUbicacion(nuevaZona);
-            if (exito) {
-                explorerController.refreshTreeView();
+		try {
+			nuevaZona.setTableroJson(tablero.generarJson());
+			ubicacionCrud = new UbicacionCRUD();
 
-                // ✅ Cerrar las ventanas tras guardar
-                if (stageTablero != null) stageTablero.close();
-                if (stagePaleta != null) stagePaleta.close();
-            }
+			boolean exito = ubicacionCrud.saveUbicacion(nuevaZona);
+			if (exito) {
+				explorerController.refreshTreeView();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+				// ✅ Cerrar las ventanas tras guardar
+				if (stageTablero != null)
+					stageTablero.close();
+				if (stagePaleta != null)
+					stagePaleta.close();
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public TableroView getTableroView() {
+		return tableroView;
+	}
 
 }

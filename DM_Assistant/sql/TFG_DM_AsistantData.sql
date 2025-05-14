@@ -304,16 +304,5 @@ INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Raro', 'Libro de Hech
 INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('�pico', 'Anillo de Poder', 1000, 0.5);
 INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Com�n', 'Cuerda', 15, 2);
 
-INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (1, 1, 2);
-INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (1, 2, 2);
-INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (1, 3, 3);
-INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (1, 4, 4);
-INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (1, 5, 5);
-INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (1, 6, 6);
-INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (1, 7, 7);
-INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (1, 8, 8);
-INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (1, 9, 9);
-INSERT INTO TIENDA_OBJETOS (idTienda, idObjeto, cantidad) VALUES (1, 10, 10);
-
 COMMIT;
 

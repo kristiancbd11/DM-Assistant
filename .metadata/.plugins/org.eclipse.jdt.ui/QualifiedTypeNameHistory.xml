@@ -6,4 +6,5 @@
     <fullyQualifiedTypeName name="clases_personaje.Personaje"/>
     <fullyQualifiedTypeName name="views.DesignerView"/>
     <fullyQualifiedTypeName name="java.lang.String"/>
+    <fullyQualifiedTypeName name="designerView.Tablero"/>
 </qualifiedTypeNameHistroy>

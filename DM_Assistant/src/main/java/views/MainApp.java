@@ -44,6 +44,7 @@ public class MainApp extends Application {
             DesktopController desktopController = new DesktopController(desktopView);
             InfoController infoController = new InfoController(infoView);
             ExplorerController explorerController = new ExplorerController(explorerView, infoController, desktopController);
+            desktopController.setExplorerController(explorerController);
             ToolBarController toolBarController = new ToolBarController(toolBarView);
             TaskBarController taskBarController = new TaskBarController(taskBarView);
 
