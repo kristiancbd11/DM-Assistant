@@ -9,6 +9,8 @@ public class StatCarisma {
 	private int jovialidad;
 	private int seduccion;
 	
+	public StatCarisma() {}
+	
 	//Contructro de la clase
 	public StatCarisma(int conviccion, int enganio, int intimidacion, int liderazgo, int jovialidad, int seduccion) {
 		super();

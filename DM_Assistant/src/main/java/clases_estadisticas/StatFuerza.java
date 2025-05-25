@@ -2,27 +2,29 @@ package clases_estadisticas;
 
 public class StatFuerza {
 	
-	private int fuerza;
+	private int impacto;
 	private int destrozo;
 	private int carga;
 	private int levantamiento;
 	private int vigor;
 	private int atletismo;
 	
-	public StatFuerza(int fuerza, int destrozo, int carga, int levantamiento, int vigor, int atletismo) {
+	public StatFuerza() {}
+	
+	public StatFuerza(int impacto, int destrozo, int carga, int levantamiento, int vigor, int atletismo) {
 		super();
-		this.fuerza = fuerza;
+		this.impacto = impacto;
 		this.destrozo = destrozo;
 		this.carga = carga;
 		this.levantamiento = levantamiento;
 		this.vigor = vigor;
 		this.atletismo = atletismo;
 	}
-	public int getFuerza() {
-		return fuerza;
+	public int getImpacto() {
+		return impacto;
 	}
-	public void setFuerza(int fuerza) {
-		this.fuerza = fuerza;
+	public void setImpacto(int fuerza) {
+		this.impacto = fuerza;
 	}
 	public int getDestrozo() {
 		return destrozo;

@@ -13,6 +13,8 @@ public class EstadoPjJson {
 	ArrayList<Estado> listaEstados = new ArrayList<Estado>();
 	ArrayList<Buff> listaBuff = new ArrayList<Buff>();
 	
+	public EstadoPjJson() {}
+	
 	public EstadoPjJson(ConjuntoEstadisticas statBase) {
 		super();
 		this.statBase = statBase;
@@ -30,6 +32,16 @@ public class EstadoPjJson {
 		}
 		
 		return json;
+	}
+	
+	public static EstadoPjJson desdeJson(String estadoJson) {
+	    ObjectMapper mapper = new ObjectMapper();
+	    try {
+	        return mapper.readValue(estadoJson, EstadoPjJson.class);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return null;
+	    }
 	}
 	
 	public ConjuntoEstadisticas getStatBase() {

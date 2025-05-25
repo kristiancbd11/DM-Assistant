@@ -31,6 +31,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import matchPlayer.MatchController;
 
 public class DesktopUbicacionView {
 
@@ -59,64 +60,79 @@ public class DesktopUbicacionView {
 	}
 
 	public StackPane entornoEscena(String rutaImagen) {
-		Escena escena = (Escena) ubicacion;
+    Escena escena = (Escena) ubicacion;
 
-		Label nombreEscena = new Label("Vista previa de: " + escena.getNombre());
-		nombreEscena.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+    Label nombreEscena = new Label("Vista previa de: " + escena.getNombre());
+    nombreEscena.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
-		ImageView vistaPrevia;
+    ImageView vistaPrevia;
 
-		if (rutaImagen != null && !rutaImagen.isEmpty()) {
-			try {
-				Image imagenCargada = new Image(rutaImagen);
-				vistaPrevia = new ImageView(imagenCargada);
-			} catch (Exception e) {
-				vistaPrevia = new ImageView(); // Imagen vacía si falla
-			}
-		} else {
-			Tablero tablero = Tablero.desdeJson(escena.getTableroJson());
+    if (rutaImagen != null && !rutaImagen.isEmpty()) {
+        try {
+            Image imagenCargada = new Image(rutaImagen);
+            vistaPrevia = new ImageView(imagenCargada);
+        } catch (Exception e) {
+            vistaPrevia = new ImageView(); // Imagen vacía si falla
+        }
+    } else {
+        Tablero tablero = Tablero.desdeJson(escena.getTableroJson());
 
-			Pane panel = new Pane();
-			panel.setPrefSize(1024, 768);
+        Pane panel = new Pane();
+        panel.setPrefSize(1024, 768);
 
-			String fondoCss = tablero.getFondo().replaceAll("(?<=-fx-background-size: )[^;]+", "1024px 768px");
-			panel.setStyle(fondoCss);
+        String fondoCss = tablero.getFondo().replaceAll("(?<=-fx-background-size: )[^;]+", "1024px 768px");
+        panel.setStyle(fondoCss);
 
-			WritableImage snapshot = new WritableImage(1024, 768);
-			new Scene(panel); // Escena temporal para snapshot
-			panel.snapshot(null, snapshot);
+        WritableImage snapshot = new WritableImage(1024, 768);
+        new Scene(panel); // Escena temporal para snapshot
+        panel.snapshot(null, snapshot);
 
-			vistaPrevia = new ImageView(snapshot);
-		}
+        vistaPrevia = new ImageView(snapshot);
+    }
 
-		// No se fuerza el tamaño, se ajusta automáticamente
-		vistaPrevia.setPreserveRatio(true);
-		vistaPrevia.setSmooth(true);
+    vistaPrevia.setPreserveRatio(true);
+    vistaPrevia.setSmooth(true);
 
-		// Evento de doble clic sobre la imagen
-		vistaPrevia.setOnMouseClicked(event -> {
-			if (event.getClickCount() == 2) {
-				Mundo mundo = escena.getReino().getNacion().getMundo();
-				DesignerController dc = new DesignerController(mundo, escena, explorerController);
-				dc.iniciar();
-			}
-		});
+    // Evento de doble clic sobre la imagen
+    vistaPrevia.setOnMouseClicked(event -> {
+        if (event.getClickCount() == 2) {
+            Mundo mundo = escena.getReino().getNacion().getMundo();
+            DesignerController dc = new DesignerController(mundo, escena, explorerController);
+            dc.iniciar();
+        }
+    });
 
-		StackPane marcoImagen = new StackPane(vistaPrevia);
-		marcoImagen.setStyle("-fx-border-color: black; -fx-border-width: 3; -fx-background-color: white;"
-				+ "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0.5, 2, 2);");
+    StackPane marcoImagen = new StackPane(vistaPrevia);
+    marcoImagen.setStyle("-fx-border-color: black; -fx-border-width: 3; -fx-background-color: white;"
+            + "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0.5, 2, 2);");
+    marcoImagen.setMaxSize(StackPane.USE_PREF_SIZE, StackPane.USE_PREF_SIZE);
 
-		// Ajustar tamaño dinámico al contenido
-		marcoImagen.setMaxSize(StackPane.USE_PREF_SIZE, StackPane.USE_PREF_SIZE);
+    // ---- Botón con icono play ----
+    Image iconoPlay = new Image(getClass().getResource("/icons/play.png").toExternalForm(), 24, 24, true, true);
+    ImageView iconoView = new ImageView(iconoPlay);
+    Button botonIniciar = new Button("", iconoView);
+    botonIniciar.setStyle("-fx-background-color: transparent;");
+    
+    botonIniciar.setOnAction(e -> {
+        MatchController mc = new MatchController(escena);
+        Stage nuevaVentana = new Stage();
+        mc.mostrarVistaTurnos(nuevaVentana);
+    });
 
-		VBox layout = new VBox(10, nombreEscena, marcoImagen);
-		layout.setAlignment(Pos.TOP_CENTER);
+    // Contenedor superior con nombre y botón
+    HBox encabezado = new HBox(10, nombreEscena, botonIniciar);
+    encabezado.setAlignment(Pos.CENTER_RIGHT);
+    encabezado.setStyle("-fx-padding: 0 10 0 10;");
 
-		StackPane contenedor = new StackPane(layout);
-		contenedor.setStyle("-fx-padding: 10;");
+    VBox layout = new VBox(10, encabezado, marcoImagen);
+    layout.setAlignment(Pos.TOP_CENTER);
 
-		return contenedor;
-	}
+    StackPane contenedor = new StackPane(layout);
+    contenedor.setStyle("-fx-padding: 10;");
+
+    return contenedor;
+}
+
 
 	public StackPane entornoTienda() {
 		Tienda tienda = (Tienda) ubicacion;

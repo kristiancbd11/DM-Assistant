@@ -9,6 +9,8 @@ public class StatConstitucion {
 	private int resistencia;
 	private int motricidad;
 	
+	public StatConstitucion() {}
+	
 	//Constructor de la clase	
 	public StatConstitucion(int vitalidad, int corpulencia, int regeneracion, int tenacidad, int resistencia,
 			int motricidad) {

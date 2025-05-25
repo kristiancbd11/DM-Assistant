@@ -10,10 +10,12 @@ public class StatGeneral {
 	private int movimiento;
 	private String dado;
 	
+	public StatGeneral() {}
+	
 	public StatGeneral(int salud, int iniciativa, int aura, int movimiento,
 			String dado) {
 		super();
-		this.salud = salud;
+		this.salud = 10 + salud;
 		this.iniciativa = iniciativa;
 		this.aura = aura;
 		this.movimiento = movimiento;

@@ -10,6 +10,8 @@ public class ConjuntoEstadisticas {
 	StatSabiduria statSabiduria ;
 	StatCarisma statCarisma;
 	
+	public ConjuntoEstadisticas () {}
+	
 	public ConjuntoEstadisticas(StatGeneral statGeneral, StatFuerza statFuerza, StatConstitucion statConstitucion,
 			StatDestreza statDestreza, StatInteligencia statInteligencia, StatSabiduria statSabiduria,
 			StatCarisma statCarisma) {

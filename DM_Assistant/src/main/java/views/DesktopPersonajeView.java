@@ -683,7 +683,7 @@ public class DesktopPersonajeView {
 	// Si hay uno, lo eliminamos de la lista y de la BD
 	if (equipadoExistente != null) {
 		personaje.getEquipacion().remove(equipadoExistente);
-		epCrud.eliminarEquipoPersonaje(equipadoExistente); // <-- asegúrate de que exista este método
+		epCrud.eliminarEquipoPersonaje(equipadoExistente);
 	}
 
 	// Equipar nuevo objeto

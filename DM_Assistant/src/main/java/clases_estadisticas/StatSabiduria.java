@@ -9,6 +9,8 @@ public class StatSabiduria {
 	private int voluntad;
 	private int supervivencia;
 	
+	public StatSabiduria() {}
+	
 	public StatSabiduria(int conocimiento, int medicina, int percepcion, int empatia, int voluntad, int supervivencia) {
 		super();
 		this.conocimiento = conocimiento;

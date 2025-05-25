@@ -9,6 +9,8 @@ public class StatDestreza {
 	private int sigilo;
 	private int precision;
 	
+	public StatDestreza() {}
+	
 	public StatDestreza(int agilidad, int presteza, int reflejos, int combate, int sigilo, int precision) {
 		super();
 		this.agilidad = agilidad;

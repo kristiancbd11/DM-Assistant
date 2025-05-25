@@ -9,4 +9,7 @@
     <fullyQualifiedTypeName name="designerView.Tablero"/>
     <fullyQualifiedTypeName name="dbhandlerCRUD.InventarioPersonajeCRUD"/>
     <fullyQualifiedTypeName name="java.lang.Integer"/>
+    <fullyQualifiedTypeName name="matchPlayer.ActionController"/>
+    <fullyQualifiedTypeName name="dbhandlerCRUD.PersonajeCRUD"/>
+    <fullyQualifiedTypeName name="clases_estadisticas.EstadoPjJson"/>
 </qualifiedTypeNameHistroy>

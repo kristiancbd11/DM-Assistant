@@ -30,6 +30,8 @@ public class ElementoVisual {
 		this.obj = data.BuscarObjeto(data.getTipo(), data.getId());
 		configurarVista();
 	}
+	
+	
 
 	private void configurarVista() {
 		// Crear etiqueta con el nombre
@@ -152,6 +154,14 @@ public class ElementoVisual {
 
 	public ElementoVisualData getData() {
 		return data;
+	}
+
+	public Object getObj() {
+		return obj;
+	}
+
+	public void setObj(Object obj) {
+		this.obj = obj;
 	}
 
 	private static class Delta {

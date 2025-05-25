@@ -1,12 +1,12 @@
 package control;
 
+import clases_estadisticas.EstadoPjJson;
 import clases_partida.*;
 import clases_personaje.Personaje;
 import dbhandlerCRUD.CriaturaCRUD;
 import dbhandlerCRUD.MundoCRUD;
 import dbhandlerCRUD.PersonajeCRUD;
 import dbhandlerCRUD.UbicacionCRUD;
-import designerView.DesignerController;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -55,15 +55,16 @@ public class ExplorerController {
 	    double anchoMenu = 300;
 
 	    contextMenuArbol.getItems().addAll(
-	            crearCustomMenuItem("Nuevo mundo", this::mostrarDialogoNuevoMundo, anchoMenu),
-	            crearCustomMenuItem("Nuevo personaje", () -> crearPersonaje(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
-	            crearCustomMenuItem("Nuevo npc", () -> crearNpc(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
-	            crearCustomMenuItem("Nueva criatura", () -> crearCriatura(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
-	            crearCustomMenuItem("Nueva ubicación", () -> crearZona(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
-	            crearCustomMenuItem("Nueva escena", () -> crearEscena(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
-	            crearCustomMenuItem("Editar", () -> renombrarMundo(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
-	            crearCustomMenuItem("Eliminar", () -> eliminarElementoSeleccionado(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu)
-	    );
+	    	    crearCustomMenuItem("Nuevo mundo", this::mostrarDialogoNuevoMundo, anchoMenu),
+	    	    crearCustomMenuItem("Nuevo personaje", () -> crearPersonaje(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
+	    	    crearCustomMenuItem("Nuevo npc", () -> crearNpc(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
+	    	    crearCustomMenuItem("Nueva criatura", () -> crearCriatura(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
+	    	    crearCustomMenuItem("Nueva ubicación", () -> crearZona(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
+	    	    crearCustomMenuItem("Nueva escena", () -> crearEscena(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
+	    	    crearCustomMenuItem("Editar", () -> renombrarMundo(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
+	    	    crearCustomMenuItem("Eliminar", () -> eliminarElementoSeleccionado(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
+	    	    crearCustomMenuItem("Descansos", () -> mostrarDialogoDescansos(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu)  // NUEVO
+	    	);
 
 	    arbolMundos.setContextMenu(contextMenuArbol);
 
@@ -308,6 +309,75 @@ public class ExplorerController {
 	        ordenarTreeView(child);
 	    }
 	}
+	
+	private void mostrarDialogoDescansos(TreeItem<Object> seleccionado) {
+	    if (seleccionado == null) return;
 
+	    // Obtener el mundo relacionado al nodo seleccionado
+	    Mundo mundo;
+	    try {
+	        mundo = fetchTreeRoot(seleccionado);
+	    } catch (IllegalStateException e) {
+	        new Alert(AlertType.WARNING, "No se pudo determinar el mundo para el nodo seleccionado.").showAndWait();
+	        return;
+	    }
+
+	    Stage dialog = new Stage();
+	    dialog.initModality(Modality.APPLICATION_MODAL);
+	    dialog.setTitle("Descansos");
+
+	    // Selector de tipo de descanso
+	    Label labelTipo = new Label("Tipo de descanso:");
+	    ChoiceBox<String> choiceTipo = new ChoiceBox<>();
+	    choiceTipo.getItems().addAll("Descanso corto", "Descanso largo");
+	    choiceTipo.getSelectionModel().selectFirst();
+
+	    // Selector de personajes (selección múltiple)
+	    Label labelPjs = new Label("Selecciona personajes:");
+	    ListView<Personaje> listViewPjs = new ListView<>();
+	    listViewPjs.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+	    listViewPjs.getItems().addAll(mundo.getPersonajes());
+
+	    // Botones
+	    Button btnAceptar = new Button("Aceptar");
+	    Button btnCancelar = new Button("Cancelar");
+
+	    btnCancelar.setOnAction(e -> dialog.close());
+
+	    btnAceptar.setOnAction(e -> {
+	        String tipoDescanso = choiceTipo.getSelectionModel().getSelectedItem();
+	        var personajesSeleccionados = listViewPjs.getSelectionModel().getSelectedItems();
+
+	        for (Personaje pj : personajesSeleccionados) {
+	        	EstadoPjJson estado = EstadoPjJson.desdeJson(pj.getEstadoJson());
+	            if ("Descanso corto".equals(tipoDescanso)) {
+	            	int saludActual = estado.getStatOnline().getStatGeneral().getSalud();
+	            	int saludMax = estado.getStatBase().getStatGeneral().getSalud();
+	            	int saludNueva = saludActual + (saludMax / 2);
+	            	if(saludNueva > saludMax) {
+	            		saludNueva = saludMax;
+	            	}
+	            	estado.getStatOnline().getStatGeneral().setSalud(saludNueva);
+	            	
+	            } else if ("Descanso largo".equals(tipoDescanso)) {
+	            	estado.getStatOnline().getStatGeneral().setSalud(estado.getStatBase().getStatGeneral().getSalud());
+	            	
+	            }
+	            
+	            pj.setEstadoJson(estado.generarJson());
+            	pjCrud.savePersonaje(pj);
+	        }
+
+	        dialog.close();
+	    });
+
+	    HBox botones = new HBox(10, btnAceptar, btnCancelar);
+	    VBox layout = new VBox(10, labelTipo, choiceTipo, labelPjs, listViewPjs, botones);
+	    layout.setPadding(new Insets(15));
+	    layout.setPrefWidth(350);
+
+	    dialog.setScene(new Scene(layout));
+	    dialog.showAndWait();
+	}
 
 }

@@ -4,21 +4,21 @@
 	<section name="java.lang.Class">
 		<item key="replaceBarOpen" value="false"/>
 		<list key="findhistory">
-			<item value="image"/>
-			<item value="venderOb"/>
-			<item value="setOro"/>
-			<item value="setText(String.valueOf"/>
-			<item value="setText(String.valueOfsetText(String.valueOf"/>
-			<item value="venderO"/>
-			<item value="saved"/>
-			<item value="save"/>
-			<item value="personajeCrud"/>
-			<item value="personajeCrud.save"/>
-			<item value="actualizarNivel"/>
-			<item value="if (registro != null) {"/>
-			<item value="experienciaField"/>
-			<item value="experiencia"/>
-			<item value="oroField"/>
+			<item value=".setFillWi"/>
+			<item value="turnoContainer"/>
+			<item value="actualizar"/>
+			<item value="progress"/>
+			<item value="iniciativa tota"/>
+			<item value="acabarTurno.setOnAction(event -&gt; {"/>
+			<item value="acabarTurno.set"/>
+			<item value="labelSalud.setStyle"/>
+			<item value="barraReaccion"/>
+			<item value="barraAccion "/>
+			<item value="layout.get"/>
+			<item value="PersonajeCRUD"/>
+			<item value="barra"/>
+			<item value="Timeline "/>
+			<item value="actualizarEstado"/>
 		</list>
 	</section>
 </section>
