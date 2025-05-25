@@ -31,6 +31,9 @@ public class Objeto {
 	@Column (name = "peso")
 	private int peso;
 	
+	@Column (name = "token")
+	private String token;
+	
 	//Constructores:
 	
 	public Objeto(){}
@@ -75,5 +78,16 @@ public class Objeto {
 		this.peso = peso;
 	}
 	
-	
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	@Override
+	public String toString() {
+		return this.getNombre();
+	}
 }

@@ -95,34 +95,4 @@ public class PersonajeCRUD {
 	        e.printStackTrace();
 	    }
 	}
-	
-	public boolean updatePersonaje(int id, Personaje datosActualizados) {
-	    Transaction tx = null;
-	    try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-	        tx = session.beginTransaction();
-
-	        Personaje personajeExistente = session.get(Personaje.class, id);
-	        if (personajeExistente != null) {
-	            // Actualizar solo los campos permitidos
-	            personajeExistente.setNombre(datosActualizados.getNombre());
-	            personajeExistente.setExperiencia(datosActualizados.getExperiencia());
-
-	            // Aplicar los cambios
-	            session.merge(personajeExistente);
-	            tx.commit();
-	            return true;
-	        } else {
-	            System.out.println("No se encontró el personaje con ID: " + id);
-	            return false;
-	        }
-	    } catch (Exception e) {
-	        if (tx != null) {
-	            tx.rollback();
-	        }
-	        e.printStackTrace();
-	        return false;
-	    }
-	}
-
-
 }

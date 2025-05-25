@@ -12,6 +12,12 @@ import clases_personaje.Personaje;
 
 public class CriaturaCRUD {
 	
+	public Criatura fetchCriatura(int id) {
+		try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+			return session.get(Criatura.class, id);
+		}
+	}
+	
 	public ArrayList<Criatura> fetchAllCriaturasInMundo(int idMundo) {
 		try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 			// Crear la consulta HQL para obtener las criaturas filtradas por idMundo

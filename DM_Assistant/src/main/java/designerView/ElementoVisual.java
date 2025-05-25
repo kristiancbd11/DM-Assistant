@@ -1,106 +1,161 @@
 package designerView;
 
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+
+import java.util.List;
+import java.util.UUID;
+
 import clases_partida.Criatura;
 import clases_personaje.Personaje;
+import javafx.geometry.Pos;
 
 public class ElementoVisual {
-    private String nombre;
-    private int fila;
-    private int columna;
-    private Object obj;
-    private String token;
-    private double rotateAngle = 0;
 
-    private double posInicialX;
-    private double posInicialY;
-    private boolean isDragging = false;
+	private VBox contenedor;
+	private ElementoVisualData data;
+	private TableroView tableroView;
+	private Object obj;
 
-    public ElementoVisual(Object obj, int fila, int columna) {
-        if (obj instanceof Personaje personaje) {
-            nombre = personaje.getNombre();
-        } else if (obj instanceof Criatura criatura) {
-            nombre = criatura.getNombre();
-        } else {
-            ElementoAux aux = (ElementoAux) obj;
-            nombre = aux.getToken();
-        }
+	public ElementoVisual(ElementoVisualData data, TableroView tableroView) {
+		this.data = data;
+		this.contenedor = new VBox();
+		this.tableroView = tableroView;
+		this.obj = data.BuscarObjeto(data.getTipo(), data.getId());
+		configurarVista();
+	}
 
-        this.obj = obj;
-        this.fila = fila;
-        this.columna = columna;
+	private void configurarVista() {
+		// Crear etiqueta con el nombre
+		Label nombreLabel = new Label(data.getNombre());
 
-        if (obj instanceof Personaje personaje) {
-            token = "/tablero/tokens/" + personaje.getToken();
-        } else if (obj instanceof Criatura) {
-            token = "/tablero/tokens/268894-Giant Spider Black.png";
-        } else if (obj instanceof ElementoAux aux) {
-            token = aux.getPath() + "/" + aux.getToken();
-        } else {
-            token = "/tablero/tokens/268894-Giant Spider Black.png";
-        }
-    }
-    
-    public ElementoVisual() {};
+		// Crear ImageView e intentar cargar el recurso
+		ImageView imageView = new ImageView();
+		String tokenPath = data.getToken();
 
-    // Getters y setters
+		try {
+			var imageUrl = getClass().getResource(tokenPath);
+			if (imageUrl != null) {
+				Image imagen = new Image(imageUrl.toExternalForm());
+				imageView.setImage(imagen);
+				imageView.setPreserveRatio(true);
 
-    public String getNombre() {
-        return nombre;
-    }
+				if (obj instanceof Criatura || obj instanceof Personaje) {
+					imageView.setFitWidth(40);
+					imageView.setFitHeight(40);
+				} else if (obj instanceof ElementoAux) {
+					imageView.setFitWidth(imagen.getWidth() / 6);
+					imageView.setFitHeight(imagen.getHeight() / 6);
+				} else {
+					// Comportamiento por defecto, por si quieres definirlo
+					imageView.setFitWidth(imagen.getWidth() / 6);
+					imageView.setFitHeight(imagen.getHeight() / 6);
+				}
+			} else {
+				System.err.println("No se encontró la imagen en recursos: " + tokenPath);
+			}
+		} catch (Exception e) {
+			System.err.println("Error cargando imagen del recurso: " + tokenPath);
+			e.printStackTrace();
+		}
 
-    public int getFila() {
-        return fila;
-    }
+		// Configurar VBox
+		contenedor.setAlignment(Pos.CENTER);
+		contenedor.setSpacing(5);
+		contenedor.getChildren().addAll(nombreLabel, imageView);
 
-    public void setFila(int fila) {
-        this.fila = fila;
-    }
+		contenedor.setUserData(this);
 
-    public int getColumna() {
-        return columna;
-    }
+		// Variables para almacenar la posición al presionar
+		final Delta dragDelta = new Delta();
 
-    public void setColumna(int columna) {
-        this.columna = columna;
-    }
+		contenedor.setOnMouseClicked(event -> {
+			if (tableroView != null) {
+				ElementoVisual anterior = tableroView.getElementoResaltado();
+				if (anterior != null) {
+					anterior.getContenedor().setStyle("");
+				}
+				tableroView.setElementoResaltado(this);
+			}
+			contenedor.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
+			event.consume();
+		});
 
-    public Object getObj() {
-        return obj;
-    }
+		contenedor.setOnMousePressed(event -> {
+			dragDelta.x = event.getSceneX() - contenedor.getLayoutX();
+			dragDelta.y = event.getSceneY() - contenedor.getLayoutY();
+			contenedor.toFront();
+			event.consume();
+		});
 
-    public String getToken() {
-        return token;
-    }
+		contenedor.setOnMouseDragged(event -> {
+			double newX = event.getSceneX() - dragDelta.x;
+			double newY = event.getSceneY() - dragDelta.y;
 
-    public double getRotateAngle() {
-        return rotateAngle;
-    }
+			contenedor.setLayoutX(newX);
+			contenedor.setLayoutY(newY);
 
-    public void setRotateAngle(double rotateAngle) {
-        this.rotateAngle = rotateAngle;
-    }
+			event.consume();
+		});
 
-    public double getPosInicialX() {
-        return posInicialX;
-    }
+		contenedor.setOnMouseReleased(event -> {
+		    if (tableroView != null) {
+		        double newX = contenedor.getLayoutX();
+		        double newY = contenedor.getLayoutY();
 
-    public void setPosInicialX(double posInicialX) {
-        this.posInicialX = posInicialX;
-    }
+		        data.setEjeX(newX);
+		        data.setEjeY(newY);
 
-    public double getPosInicialY() {
-        return posInicialY;
-    }
+		        UUID clave = data.getClave();
 
-    public void setPosInicialY(double posInicialY) {
-        this.posInicialY = posInicialY;
-    }
+		        // Siempre actualiza la posición del mismo objeto
+		        tableroView.getElementosColocados().put(clave, data);
 
-    public boolean isDragging() {
-        return isDragging;
-    }
+		        event.consume();
+		    }
+		});
 
-    public void setDragging(boolean dragging) {
-        isDragging = dragging;
-    }
+		// Menú contextual para eliminar el elemento del tablero
+		ContextMenu menuContextual = new ContextMenu();
+		MenuItem eliminarItem = new MenuItem("Eliminar");
+		menuContextual.getItems().add(eliminarItem);
+
+		// Evento para clic derecho
+		contenedor.setOnMousePressed(event -> {
+		    if (event.getButton() == MouseButton.SECONDARY) {
+		        menuContextual.show(contenedor, event.getScreenX(), event.getScreenY());
+		        event.consume();
+		    } else {
+		        menuContextual.hide(); // Ocultar si no es clic derecho
+		    }
+		});
+
+		// Acción de eliminar
+		eliminarItem.setOnAction(e -> {
+		    if (tableroView != null) {
+		        Pane contenido = (Pane) tableroView.getRoot().getChildren().get(0);
+		        contenido.getChildren().remove(contenedor);
+		        tableroView.getElementosColocados().remove(data.getClave());
+		    }
+		});
+	}
+
+	public VBox getContenedor() {
+		return contenedor;
+	}
+
+	public ElementoVisualData getData() {
+		return data;
+	}
+
+	private static class Delta {
+		double x, y;
+	}
+
 }

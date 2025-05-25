@@ -1,25 +1,22 @@
 package designerView;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import java.util.UUID;
 
 import javafx.scene.layout.VBox;
 
 public class Tablero {
     private String fondo;
-    private List<ElementoVisual> elementosColocados;
+    private HashMap<UUID, ElementoVisualData> elementosColocados = new HashMap<UUID, ElementoVisualData>();
 
     // Constructor vacío necesario para Jackson
     public Tablero() {}
-
-    // Constructor útil para crear manualmente
-    public Tablero(String fondo, List<ElementoVisual> elementosColocados) {
-        this.fondo = fondo;
-        this.elementosColocados = elementosColocados;
-    }
 
     // Método estático para crear un Tablero desde un JSON
     public static Tablero desdeJson(String json) {
@@ -43,11 +40,11 @@ public class Tablero {
         this.fondo = fondo;
     }
 
-    public List<ElementoVisual> getElementosColocados() {
+    public HashMap<UUID, ElementoVisualData> getElementosColocados() {
         return elementosColocados;
     }
 
-    public void setElementosColocados(List<ElementoVisual> elementosColocados) {
+    public void setElementosColocados(HashMap<UUID, ElementoVisualData> elementosColocados) {
         this.elementosColocados = elementosColocados;
     }
 
@@ -72,4 +69,5 @@ public class Tablero {
     @JsonIgnoreProperties({"parent", "scene", "antiAliasing"})
     private static abstract class IgnoreJavaFXProperties {
     }
+
 }

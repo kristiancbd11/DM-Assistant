@@ -55,6 +55,7 @@ DROP TABLE DONES;
 DROP TABLE TALENTOS;
 DROP TABLE PERSONAJES;
 DROP TABLE HECHIZOS;
+DROP TABLE CONSUMIBLES;
 DROP TABLE ARMADURAS;
 DROP TABLE ARMAS;
 DROP TABLE OBJETOS;
@@ -201,13 +202,14 @@ CREATE TABLE OBJETOS (
     rareza VARCHAR2(20) CONSTRAINT nn_rareza_obj NOT NULL,
     nombre VARCHAR2(20) CONSTRAINT nn_nombre_obj NOT NULL,
     valor NUMBER CONSTRAINT nn_valor_obj NOT NULL,
-    peso NUMBER CONSTRAINT nn_peso_obj NOT NULL
+    peso NUMBER CONSTRAINT nn_peso_obj NOT NULL,
+    token VARCHAR2(255)
 );
 
 CREATE TABLE ARMAS (
     idObjeto NUMBER CONSTRAINT pk_idobjeto_arm PRIMARY KEY,
     dado VARCHAR2(5) CONSTRAINT nn_dado_arma NOT NULL,
-    tipoDanio VARCHAR(20) CONSTRAINT nn_tipod_arma NOT NULL,
+    tipoDanio VARCHAR2(20) CONSTRAINT nn_tipod_arma NOT NULL,
     CONSTRAINT objetos_armas_fk FOREIGN KEY (idObjeto) REFERENCES OBJETOS(idObjeto)
 );
 
@@ -216,6 +218,12 @@ CREATE TABLE ARMADURAS (
     tipo VARCHAR2(20) CONSTRAINT nn_tipo_armd NOT NULL,
     resistencia RAW(2),
     CONSTRAINT objetos_armaduras_fk FOREIGN KEY (idObjeto) REFERENCES OBJETOS(idObjeto)
+);
+
+CREATE TABLE CONSUMIBLES (
+    idObjeto NUMBER CONSTRAINT pk_idobjeto_cons PRIMARY KEY,
+    tipo VARCHAR2(20) CONSTRAINT nn_tipo_cons NOT NULL,
+    CONSTRAINT objetos_consumible_fk FOREIGN KEY (idObjeto) REFERENCES OBJETOS(idObjeto)
 );
 
 CREATE TABLE HECHIZOS (
@@ -376,6 +384,7 @@ CREATE TABLE RASGOS_PERSONAJES (
 CREATE TABLE EQUIPO_PERSONAJE (
     idObjeto NUMBER,
     idPersonaje NUMBER,
+    ranura NUMBER,
     CONSTRAINT equipo_personaje_fk FOREIGN KEY (idObjeto) REFERENCES OBJETOS(idObjeto),
     CONSTRAINT personaje_equipo_fk FOREIGN KEY (idPersonaje) REFERENCES PERSONAJES(idPersonaje)
 );
@@ -383,6 +392,7 @@ CREATE TABLE EQUIPO_PERSONAJE (
 CREATE TABLE INVENTARIO_PERSONAJE (
     idObjeto NUMBER,
     idPersonaje NUMBER,
+    cantidad NUMBER,
     CONSTRAINT invent_personaje_fk FOREIGN KEY (idObjeto) REFERENCES OBJETOS(idObjeto),
     CONSTRAINT personaje_invent_fk FOREIGN KEY (idPersonaje) REFERENCES PERSONAJES(idPersonaje)
 );

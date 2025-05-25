@@ -4,21 +4,21 @@
 	<section name="java.lang.Class">
 		<item key="replaceBarOpen" value="false"/>
 		<list key="findhistory">
-			<item value="desdeJson"/>
-			<item value="cargarDesde"/>
-			<item value="marcoIma"/>
-			<item value="actualizarFondo"/>
-			<item value="marcoI"/>
-			<item value="tablero"/>
-			<item value="construirNodoVisual"/>
-			<item value="inventari"/>
-			<item value="TiendaObjeto tiendaObjeto = new TiendaObjeto(tienda, objetoSeleccionado, cantidad);"/>
-			<item value="anadirBtn.setOnAction(e -&gt; {"/>
-			<item value="TIENDA"/>
-			<item value="getOro"/>
-			<item value="getPerson"/>
-			<item value="vista de tien"/>
-			<item value="cantidadLab"/>
+			<item value="image"/>
+			<item value="venderOb"/>
+			<item value="setOro"/>
+			<item value="setText(String.valueOf"/>
+			<item value="setText(String.valueOfsetText(String.valueOf"/>
+			<item value="venderO"/>
+			<item value="saved"/>
+			<item value="save"/>
+			<item value="personajeCrud"/>
+			<item value="personajeCrud.save"/>
+			<item value="actualizarNivel"/>
+			<item value="if (registro != null) {"/>
+			<item value="experienciaField"/>
+			<item value="experiencia"/>
+			<item value="oroField"/>
 		</list>
 	</section>
 </section>

@@ -23,9 +23,11 @@ import clases_objetos.Objeto;
 import clases_partida.Escena;
 import clases_partida.Mundo;
 import clases_partida.Nacion;
+import clases_partida.TiendaObjeto;
 import clases_partida.Ubicacion;
 import clases_roles.Clase;
 import clases_roles.Subclase;
+import dbhandlerCRUD.InventarioPersonajeCRUD;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,6 +39,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import javafx.scene.control.Spinner;
@@ -155,14 +158,12 @@ public class Personaje {
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
 	@JoinTable(name = "RASGOS_PERSONAJES", joinColumns = @JoinColumn(name = "idPersonaje"), inverseJoinColumns = @JoinColumn(name = "idRasgo"))
 	private List<Rasgo> listaRasgos;
-
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
-	@JoinTable(name = "EQUIPO_PERSONAJE", joinColumns = @JoinColumn(name = "idPersonaje"), inverseJoinColumns = @JoinColumn(name = "idObjeto"))
-	private List<Objeto> equipacion;
-
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
-	@JoinTable(name = "INVENTARIO_PERSONAJE", joinColumns = @JoinColumn(name = "idPersonaje"), inverseJoinColumns = @JoinColumn(name = "idObjeto"))
-	private List<Objeto> inventario = new ArrayList<Objeto>();
+	
+	@OneToMany(mappedBy = "personaje", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+	private List<EquipoPersonaje> equipacion = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "personaje", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+	private List<InventarioPersonaje> objetosConCantidad = new ArrayList<>();
 
 	// Funciones:
 
@@ -212,7 +213,6 @@ public class Personaje {
 	    this.listaVentajas = new ArrayList<>(original.listaVentajas);
 	    this.listaRasgos = new ArrayList<>(original.listaRasgos);
 	    this.equipacion = new ArrayList<>(original.equipacion);
-	    this.inventario = new ArrayList<>(original.inventario);
 
 	    this.escenas = new ArrayList<>(original.escenas);
 	    this.ubicaciones = new ArrayList<>(original.ubicaciones);
@@ -220,7 +220,6 @@ public class Personaje {
 	}
 	
 	public void setAllStats(Map<String, List<Spinner<Integer>>> subatributosSpinners) {
-		Scanner sc = new Scanner(System.in);
 		int n1 = 0;
 		int n2 = 0;
 		int n3 = 0;
@@ -320,10 +319,6 @@ public class Personaje {
 
         return nivel - 1; // El bucle sale cuando se pasa, así que restamos 1
     }
-	
-	public void aniadirObjeto(Objeto objeto) {
-		this.inventario.add(objeto);
-	}
 
 	public void perderTurno() {
 		// Gestionar aquí los casos en los que se pierde el turno del jugador
@@ -495,20 +490,12 @@ public class Personaje {
 		this.listaRasgos = listaRasgos;
 	}
 
-	public List<Objeto> getEquipacion() {
+	public List<EquipoPersonaje> getEquipacion() {
 		return equipacion;
 	}
 
-	public void setEquipacion(List<Objeto> equipacion) {
+	public void setEquipacion(List<EquipoPersonaje> equipacion) {
 		this.equipacion = equipacion;
-	}
-
-	public List<Objeto> getInventario() {
-		return inventario;
-	}
-
-	public void setInventario(List<Objeto> inventario) {
-		this.inventario = inventario;
 	}
 
 	public List<Escena> getEscenas() {
@@ -567,6 +554,40 @@ public class Personaje {
 		this.nivel = nivel;
 	}
 
+	public List<InventarioPersonaje> getObjetosConCantidad() {
+		return objetosConCantidad;
+	}
+
+	public void setObjetosConCantidad(List<InventarioPersonaje> objetosConCantidad) {
+		this.objetosConCantidad = objetosConCantidad;
+	}
+	
+	public void addObjetoConCantidad(InventarioPersonaje inp) {
+		this.objetosConCantidad.add(inp);
+	}
+
+	public void venderObjeto(InventarioPersonaje inp, int cantidadVender) {
+	    Objeto objeto = inp.getObjeto();
+	    int oroGanado = objeto.getValor() * cantidadVender;
+
+	    // Aumentar el oro
+	    this.oro += oroGanado;
+
+	    // Reducir la cantidad del objeto
+	    int nuevaCantidad = inp.getCantidad() - cantidadVender;
+	    inp.setCantidad(nuevaCantidad);
+
+	    if (nuevaCantidad <= 0) {
+	        this.getObjetosConCantidad().remove(inp);
+	        // También se debe eliminar en la base de datos en otra parte del código
+	    }
+	}
+
+	
+	public void removeObjetoConCantidad(InventarioPersonaje inp) {
+		this.objetosConCantidad.remove(inp);
+	}
+	
 	@Override
 	public String toString() {
 		return nombre;

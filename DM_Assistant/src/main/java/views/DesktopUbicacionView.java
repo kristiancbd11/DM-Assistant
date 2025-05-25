@@ -1,18 +1,24 @@
 package views;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import clases_objetos.Objeto;
 import clases_partida.Escena;
+import clases_partida.Mundo;
 import clases_partida.Tienda;
 import clases_partida.TiendaObjeto;
 import clases_partida.Ubicacion;
+import clases_personaje.InventarioPersonaje;
+import clases_personaje.Personaje;
 import control.ExplorerController;
+import dbhandlerCRUD.InventarioPersonajeCRUD;
 import dbhandlerCRUD.ObjetoCRUD;
 import dbhandlerCRUD.PersonajeCRUD;
 import dbhandlerCRUD.TiendaObjetoCRUD;
 import designerView.DesignerController;
-import designerView.ElementoVisual;
-import designerView.ElementoVisualBuilder;
 import designerView.Tablero;
-import designerView.TableroView;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -28,6 +34,7 @@ import javafx.stage.Stage;
 
 public class DesktopUbicacionView {
 
+	private StackPane stackPanePrincipal;
 	private Ubicacion ubicacion;
 	private TiendaObjetoCRUD tienObjCrud = new TiendaObjetoCRUD();
 	private PersonajeCRUD personajeCrud = new PersonajeCRUD();
@@ -41,86 +48,71 @@ public class DesktopUbicacionView {
 	}
 
 	public StackPane getVista() {
-
 		if (ubicacion instanceof Tienda) {
-			return entornoTienda();
+			stackPanePrincipal = entornoTienda();
 		} else {
-			return entornoEscena();
+			Escena escena = (Escena) ubicacion;
+			Tablero tablero = Tablero.desdeJson(escena.getTableroJson());
+			stackPanePrincipal = entornoEscena(tablero.getFondo());
 		}
+		return stackPanePrincipal;
 	}
 
-	public StackPane entornoEscena() {
+	public StackPane entornoEscena(String rutaImagen) {
 		Escena escena = (Escena) ubicacion;
 
-		// Crear el objeto Tablero desde su JSON
-		Tablero tablero = Tablero.desdeJson(escena.getTableroJson());
-
-		// Crear el panel del tablero con tamaño original
-		double panelWidth = 1024;
-		double panelHeight = 768;
-
-		Pane panel = new Pane();
-		panel.setPrefSize(panelWidth, panelHeight);
-
-		// Aplicar fondo desde CSS con tamaño acorde al panel
-		String fondoCss = tablero.getFondo().replaceAll("(?<=-fx-background-size: )[^;]+",
-				panelWidth + "px " + panelHeight + "px");
-		panel.setStyle(fondoCss);
-
-		// Agregar los elementos visuales sin eventos
-		for (ElementoVisual ev : tablero.getElementosColocados()) {
-			VBox nodo = ElementoVisualBuilder.construirNodoVisual(ev);
-			nodo.setLayoutX(ev.getPosInicialX());
-			nodo.setLayoutY(ev.getPosInicialY());
-			panel.getChildren().add(nodo);
-		}
-
-		// Renderizar el Pane a una imagen (snapshot)
-		WritableImage snapshot = new WritableImage((int) panelWidth, (int) panelHeight);
-		// Crear escena temporal para que se renderice bien el fondo
-		new Scene(panel); // No necesitas mostrarla
-
-		panel.snapshot(null, snapshot);
-
-		// Mostrar la imagen en un ImageView redimensionado
-		ImageView vistaPrevia = new ImageView(snapshot);
-		vistaPrevia.setFitWidth(1024);
-		vistaPrevia.setFitHeight(768);
-		vistaPrevia.setPreserveRatio(false); // IMPORTANTE: desactivar para ajuste exacto
-		vistaPrevia.setSmooth(true);
-		vistaPrevia.setPreserveRatio(false); // ceñirse a 600x450
-
-		// Marco decorativo con tamaño exacto al del ImageView
-		StackPane marcoImagen = new StackPane(vistaPrevia);
-		marcoImagen.setPrefSize(1024, 768); // Ceñir exactamente al tamaño visible
-		marcoImagen.setMaxSize(1024, 768);
-		marcoImagen.setMinSize(1024, 768);
-
-		marcoImagen.setStyle(
-		    "-fx-border-color: black;" +
-		    "-fx-border-width: 3;" +
-		    "-fx-background-color: white;" +
-		    "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0.5, 2, 2);"
-		);
-		marcoImagen.setPadding(Insets.EMPTY); // Sin relleno interno
-
-		// Crear evento al hacer clic sobre la imagen
-		marcoImagen.setOnMouseClicked(event -> {
-		    DesignerController dc = new DesignerController(escena.getReino().getNacion().getMundo(), escena, explorerController);
-		    dc.iniciar();
-		    Tablero tableroACrear = Tablero.desdeJson(escena.getTableroJson());
-		    dc.getTableroView().cargarDesdeTablero(tableroACrear);
-		});
-		
-		// Label con el nombre de la escena
 		Label nombreEscena = new Label("Vista previa de: " + escena.getNombre());
 		nombreEscena.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+
+		ImageView vistaPrevia;
+
+		if (rutaImagen != null && !rutaImagen.isEmpty()) {
+			try {
+				Image imagenCargada = new Image(rutaImagen);
+				vistaPrevia = new ImageView(imagenCargada);
+			} catch (Exception e) {
+				vistaPrevia = new ImageView(); // Imagen vacía si falla
+			}
+		} else {
+			Tablero tablero = Tablero.desdeJson(escena.getTableroJson());
+
+			Pane panel = new Pane();
+			panel.setPrefSize(1024, 768);
+
+			String fondoCss = tablero.getFondo().replaceAll("(?<=-fx-background-size: )[^;]+", "1024px 768px");
+			panel.setStyle(fondoCss);
+
+			WritableImage snapshot = new WritableImage(1024, 768);
+			new Scene(panel); // Escena temporal para snapshot
+			panel.snapshot(null, snapshot);
+
+			vistaPrevia = new ImageView(snapshot);
+		}
+
+		// No se fuerza el tamaño, se ajusta automáticamente
+		vistaPrevia.setPreserveRatio(true);
+		vistaPrevia.setSmooth(true);
+
+		// Evento de doble clic sobre la imagen
+		vistaPrevia.setOnMouseClicked(event -> {
+			if (event.getClickCount() == 2) {
+				Mundo mundo = escena.getReino().getNacion().getMundo();
+				DesignerController dc = new DesignerController(mundo, escena, explorerController);
+				dc.iniciar();
+			}
+		});
+
+		StackPane marcoImagen = new StackPane(vistaPrevia);
+		marcoImagen.setStyle("-fx-border-color: black; -fx-border-width: 3; -fx-background-color: white;"
+				+ "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0.5, 2, 2);");
+
+		// Ajustar tamaño dinámico al contenido
+		marcoImagen.setMaxSize(StackPane.USE_PREF_SIZE, StackPane.USE_PREF_SIZE);
 
 		VBox layout = new VBox(10, nombreEscena, marcoImagen);
 		layout.setAlignment(Pos.TOP_CENTER);
 
 		StackPane contenedor = new StackPane(layout);
-		contenedor.setPrefSize(620, 500);
 		contenedor.setStyle("-fx-padding: 10;");
 
 		return contenedor;
@@ -159,12 +151,27 @@ public class DesktopUbicacionView {
 			// Imagen del objeto
 			ImageView imagenObjeto;
 			try {
-				Image img = new Image(getClass().getResourceAsStream("/icons/default_object.png"));
+				String tokenPath = tiendaObjeto.getObjeto().getToken(); // Ruta del token
+				InputStream imageStream;
+
+				if (tokenPath != null) {
+					imageStream = getClass().getResourceAsStream(tokenPath);
+					if (imageStream == null) {
+						// Si la ruta del token no existe, usar imagen por defecto
+						imageStream = getClass().getResourceAsStream("/icons/default_object.png");
+					}
+				} else {
+					// Si el token es null, usar imagen por defecto
+					imageStream = getClass().getResourceAsStream("/icons/default_object.png");
+				}
+
+				Image img = new Image(imageStream);
 				imagenObjeto = new ImageView(img);
 				imagenObjeto.setFitWidth(64);
 				imagenObjeto.setFitHeight(64);
+
 			} catch (Exception e) {
-				imagenObjeto = new ImageView(); // fallback vacío
+				imagenObjeto = new ImageView(); // fallback en caso de error grave
 			}
 
 			// Detalles: peso - rareza - valor - cantidad
@@ -245,8 +252,13 @@ public class DesktopUbicacionView {
 				javafx.scene.control.ComboBox<String> personajeCombo = new javafx.scene.control.ComboBox<>();
 
 				// Rellenar el ComboBox con los personajes del mundo actual
-				ubicacion.getReino().getNacion().getMundo().getPersonajes()
-						.forEach(p -> personajeCombo.getItems().add(p.getNombre()));
+				PersonajeCRUD pjCrud = new PersonajeCRUD();
+				int idMundo = ubicacion.getReino().getNacion().getMundo().getIdMundo();
+
+				ArrayList<Personaje> personajes = pjCrud.fetchAllPersonajesInMundo(idMundo);
+				for (Personaje p : personajes) {
+				    personajeCombo.getItems().add(p.getNombre());
+				}
 
 				TextField cantidadField = new TextField();
 				cantidadField.setPromptText("Cantidad a comprar");
@@ -285,11 +297,28 @@ public class DesktopUbicacionView {
 						if (personaje.getOro() >= costoTotal) {
 							personaje.setOro(personaje.getOro() - costoTotal);
 							tienda.setFondos(tienda.getFondos() + costoTotal);
-							for (int i = 0; i < cantidadComprar; i++) {
-								personaje.aniadirObjeto(tiendaObjeto.getObjeto());
+							
+							boolean existe = false;
+							for (InventarioPersonaje inp : personaje.getObjetosConCantidad()) {
+								if(inp.getObjeto().getIdObjeto() == tiendaObjeto.getObjeto().getIdObjeto()) {
+									inp.setCantidad(inp.getCantidad() + cantidadComprar);
+									InventarioPersonajeCRUD inpCrud = new InventarioPersonajeCRUD();
+									inpCrud.guardarOActualizarPersonajeIventario(inp);
+									existe = true;
+									break;
+								}
+							}
+							
+							if(!existe) {
+								InventarioPersonaje inp = new InventarioPersonaje(tiendaObjeto.getObjeto(), personaje, cantidadComprar);
+								personaje.addObjetoConCantidad(inp);
+								InventarioPersonajeCRUD inpCrud = new InventarioPersonajeCRUD();
+								inpCrud.guardarOActualizarPersonajeIventario(inp);
 							}
 
 							personajeCrud.savePersonaje(personaje);
+							ubicacion.getReino().getNacion().getMundo().removePersonaje(personaje);
+							ubicacion.getReino().getNacion().getMundo().addPersonaje(personajeCrud.fetchPersonaje(personaje.getId()));
 
 							tiendaObjeto.setCantidad(tiendaObjeto.getCantidad() - cantidadComprar);
 							cantidadLabel.setText("Cantidad: " + tiendaObjeto.getCantidad());
@@ -407,8 +436,14 @@ public class DesktopUbicacionView {
 			Label instruccionLabel = new Label("Selecciona un objeto y su cantidad:");
 
 			javafx.scene.control.ComboBox<String> objetoCombo = new javafx.scene.control.ComboBox<>();
-			var todosLosObjetos = objetoCrud.fetchAllObjetos();
+
+			List<Objeto> todosLosObjetos = new ArrayList<>();
+			todosLosObjetos.addAll(objetoCrud.fetchAllObjetosArmadura());
+			todosLosObjetos.addAll(objetoCrud.fetchAllObjetosArma());
+			todosLosObjetos.addAll(objetoCrud.fetchAllObjetosConsumible());
+
 			todosLosObjetos.forEach(o -> objetoCombo.getItems().add(o.getNombre()));
+
 
 			TextField cantidadField = new TextField();
 			cantidadField.setPromptText("Cantidad");

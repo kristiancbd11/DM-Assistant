@@ -39,6 +39,7 @@
 
 		<mapping class="clases_objetos.Arma" />
 		<mapping class="clases_objetos.Armadura" />
+		<mapping class="clases_objetos.Consumible" />
 		<mapping class="clases_objetos.Objeto" />
 
 		<mapping class="clases_partida.Criatura" />
@@ -53,7 +54,9 @@
 		<mapping class="clases_partida.Ubicacion" />	
 
 		<mapping class="clases_personaje.Arquetipo" />
+		<mapping class="clases_personaje.EquipoPersonaje" />
 		<mapping class="clases_personaje.Ideologia" />
+		<mapping class="clases_personaje.InventarioPersonaje" />
 		<mapping class="clases_personaje.Personaje" />
 		<mapping class="clases_personaje.Raza" />
 		<mapping class="clases_personaje.Religion" />

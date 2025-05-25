@@ -1,106 +1,122 @@
 package designerView;
 
-import java.util.ArrayList;
-
+import control.ExplorerController;
+import javafx.scene.Scene;
+import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 import clases_partida.Escena;
 import clases_partida.Mundo;
-import control.ExplorerController;
 import dbhandlerCRUD.UbicacionCRUD;
-import javafx.application.Platform;
-import javafx.geometry.Rectangle2D;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
+import javafx.geometry.Insets;
+import javafx.scene.control.Separator;
+import javafx.scene.layout.Priority;
 
 public class DesignerController {
 
-	private double gridWidth = 1024;
-	private double gridHeight = 768;
-	private double paletteWidth = 200;
-	private double margen = 10;
-
-	private final Mundo mundo;
-	private ExplorerController explorerController;
-	private TableroView tableroView = new TableroView(gridWidth, gridHeight, 0);
+	private TableroView tableroView;
 	private PaletaView paletaView;
 	private Tablero tablero;
-	private Escena nuevaZona;
-	private UbicacionCRUD ubicacionCrud;
+	private Mundo mundo;
+	private Escena escena;
+	private ExplorerController explorerController;
 
-	// Referencias a los stages
-	private Stage stageTablero;
-	private Stage stagePaleta;
+	private Stage principalStage;
+	private Stage paletaStage; // Nuevo stage para PaletaView
 
-	public DesignerController(Mundo mundo, Escena nuevaZona, ExplorerController explorerController) {
+	public DesignerController(Mundo mundo, Escena escena, ExplorerController explorerController) {
 		this.mundo = mundo;
-		this.nuevaZona = nuevaZona;
+		this.escena = escena;
 		this.explorerController = explorerController;
-	}
 
-	public void iniciar() {
-		Platform.runLater(() -> {
-			// Crear ventana
-			Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-			double gridX = (screenBounds.getWidth() - (gridWidth + margen + paletteWidth)) / 2;
-			double gridY = (screenBounds.getHeight() - gridHeight) / 2;
-
-			paletaView = new PaletaView(mundo, tableroView);
-			paletaView.getGuardarButton().setOnAction(event -> {
-				guardarTablero();
-			});
-			tableroView.setPaletaView(paletaView);
-
-			// Establecer el tablero de la escena en el tableroView
-			String tableroJson = nuevaZona.getTableroJson();
-			Tablero tablero;
-			if (tableroJson != null) {
-				try {
-					tablero = Tablero.desdeJson(tableroJson);
-				} catch (Exception e) {
-					System.err.println("Error al cargar el tablero desde JSON, se creará uno en blanco.");
-					e.printStackTrace();
-					tablero = new Tablero("", new ArrayList<>());
-				}
-			} else {
-				tablero = new Tablero("", new ArrayList<>()); // fondo vacío y sin elementos
-			}
-
-			tableroView.cargarDesdeTablero(tablero);
-
-			// Crear ventanas
-			stageTablero = tableroView.crearVentana(gridX, gridY);
-			stagePaleta = paletaView.crearVentana(gridX + gridWidth + margen, gridY);
-
-			stageTablero.setOnCloseRequest(e -> stagePaleta.close());
-			stagePaleta.setOnCloseRequest(e -> stageTablero.close());
-		});
-	}
-
-	public void guardarTablero() {
-		String fondo = tableroView.getPanelVisual().getStyle();
-		Tablero tablero = new Tablero(fondo, tableroView.getElementosColocados());
-
-		try {
-			nuevaZona.setTableroJson(tablero.generarJson());
-			ubicacionCrud = new UbicacionCRUD();
-
-			boolean exito = ubicacionCrud.saveUbicacion(nuevaZona);
-			if (exito) {
-				explorerController.refreshTreeView();
-
-				// ✅ Cerrar las ventanas tras guardar
-				if (stageTablero != null)
-					stageTablero.close();
-				if (stagePaleta != null)
-					stagePaleta.close();
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (escena.getTableroJson() == null) {
+			this.tablero = new Tablero();
+		} else {
+			this.tablero = Tablero.desdeJson(escena.getTableroJson());
 		}
 	}
 
-	public TableroView getTableroView() {
-		return tableroView;
+	public Stage iniciar() {
+		if (principalStage != null && principalStage.isShowing()) {
+			principalStage.toFront();
+			if (paletaStage != null && paletaStage.isShowing()) {
+				paletaStage.toFront();
+			}
+			return principalStage;
+		}
+
+		tableroView = new TableroView(tablero);
+		paletaView = new PaletaView(mundo);
+
+		paletaView.setTableroView(tableroView);
+		tableroView.setPaleta(paletaView);
+
+		paletaView.inicializar();
+		tableroView.inicializar();
+
+		// --- Ventana principal solo con TableroView ---
+		principalStage = new Stage();
+		Scene sceneTablero = new Scene(tableroView.getRoot());
+		principalStage.setTitle("Diseñador de Escena - Tablero");
+		principalStage.setScene(sceneTablero);
+		principalStage.setWidth(1024);
+		principalStage.setHeight(768);
+		principalStage.show();
+
+		// --- Nueva ventana para PaletaView ---
+		paletaStage = new Stage();
+		Scene scenePaleta = new Scene(paletaView.getRoot());
+		paletaStage.setTitle("Diseñador de Escena - Paleta");
+		paletaStage.setScene(scenePaleta);
+		paletaStage.setWidth(300);
+		paletaStage.setHeight(768);
+
+		// Posicionar la ventana de Paleta a la derecha de la principal (10px de
+		// separación)
+		paletaStage.setX(principalStage.getX() + principalStage.getWidth() + 10);
+		paletaStage.setY(principalStage.getY());
+		paletaStage.show();
+
+		// --- Vincular cierre entre ventanas ---
+		principalStage.setOnCloseRequest(event -> {
+			if (paletaStage != null) {
+				paletaStage.close();
+			}
+		});
+
+		paletaStage.setOnCloseRequest(event -> {
+			if (principalStage != null) {
+				principalStage.close();
+			}
+		});
+
+		// --- Acción del botón Guardar ---
+		paletaView.setOnGuardarAction(() -> {
+			guardarTablero();
+			if (principalStage != null)
+				principalStage.close();
+			if (paletaStage != null)
+				paletaStage.close();
+		});
+
+		return principalStage;
 	}
 
+	private void guardarTablero() {
+		if (tablero == null) {
+			tablero = new Tablero();
+		}
+
+		String rutaFondo = tableroView.getRutaFondoActual();
+		if (rutaFondo == null || rutaFondo.isEmpty()) {
+			rutaFondo = "tablero/grounds/Default.png";
+		}
+
+		tablero.setElementosColocados(tableroView.getElementosColocados());
+		tablero.setFondo(rutaFondo);
+		escena.setTableroJson(tablero.generarJson());
+
+		UbicacionCRUD ubiCrud = new UbicacionCRUD();
+		ubiCrud.saveUbicacion(escena);
+		explorerController.refreshTreeView();
+	}
 }

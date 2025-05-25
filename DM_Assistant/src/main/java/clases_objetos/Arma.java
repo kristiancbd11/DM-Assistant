@@ -36,4 +36,38 @@ public class Arma extends Objeto {
 	//Constructores:
 	
 	public Arma(){}
+
+	public Objeto getObjeto() {
+		return objeto;
+	}
+
+	public void setObjeto(Objeto objeto) {
+		this.objeto = objeto;
+	}
+
+	public String getDado() {
+		return dado;
+	}
+
+	public void setDado(String dado) {
+		this.dado = dado;
+	}
+
+	public Dado getDanio() {
+		return danio;
+	}
+
+	public void setDanio(Dado danio) {
+		this.danio = danio;
+	}
+
+	public String getTipoDanio() {
+		return tipoDanio;
+	}
+
+	public void setTipoDanio(String tipoDanio) {
+		this.tipoDanio = tipoDanio;
+	}
+	
+
 }

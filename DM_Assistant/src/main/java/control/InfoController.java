@@ -7,7 +7,6 @@ import views.EscenaView;
 import views.InfoView;
 import views.InfoViewType;
 import views.ReinoView;
-import views.DesktopUbicacionView;
 import clases_partida.Criatura;
 import clases_partida.Mundo;
 import clases_partida.Nacion;

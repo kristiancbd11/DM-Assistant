@@ -29,7 +29,7 @@ public class Armadura extends Objeto {
 	// 9 -> Necrótico
 	// 10 -> Sónico
 	@Column(name = "resistencia")
-	private byte resistencia;
+	private byte[] resistencia;
 
 	@Column(name = "tipo")
 	private String tipo; // Casco, coraza, botas, guantes, grebas
@@ -37,4 +37,32 @@ public class Armadura extends Objeto {
 	//Constructores:
 	
 	public Armadura(){}
+
+	public Objeto getObjeto() {
+		return objeto;
+	}
+
+	public void setObjeto(Objeto objeto) {
+		this.objeto = objeto;
+	}
+
+	public byte[] getResistencia() {
+		return resistencia;
+	}
+
+	public void setResistencia(byte[] resistencia) {
+		this.resistencia = resistencia;
+	}
+
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+
+	
+	
+	
 }

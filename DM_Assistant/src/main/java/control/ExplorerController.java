@@ -83,23 +83,23 @@ public class ExplorerController {
 	        if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
 	            Object value = selected.getValue();
 	            if (value instanceof Personaje) {
-	                desktopController.cambiarVista(DesktopViewType.PERSONAJE, selected);
+	                desktopController.cambiarVista(DesktopViewType.PERSONAJE, selected, fetchTreeRoot(selected));
 	            } else if (value instanceof Criatura) {
-	                desktopController.cambiarVista(DesktopViewType.CRIATURA, selected);
+	                desktopController.cambiarVista(DesktopViewType.CRIATURA, selected, fetchTreeRoot(selected));
 	            } else if (value instanceof Nacion) {
 	            	if(desktopController.getDesktopNacionController().getNacion() == null) {
-		                desktopController.cambiarVista(DesktopViewType.NACION, selected);
+		                desktopController.cambiarVista(DesktopViewType.NACION, selected, fetchTreeRoot(selected));
 	            	} else {
 	            		desktopController.getDesktopNacionController().cambiarVista((Nacion) selected.getValue());
 	            	}
 	            } else if (value instanceof Reino) {
-	                desktopController.cambiarVista(DesktopViewType.REINO, selected);
+	                desktopController.cambiarVista(DesktopViewType.REINO, selected, fetchTreeRoot(selected));
 	            } else if (value instanceof Ubicacion) {
-	                desktopController.cambiarVista(DesktopViewType.UBICACION, selected);
+	                desktopController.cambiarVista(DesktopViewType.UBICACION, selected, fetchTreeRoot(selected));
 	            } else if (value instanceof Escena) {
-	                desktopController.cambiarVista(DesktopViewType.ESCENA, selected);
+	                desktopController.cambiarVista(DesktopViewType.ESCENA, selected, fetchTreeRoot(selected));
 	            } else if (value instanceof Mundo) {
-	            	desktopController.cambiarVista(DesktopViewType.MUNDO, selected);
+	            	desktopController.cambiarVista(DesktopViewType.MUNDO, selected, fetchTreeRoot(selected));
 	            }
 	        } else if (event.getClickCount() == 1) {
 	        	Object value = selected.getValue();

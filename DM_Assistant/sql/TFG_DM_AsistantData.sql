@@ -293,16 +293,42 @@ INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACION
 INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Thurimgard'), 'Grumble');
 INSERT INTO IDEOLOGIAS (idNacion, nombre) VALUES ((SELECT idNacion FROM O_NACIONES WHERE nombre = 'Thurimgard'), 'Pacto de la Forja');
 
-INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Comï¿½n', 'Pociï¿½n', 10, 1);
-INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Raro', 'Espada Larga', 150, 5);
-INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('ï¿½pico', 'Armadura Dragï¿½n', 500, 20);
-INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Comï¿½n', 'Antorcha', 5, 2);
-INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Raro', 'Amuleto Mï¿½stico', 200, 1);
-INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('ï¿½pico', 'Cetro del Vacï¿½o', 750, 3);
-INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Comï¿½n', 'Botas de Cuero', 25, 1);
-INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Raro', 'Libro de Hechizos', 120, 4);
-INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('ï¿½pico', 'Anillo de Poder', 1000, 0.5);
-INSERT INTO OBJETOS (rareza, nombre, valor, peso) VALUES ('Comï¿½n', 'Cuerda', 15, 2);
+INSERT INTO OBJETOS (rareza, nombre, valor, peso, token) VALUES ('Común', 'Gorro', 25, 1, '/icons/gorro.png');
+INSERT INTO ARMADURAS (idObjeto, tipo, resistencia) VALUES ((SELECT idObjeto FROM OBJETOS WHERE nombre = 'Gorro'), 'Casco', hextoraw('0000'));
+
+INSERT INTO OBJETOS (rareza, nombre, valor, peso, token) VALUES ('Raro', 'Casco de Hierro', 25, 1, '/icons/casco_hierro.png');
+INSERT INTO ARMADURAS (idObjeto, tipo, resistencia) VALUES ((SELECT idObjeto FROM OBJETOS WHERE nombre = 'Casco de Hierro'), 'Casco', hextoraw('0000'));
+
+INSERT INTO OBJETOS (rareza, nombre, valor, peso, token) VALUES ('Común', 'Casco de Mithril', 25, 1, '/icons/casco_mithril.png');
+INSERT INTO ARMADURAS (idObjeto, tipo, resistencia) VALUES ((SELECT idObjeto FROM OBJETOS WHERE nombre = 'Casco de Mithril'), 'Casco', hextoraw('0000'));
+
+INSERT INTO OBJETOS (rareza, nombre, valor, peso, token) VALUES ('Común', 'Camisa', 25, 1, '/icons/camisa.png');
+INSERT INTO ARMADURAS (idObjeto, tipo, resistencia) VALUES ((SELECT idObjeto FROM OBJETOS WHERE nombre = 'Camisa'), 'Coraza', hextoraw('0000'));
+
+INSERT INTO OBJETOS (rareza, nombre, valor, peso, token) VALUES ('Común', 'Coraza de Cuero', 25, 1, '/icons/coraza_cuero.png');
+INSERT INTO ARMADURAS (idObjeto, tipo, resistencia) VALUES ((SELECT idObjeto FROM OBJETOS WHERE nombre = 'Coraza de Cuero'), 'Coraza', hextoraw('0000'));
+
+INSERT INTO OBJETOS (rareza, nombre, valor, peso, token) VALUES ('Raro', 'Coraza de Hierro', 25, 1, '/icons/coraza_hierro.png');
+INSERT INTO ARMADURAS (idObjeto, tipo, resistencia) VALUES ((SELECT idObjeto FROM OBJETOS WHERE nombre = 'Coraza de Hierro'), 'Coraza', hextoraw('0000'));
+
+INSERT INTO OBJETOS (rareza, nombre, valor, peso, token) VALUES ('Común', 'Botas de Cuero', 25, 1, '/icons/botas_cuero.png');
+INSERT INTO ARMADURAS (idObjeto, tipo, resistencia) VALUES ((SELECT idObjeto FROM OBJETOS WHERE nombre = 'Botas de Cuero'), 'Botas', hextoraw('0000'));
+
+INSERT INTO OBJETOS (rareza, nombre, valor, peso, token) VALUES ('Raro', 'Botas de Hierro', 25, 1, '/icons/botas_hierro.png');
+INSERT INTO ARMADURAS (idObjeto, tipo, resistencia) VALUES ((SELECT idObjeto FROM OBJETOS WHERE nombre = 'Botas de Hierro'), 'Botas', hextoraw('0000'));
+
+INSERT INTO OBJETOS (rareza, nombre, valor, peso, token) VALUES ('Épico', 'Botas de Mithril', 25, 1, '/icons/botas_mithril.png');
+INSERT INTO ARMADURAS (idObjeto, tipo, resistencia) VALUES ((SELECT idObjeto FROM OBJETOS WHERE nombre = 'Botas de Mithril'), 'Botas', hextoraw('0000'));
+
+INSERT INTO OBJETOS (rareza, nombre, valor, peso, token) VALUES ('Raro', 'Espada Larga', 150, 3, '/icons/espada_larga.png');
+INSERT INTO ARMAS (idObjeto, dado, tipoDanio) VALUES ((SELECT idObjeto FROM OBJETOS WHERE nombre = 'Espada Larga'), '1d6', 'Lacerante');
+
+INSERT INTO OBJETOS (rareza, nombre, valor, peso, token) VALUES ('Común', 'Daga', 50, 2, '/icons/daga.png');
+INSERT INTO ARMAS (idObjeto, dado, tipoDanio) VALUES ((SELECT idObjeto FROM OBJETOS WHERE nombre = 'Daga'), '1d4', 'Lacerante');
+
+INSERT INTO OBJETOS (rareza, nombre, valor, peso, token) VALUES ('Raro', 'Hacha de Guerra', 200, 5, '/icons/hacha_guerra.png');
+INSERT INTO ARMAS (idObjeto, dado, tipoDanio) VALUES ((SELECT idObjeto FROM OBJETOS WHERE nombre = 'Hacha de Guerra'), '1d8', 'Lacerante');
+
 
 COMMIT;
 

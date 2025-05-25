@@ -1,221 +1,145 @@
 package designerView;
 
-import javafx.scene.Scene;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.TransferMode;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class TableroView {
 
-	private final double width;
-	private final double height;
+    private PaletaView paleta;
+    private Tablero tablero;
+    private VBox root;
+    private HashMap<UUID, ElementoVisualData> elementosColocados;
+    private String rutaFondoActual;
+    private ElementoVisual elementoResaltado;
 
-	private Pane panelVisual = new Pane();
-	private final List<ElementoVisual> elementosColocados = new ArrayList<>();
-	private PaletaView paletaView;
+    public TableroView(Tablero tablero) {
+        this.tablero = tablero;
+        this.elementosColocados = tablero.getElementosColocados();
+        this.rutaFondoActual = tablero.getFondo();
+    }
 
-	public TableroView(double width, double height, int casillaTam) {
-		this.width = width;
-		this.height = height;
-	}
+    
+    public void inicializar() {
+        root = new VBox(10);
+        root.setPrefSize(1024, 768);
 
-	public Stage crearVentana(double x, double y) {
-		panelVisual.setPrefSize(width, height);
+        Pane contenido = new Pane();
+        contenido.setPrefSize(1024, 768);
+        root.getChildren().add(contenido);
 
-		// Estilo por defecto
-		panelVisual.setStyle(String.format(
-				"-fx-background-image: url('/tablero/grounds/stone.png'); -fx-background-size: %fpx %fpx;",
-				width, height));
+        // Se recorre por los valores del HashMap
+        for (ElementoVisualData evData : elementosColocados.values()) {
+            ElementoVisual ev = new ElementoVisual(evData, this);
+            VBox contenedor = ev.getContenedor();
+            contenedor.setLayoutX(evData.getEjeX());
+            contenedor.setLayoutY(evData.getEjeY());
+            contenido.getChildren().add(contenedor);
+        }
 
-		// Eventos DnD
-		panelVisual.setOnDragOver(this::manejarDragOver);
-		panelVisual.setOnDragDropped(this::manejarDragDropped);
+        if (rutaFondoActual != null && !rutaFondoActual.isEmpty()) {
+            actualizarFondo(rutaFondoActual);
+        }
 
-		StackPane root = new StackPane(panelVisual);
-		Stage stage = new Stage();
-		stage.setTitle("Lienzo de Diseño Libre");
-		stage.setScene(new Scene(root));
-		stage.setX(x);
-		stage.setY(y);
-		stage.setResizable(false);
-		stage.show();
+        contenido.setOnMouseClicked(event -> {
+            if (paleta == null) return;
 
-		return stage;
-	}
+            // Solo colocar si se hace clic sobre el Pane directamente
+            if (event.getTarget() != contenido) return;
 
-	private void manejarDragOver(DragEvent event) {
-		if (event.getGestureSource() != panelVisual && event.getDragboard().hasString()) {
-			event.acceptTransferModes(TransferMode.COPY);
-		}
-		event.consume();
-	}
+            ElementoVisual seleccionado = paleta.getSeleccionado();
+            if (seleccionado == null) return;
 
-	private void manejarDragDropped(DragEvent event) {
-		String nombreElemento = event.getDragboard().getString();
-		double x = event.getX();
-		double y = event.getY();
+            ElementoVisual copia = new ElementoVisual(seleccionado.getData().clonar(), this);
+            VBox contenedor = copia.getContenedor();
 
-		if (paletaView == null) {
-			System.err.println("PaletaView no ha sido establecida.");
-			return;
-		}
+            double x = event.getX();
+            double y = event.getY();
 
-		Object obj = paletaView.getObjetoPorNombre(nombreElemento);
-		if (obj != null) {
-			ElementoVisual ev;
+            copia.getData().setEjeX((int) x);
+            copia.getData().setEjeY((int) y);
+            contenedor.setLayoutX(x);
+            contenedor.setLayoutY(y);
 
-			if (obj instanceof ElementoVisual elementoExistente) {
-				ev = new ElementoVisual(elementoExistente.getNombre(), 0, 0);
-			} else {
-				ev = new ElementoVisual(obj, 0, 0);
-			}
+            contenido.getChildren().add(contenedor);
 
-			elementosColocados.add(ev);
+            UUID clave = UUID.randomUUID();
+            copia.getData().setClave(clave);
+            elementosColocados.put(clave, copia.getData());
+        });
 
-			VBox nodoVisual = ElementoVisualBuilder.construirNodoVisual(ev);
-			nodoVisual.setLayoutX(x);
-			nodoVisual.setLayoutY(y);
+    }
 
-			agregarEventoArrastre(nodoVisual, ev);
-			panelVisual.getChildren().add(nodoVisual);
+    public void actualizarFondo(String rutaFondo) {
+        try (InputStream stream = getClass().getResourceAsStream("/" + rutaFondo)) {
+            if (stream == null) {
+                System.err.println("No se encontró el recurso de fondo: " + rutaFondo);
+                return;
+            }
+            Image image = new Image(stream);
+            BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT,
+                    BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER,
+                    new BackgroundSize(1024, 768, false, false, false, false));
 
-			if (obj instanceof clases_personaje.Personaje) {
-				paletaView.removerElemento(nombreElemento);
+            if (!root.getChildren().isEmpty() && root.getChildren().get(0) instanceof Pane contenido) {
+                contenido.setBackground(new Background(backgroundImage));
+            }
 
-				int id = obtenerIdDesdeObjeto(obj);
-				for (CategoriaPaleta categoria : paletaView.getCategorias()) {
-					if (categoria.getObjetosPorNombre().containsKey(nombreElemento)) {
-						categoria.getEstadoColocados().put(id, true);
-						break;
-					}
-				}
-			}
-		}
+            rutaFondoActual = rutaFondo;
+        } catch (Exception e) {
+            System.err.println("Error cargando imagen fondo: " + e.getMessage());
+        }
+    }
 
-		event.setDropCompleted(true);
-		event.consume();
-	}
+    public String getRutaFondoActual() {
+        return rutaFondoActual;
+    }
 
-	private void agregarEventoArrastre(VBox nodoVisual, ElementoVisual ev) {
-		nodoVisual.setOnMousePressed((MouseEvent event) -> {
-			ev.setPosInicialX(event.getSceneX());
-			ev.setPosInicialY(event.getSceneY());
-			ev.setDragging(true);
-		});
+    public PaletaView getPaleta() {
+        return paleta;
+    }
 
-		nodoVisual.setOnMouseDragged((MouseEvent event) -> {
-			double deltaX = event.getSceneX() - ev.getPosInicialX();
-			double deltaY = event.getSceneY() - ev.getPosInicialY();
+    public void setPaleta(PaletaView paleta) {
+        this.paleta = paleta;
+    }
 
-			double nuevaX = nodoVisual.getLayoutX() + deltaX;
-			double nuevaY = nodoVisual.getLayoutY() + deltaY;
+    public Tablero getTablero() {
+        return tablero;
+    }
 
-			double maxX = width - nodoVisual.getWidth();
-			double maxY = height - nodoVisual.getHeight();
+    public void setTablero(Tablero tablero) {
+        this.tablero = tablero;
+        this.rutaFondoActual = tablero.getFondo();
+    }
 
-			nuevaX = Math.max(0, Math.min(nuevaX, maxX));
-			nuevaY = Math.max(0, Math.min(nuevaY, maxY));
+    public VBox getRoot() {
+        return root;
+    }
 
-			nodoVisual.setLayoutX(nuevaX);
-			nodoVisual.setLayoutY(nuevaY);
+    public void setRoot(VBox root) {
+        this.root = root;
+    }
 
-			ev.setPosInicialX(event.getSceneX());
-			ev.setPosInicialY(event.getSceneY());
-		});
+    public HashMap<UUID, ElementoVisualData> getElementosColocados() {
+        return elementosColocados;
+    }
 
-		nodoVisual.setOnMouseReleased(event -> ev.setDragging(false));
+    public void setElementosColocados(HashMap<UUID, ElementoVisualData> elementosColocados) {
+        this.elementosColocados = elementosColocados;
+    }
 
-		ContextMenu contextMenu = new ContextMenu();
-		MenuItem eliminarItem = new MenuItem("Eliminar");
-		contextMenu.getItems().add(eliminarItem);
+    public void setRutaFondoActual(String rutaFondoActual) {
+        this.rutaFondoActual = rutaFondoActual;
+    }
 
-		nodoVisual.setOnContextMenuRequested(e ->
-			contextMenu.show(nodoVisual, e.getScreenX(), e.getScreenY())
-		);
+    public void setElementoResaltado(ElementoVisual ev) {
+        this.elementoResaltado = ev;
+    }
 
-		eliminarItem.setOnAction(e -> {
-			panelVisual.getChildren().remove(nodoVisual);
-			elementosColocados.remove(ev);
-
-			if (ev.getObj() instanceof clases_personaje.Personaje) {
-				paletaView.reinsertarElemento(ev.getObj());
-			}
-		});
-	}
-
-	/**
-	 * Carga todos los elementos del objeto Tablero al panel visual
-	 * y refresca el fondo con el estilo especificado.
-	 */
-	public void cargarDesdeTablero(Tablero tablero) {
-	    this.elementosColocados.clear();
-	    this.panelVisual.getChildren().clear();
-
-	    // Aquí puedes agregar lógica para construir los elementos visuales a partir del Tablero
-	    for (ElementoVisual ev : tablero.getElementosColocados()) {
-	        VBox nodo = ElementoVisualBuilder.construirNodoVisual(ev);
-	        nodo.setLayoutX(ev.getPosInicialX());
-	        nodo.setLayoutY(ev.getPosInicialY());
-	        panelVisual.getChildren().add(nodo);
-	    }
-
-	    // Si es necesario, también puedes agregar lógica para cambiar el fondo del tablero
-		this.panelVisual.setOnDragOver(this::manejarDragOver);
-		this.panelVisual.setOnDragDropped(this::manejarDragDropped);
-	    this.panelVisual.setStyle(tablero.getFondo());
-	}
-
-
-	public void actualizarFondo(String estiloCSS) {
-		if (panelVisual != null && estiloCSS != null && !estiloCSS.isBlank()) {
-			panelVisual.setStyle(estiloCSS);
-		} else {
-			System.err.println("No se pudo actualizar el fondo: estiloCSS es null o vacío.");
-		}
-	}
-
-	private int obtenerIdDesdeObjeto(Object obj) {
-		try {
-			var method = obj.getClass().getMethod("getId");
-			return (int) method.invoke(obj);
-		} catch (Exception e) {
-			System.err.println("Error al obtener ID del objeto: " + e.getMessage());
-			return -1;
-		}
-	}
-
-	// Getters y Setters
-
-	public void setPaletaView(PaletaView paletaView) {
-		this.paletaView = paletaView;
-	}
-
-	public Pane getPanelVisual() {
-		return panelVisual;
-	}
-
-	public void setPanelVisual(Pane panelVisual) {
-		this.panelVisual = panelVisual;
-	}
-
-	public List<ElementoVisual> getElementosColocados() {
-		return elementosColocados;
-	}
-
-	public double getWidth() {
-		return width;
-	}
-
-	public double getHeight() {
-		return height;
-	}
+    public ElementoVisual getElementoResaltado() {
+        return this.elementoResaltado;
+    }
 }

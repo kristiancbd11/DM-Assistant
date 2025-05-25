@@ -1,5 +1,7 @@
 package views;
 
+import java.util.Random;
+
 import javafx.animation.RotateTransition;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -14,8 +16,11 @@ public class LoadingView extends VBox {
         super(15);
         setAlignment(Pos.CENTER);
 
-        // Cargar la imagen de fondo
-        Image backgroundImage = new Image(getClass().getResourceAsStream("/images/loading_screen2.png"));
+        // Elegir una imagen de fondo aleatoria
+        Random random = new Random();
+        int numero = random.nextInt(4) + 1; // Número entre 1 y 4
+        String rutaImagen = "/images/loading_screen" + numero + ".png";
+        Image backgroundImage = new Image(getClass().getResourceAsStream(rutaImagen));
 
         // Crear un BackgroundImage con la imagen cargada
         BackgroundImage backgroundImg = new BackgroundImage(
@@ -29,7 +34,7 @@ public class LoadingView extends VBox {
         // Aplicar el BackgroundImage al VBox
         setBackground(new Background(backgroundImg));
 
-        // Imagen de carga
+        // Imagen de carga (logo central)
         Image image = new Image(getClass().getResourceAsStream("/images/loading_logo.png"));
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(100); // Tamaño deseado

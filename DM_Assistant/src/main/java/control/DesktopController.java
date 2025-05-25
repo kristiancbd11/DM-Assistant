@@ -24,11 +24,11 @@ public class DesktopController {
         return desktopView.getDesktop();
     }
 
-    public void cambiarVista(DesktopViewType vistaTipo, TreeItem<Object> item) {
+    public void cambiarVista(DesktopViewType vistaTipo, TreeItem<Object> item, Mundo mundo) {
         StackPane nuevaVista = switch (vistaTipo) {
             case PERSONAJE -> {
             	nacionController.setNacion(null);
-                DesktopPersonajeController personajeController = new DesktopPersonajeController((Personaje) item.getValue());
+                DesktopPersonajeController personajeController = new DesktopPersonajeController((Personaje) item.getValue(), this, mundo);
                 yield personajeController.getVista();
             }
             case CRIATURA -> {
