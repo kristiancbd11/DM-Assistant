@@ -29,7 +29,6 @@ public class CreationCriaturaController {
             view.getNombreField().clear();  // Limpiar el campo de nombre
         });
 
-        // Configurar evento para el botón Crear
         view.getBtnCrear().setOnAction(event -> {
             String nombre = view.getNombreField().getText().trim();
 
@@ -37,21 +36,22 @@ public class CreationCriaturaController {
                 mostrarAlerta("El nombre de la criatura no puede estar vacío.");
                 return;
             }
-            
+
             Criatura criatura = new Criatura(nombre);
             mundo.addCriatura(criatura);
-            
+
             // Guardar en la base de datos
             boolean exito = criaturaCRUD.saveCriatura(criatura);  // Asume que retorna true si fue exitoso
 
             if (exito) {
                 mostrarAlerta("Criatura creada exitosamente.", AlertType.INFORMATION);
                 explorerController.refreshTreeView();
-                view.getNombreField().clear();  // Limpiar después de crear
+                window.close();  // Cierra la ventana tras crear con éxito
             } else {
                 mostrarAlerta("Hubo un error al guardar la criatura.");
             }
         });
+
     }
 
     private void mostrarAlerta(String mensaje) {

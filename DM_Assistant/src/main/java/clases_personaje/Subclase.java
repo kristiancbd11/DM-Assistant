@@ -1,4 +1,4 @@
-package clases_roles;
+package clases_personaje;
 
 import java.util.List;
 
@@ -40,5 +40,15 @@ public class Subclase {
 	//Constructor:
 	
 	public Subclase(){}
+
+	public int getIdSubclase() {
+		return idSubclase;
+	}
+
+	public void setIdSubclase(int idSubclase) {
+		this.idSubclase = idSubclase;
+	}
+	
+	
 
 }

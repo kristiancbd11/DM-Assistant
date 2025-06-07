@@ -34,5 +34,15 @@ public class Ventaja {
 	//Constructores:
 	
 	public Ventaja(){}
+
+	public Habilidad getHabilidad() {
+		return habilidad;
+	}
+
+	public void setHabilidad(Habilidad habilidad) {
+		this.habilidad = habilidad;
+	}
+	
+	
 	
 }

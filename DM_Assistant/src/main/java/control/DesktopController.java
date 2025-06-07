@@ -3,6 +3,7 @@ package control;
 import clases_partida.Criatura;
 import clases_partida.Mundo;
 import clases_partida.Nacion;
+import clases_partida.Reino;
 import clases_partida.Ubicacion;
 import clases_personaje.Personaje;
 import javafx.scene.control.TreeItem;
@@ -45,7 +46,11 @@ public class DesktopController {
             	DesktopMundoController mundoController = new DesktopMundoController((Mundo) item.getValue());
             	yield mundoController.getVista();
             }
-            case REINO -> new ReinoView().crearView();
+            case REINO -> {
+            	nacionController.setNacion(null);
+            	DesktopReinoView reinoView = new DesktopReinoView((Reino) item.getValue());
+            	yield reinoView.crearView();
+            }
             case UBICACION -> {
             	nacionController.setNacion(null);
             	DesktopUbicacionView ubicacionView = new DesktopUbicacionView((Ubicacion) item.getValue(), explorerController);
@@ -60,6 +65,10 @@ public class DesktopController {
         } else {
             System.out.println("Vista desconocida o nula: " + vistaTipo);
         }
+    }
+    
+    public void vistaInicio() {
+    	desktopView.setContenido(desktopView.generarVistaInicio());
     }
 
 	public DesktopNacionController getDesktopNacionController() {

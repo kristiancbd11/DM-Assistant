@@ -29,9 +29,6 @@ public class DesktopNacionView {
     public StackPane crearView(Nacion nacion) {
         StackPane root = new StackPane();
 
-        Label titulo = new Label("🌍 Vista del Mundo - " + nacion.getNombre());
-        StackPane.setAlignment(titulo, Pos.TOP_CENTER);
-
         Image imagen = new Image(getClass().getResourceAsStream("/images/Gartea_Ciudades.png"));
         imageView = new ImageView(imagen);
         imageView.setPreserveRatio(true);
@@ -43,7 +40,7 @@ public class DesktopNacionView {
         Rectangle2D vistaInicial = getVistaParaNacion(nacion.getNombre());
         imageView.setViewport(vistaInicial);
 
-        root.getChildren().addAll(imageView, titulo);
+        root.getChildren().addAll(imageView);
         return root;
     }
 

@@ -108,16 +108,19 @@ public class ElementoVisual {
 
 		contenedor.setOnMouseReleased(event -> {
 		    if (tableroView != null) {
-		        double newX = contenedor.getLayoutX();
-		        double newY = contenedor.getLayoutY();
-
-		        data.setEjeX(newX);
-		        data.setEjeY(newY);
-
 		        UUID clave = data.getClave();
 
-		        // Siempre actualiza la posición del mismo objeto
-		        tableroView.getElementosColocados().put(clave, data);
+		        // Solo actualizar coordenadas si el elemento YA está colocado en el tablero
+		        if (tableroView.getElementosColocados().containsKey(clave)) {
+		            double newX = contenedor.getLayoutX();
+		            double newY = contenedor.getLayoutY();
+
+		            data.setEjeX(newX);
+		            data.setEjeY(newY);
+
+		            // Actualizar el registro en el mapa
+		            tableroView.getElementosColocados().put(clave, data);
+		        }
 
 		        event.consume();
 		    }

@@ -1,5 +1,7 @@
 package clases_estadisticas;
 
+import java.util.ArrayList;
+
 public class StatSabiduria {
 	
 	private int conocimiento;
@@ -20,6 +22,18 @@ public class StatSabiduria {
 		this.voluntad = voluntad;
 		this.supervivencia = supervivencia;
 	}
+	
+	public ArrayList<Integer> getAll() {
+		ArrayList<Integer> lista = new ArrayList<Integer>();
+		lista.add(conocimiento);
+		lista.add(medicina);
+		lista.add(percepcion);
+		lista.add(empatia);
+		lista.add(voluntad);
+		lista.add(supervivencia);
+		return lista;
+	}
+	
 	public int getConocimiento() {
 		return conocimiento;
 	}

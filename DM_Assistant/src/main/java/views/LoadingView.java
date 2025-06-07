@@ -35,7 +35,7 @@ public class LoadingView extends VBox {
         setBackground(new Background(backgroundImg));
 
         // Imagen de carga (logo central)
-        Image image = new Image(getClass().getResourceAsStream("/images/loading_logo.png"));
+        Image image = new Image(getClass().getResourceAsStream("/images/loading_logo2.png"));
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(100); // Tamaño deseado
         imageView.setPreserveRatio(true);

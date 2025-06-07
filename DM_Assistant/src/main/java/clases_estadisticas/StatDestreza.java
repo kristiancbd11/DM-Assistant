@@ -1,5 +1,7 @@
 package clases_estadisticas;
 
+import java.util.ArrayList;
+
 public class StatDestreza {
 
 	private int agilidad;
@@ -20,6 +22,18 @@ public class StatDestreza {
 		this.sigilo = sigilo;
 		this.precision = precision;
 	}
+	
+	public ArrayList<Integer> getAll() {
+		ArrayList<Integer> lista = new ArrayList<Integer>();
+		lista.add(agilidad);
+		lista.add(presteza);
+		lista.add(reflejos);
+		lista.add(combate);
+		lista.add(sigilo);
+		lista.add(precision);
+		return lista;
+	}
+	
 	public int getAgilidad() {
 		return agilidad;
 	}

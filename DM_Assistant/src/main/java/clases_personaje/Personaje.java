@@ -25,8 +25,6 @@ import clases_partida.Mundo;
 import clases_partida.Nacion;
 import clases_partida.TiendaObjeto;
 import clases_partida.Ubicacion;
-import clases_roles.Clase;
-import clases_roles.Subclase;
 import dbhandlerCRUD.InventarioPersonajeCRUD;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -184,6 +182,7 @@ public class Personaje {
 		this.clase = clase;
 		this.competenciaArma = clase.getCompetenciaArma();
 		this.competenciaArmadura = clase.getCompetenciaArmadura();
+		this.listaHechizos = clase.getListaHechizo();
 	}
 	
 	// CONSTRUCTOR COPIA
@@ -322,6 +321,127 @@ public class Personaje {
 
 	public void perderTurno() {
 		// Gestionar aquí los casos en los que se pierde el turno del jugador
+	}
+	
+	public int getStatConcreto(String tipo) {
+		int modificador = 0;
+		EstadoPjJson estado = EstadoPjJson.desdeJson(estadoJson);
+		
+		switch (tipo) {
+		case "Impacto":
+			modificador = estado.getStatOnline().getStatFuerza().getImpacto();
+			break;
+		case "Destrozo":
+			modificador = estado.getStatOnline().getStatFuerza().getDestrozo();
+			break;
+		case "Carga":
+			modificador = estado.getStatOnline().getStatFuerza().getCarga();
+			break;
+		case "Levantamiento":
+			modificador = estado.getStatOnline().getStatFuerza().getLevantamiento();
+			break;
+		case "Vigor":
+			modificador = estado.getStatOnline().getStatFuerza().getVigor();
+			break;
+		case "Atletismo":
+			modificador = estado.getStatOnline().getStatFuerza().getAtletismo();
+			break;
+		case "Vitalidad":
+			modificador = estado.getStatOnline().getStatConstitucion().getVitalidad();
+			break;
+		case "Corpulencia":
+			modificador = estado.getStatOnline().getStatConstitucion().getCorpulencia();
+			break;
+		case "Regeneracion":
+			modificador = estado.getStatOnline().getStatConstitucion().getRegeneracion();
+			break;
+		case "Tenacidad":
+			modificador = estado.getStatOnline().getStatConstitucion().getTenacidad();
+			break;
+		case "Resistencia":
+			modificador = estado.getStatOnline().getStatConstitucion().getResistencia();
+			break;
+		case "Motricidad":
+			modificador = estado.getStatOnline().getStatConstitucion().getMotricidad();
+			break;
+		case "Agilidad":
+			modificador = estado.getStatOnline().getStatDestreza().getAgilidad();
+			break;
+		case "Presteza":
+			modificador = estado.getStatOnline().getStatDestreza().getPresteza();
+			break;
+		case "Reflejos":
+			modificador = estado.getStatOnline().getStatDestreza().getReflejos();
+			break;
+		case "Combate":
+			modificador = estado.getStatOnline().getStatDestreza().getCombate();
+			break;
+		case "Sigilo":
+			modificador = estado.getStatOnline().getStatDestreza().getSigilo();
+			break;
+		case "Precisión":
+			modificador = estado.getStatOnline().getStatDestreza().getPrecision();
+			break;
+		case "Perspicacia":
+			modificador = estado.getStatOnline().getStatInteligencia().getPerspicacia();
+			break;
+		case "Intuición":
+			modificador = estado.getStatOnline().getStatInteligencia().getIntuicion();
+			break;
+		case "Investigación":
+			modificador = estado.getStatOnline().getStatInteligencia().getInvestigacion();
+			break;
+		case "Estrategia":
+			modificador = estado.getStatOnline().getStatInteligencia().getEstrategia();
+			break;
+		case "Memoria":
+			modificador = estado.getStatOnline().getStatInteligencia().getMemoria();
+			break;
+		case "comArcana":
+			modificador = estado.getStatOnline().getStatInteligencia().getComArcana();
+			break;
+		case "Convicción":
+			modificador = estado.getStatOnline().getStatCarisma().getConviccion();
+			break;
+		case "Engaño":
+			modificador = estado.getStatOnline().getStatCarisma().getEnganio();
+			break;
+		case "Intimidación":
+			modificador = estado.getStatOnline().getStatCarisma().getIntimidacion();
+			break;
+		case "Liderazgo":
+			modificador = estado.getStatOnline().getStatCarisma().getLiderazgo();
+			break;
+		case "Jovialidad":
+			modificador = estado.getStatOnline().getStatCarisma().getJovialidad();
+			break;
+		case "Seducción":
+			modificador = estado.getStatOnline().getStatCarisma().getSeduccion();
+			break;
+		case "Conocimiento":
+			modificador = estado.getStatOnline().getStatSabiduria().getConocimiento();
+			break;
+		case "Medicina":
+			modificador = estado.getStatOnline().getStatSabiduria().getMedicina();
+			break;
+		case "Percepción":
+			modificador = estado.getStatOnline().getStatSabiduria().getPercepcion();
+			break;
+		case "Empatía":
+			modificador = estado.getStatOnline().getStatSabiduria().getEmpatia();
+			break;
+		case "Voluntad":
+			modificador = estado.getStatOnline().getStatSabiduria().getVoluntad();
+			break;
+		case "Supervivencia":
+			modificador = estado.getStatOnline().getStatSabiduria().getSupervivencia();
+			break;
+		default:
+			modificador = 0;
+			break;
+		}
+		
+		return modificador;
 	}
 
 	// Getters y setters

@@ -17,16 +17,10 @@ import jakarta.persistence.Table;
 @PrimaryKeyJoinColumn(name = "idHabilidad") // Relaciona con la clave primaria de Habilidad
 public class Rasgo extends Habilidad {
 	
-//	@Id
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "rasgos_gen")
-//    @SequenceGenerator(name = "rasgos_gen", sequenceName = "rasgos_seq", allocationSize = 1)
-//	@Column (name = "idRasgo")
-//	private int idRasgo;
-//	
-//	@Id
-//	@OneToOne
-//	@JoinColumn (name = "idHabilidad", nullable = false)
-//	private int idHabilidad;
+	@Id
+	@OneToOne
+	@JoinColumn (name = "idHabilidad", nullable = false)
+	private Habilidad habilidad;
 	
 	@Column (name = "unlockLvl")
 	private int unlockLvl;
@@ -40,4 +34,13 @@ public class Rasgo extends Habilidad {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public Habilidad getHabilidad() {
+		return habilidad;
+	}
+
+	public void setHabilidad(Habilidad habilidad) {
+		this.habilidad = habilidad;
+	}
+	
 }

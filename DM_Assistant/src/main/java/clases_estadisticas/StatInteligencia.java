@@ -1,5 +1,7 @@
 package clases_estadisticas;
 
+import java.util.ArrayList;
+
 public class StatInteligencia {
 
 	private int perspicacia;
@@ -21,6 +23,17 @@ public class StatInteligencia {
 		this.estrategia = estrategia;
 		this.memoria = memoria;
 		this.comArcana = comArcana;
+	}
+	
+	public ArrayList<Integer> getAll() {
+		ArrayList<Integer> lista = new ArrayList<Integer>();
+		lista.add(perspicacia);
+		lista.add(intuicion);
+		lista.add(investigacion);
+		lista.add(estrategia);
+		lista.add(memoria);
+		lista.add(comArcana);
+		return lista;
 	}
 
 	public int getPerspicacia() {

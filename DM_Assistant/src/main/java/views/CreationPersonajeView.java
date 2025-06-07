@@ -17,10 +17,10 @@ import java.util.List;
 import java.util.Map;
 
 import clases_partida.O_Nacion;
+import clases_personaje.Clase;
 import clases_personaje.Ideologia;
 import clases_personaje.Raza;
 import clases_personaje.Religion;
-import clases_roles.Clase;
 
 public class CreationPersonajeView extends VBox {
 

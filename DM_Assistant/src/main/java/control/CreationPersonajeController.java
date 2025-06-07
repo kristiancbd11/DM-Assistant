@@ -16,7 +16,7 @@ import clases_personaje.Religion;
 import clases_partida.Mundo;
 import clases_partida.Nacion;
 import clases_partida.O_Nacion;
-import clases_roles.Clase;
+import clases_personaje.Clase;
 import clases_personaje.Ideologia;
 
 import java.util.List;

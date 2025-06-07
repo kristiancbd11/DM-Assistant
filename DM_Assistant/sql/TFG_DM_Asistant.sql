@@ -80,7 +80,7 @@ DROP TABLE HABILIDADES;
 
 CREATE TABLE HABILIDADES (
     idHabilidad NUMBER CONSTRAINT pk_habilidades PRIMARY KEY,
-    nombre VARCHAR(20) CONSTRAINT nn_nombre_hab NOT NULL,
+    nombre VARCHAR(50) CONSTRAINT nn_nombre_hab NOT NULL,
     descripcion VARCHAR(500) CONSTRAINT nn_desc_hab NOT NULL,
     activa NUMBER(1) CONSTRAINT nn_activa_hab NOT NULL
 );
@@ -222,6 +222,7 @@ CREATE TABLE ARMADURAS (
 
 CREATE TABLE CONSUMIBLES (
     idObjeto NUMBER CONSTRAINT pk_idobjeto_cons PRIMARY KEY,
+    dado VARCHAR2(10),
     tipo VARCHAR2(20) CONSTRAINT nn_tipo_cons NOT NULL,
     CONSTRAINT objetos_consumible_fk FOREIGN KEY (idObjeto) REFERENCES OBJETOS(idObjeto)
 );

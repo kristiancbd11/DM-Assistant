@@ -1,4 +1,4 @@
-package clases_roles;
+package clases_personaje;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,8 +6,6 @@ import java.util.List;
 
 import clases_habilidades.Hechizo;
 import clases_habilidades.Rasgo;
-import clases_personaje.Arquetipo;
-import clases_personaje.Dado;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -197,8 +195,7 @@ public class Clase {
 	@Override
 	public String toString() {
 		return nombre;
-	}
-    
+	} 
 }
 
 

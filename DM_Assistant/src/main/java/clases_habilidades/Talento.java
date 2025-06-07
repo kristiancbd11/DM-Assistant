@@ -1,6 +1,6 @@
 package clases_habilidades;
 
-import clases_roles.Clase;
+import clases_personaje.Clase;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,12 +16,6 @@ import jakarta.persistence.Table;
 @Table (name = "TALENTOS")
 public class Talento {
 
-//	@Id
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "talentos_gen")
-//    @SequenceGenerator(name = "talentos_gen", sequenceName = "talentos_seq", allocationSize = 1)
-//	@Column (name = "idTalento")
-//	private int idTalento;
-//	
 	@Id
 	@OneToOne
 	@JoinColumn (name = "idHabilidad", nullable = false)
@@ -46,4 +40,12 @@ public class Talento {
 	//Constructores:
 	
 	public Talento(){}
+
+	public Habilidad getHabilidad() {
+		return habilidad;
+	}
+
+	public void setHabilidad(Habilidad habilidad) {
+		this.habilidad = habilidad;
+	}
 }

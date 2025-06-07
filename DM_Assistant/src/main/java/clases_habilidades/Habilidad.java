@@ -37,4 +37,24 @@ public abstract class Habilidad {
 	
 	public abstract void ejecutar(Personaje personaje, Personaje objetivo);
 
+	public String getNombre() {
+		return nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public String getDescripcion() {
+		return descripcion;
+	}
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+
+	public int getIdHabilidad() {
+		return idHabilidad;
+	}	
+	
 }

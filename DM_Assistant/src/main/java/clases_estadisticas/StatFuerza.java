@@ -1,5 +1,7 @@
 package clases_estadisticas;
 
+import java.util.ArrayList;
+
 public class StatFuerza {
 	
 	private int impacto;
@@ -20,6 +22,18 @@ public class StatFuerza {
 		this.vigor = vigor;
 		this.atletismo = atletismo;
 	}
+	
+	public ArrayList<Integer> getAll() {
+		ArrayList<Integer> lista = new ArrayList<Integer>();
+		lista.add(impacto);
+		lista.add(destrozo);
+		lista.add(carga);
+		lista.add(levantamiento);
+		lista.add(vigor);
+		lista.add(atletismo);
+		return lista;
+	}
+	
 	public int getImpacto() {
 		return impacto;
 	}

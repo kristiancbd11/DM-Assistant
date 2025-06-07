@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import clases_estadisticas.EstadoPjJson;
+import clases_habilidades.Hechizo;
 import clases_objetos.Arma;
 import clases_objetos.Armadura;
 import clases_objetos.Objeto;
@@ -17,6 +19,7 @@ import dbhandlerCRUD.EquipoPersonajeCRUD;
 import dbhandlerCRUD.InventarioPersonajeCRUD;
 import dbhandlerCRUD.ObjetoCRUD;
 import dbhandlerCRUD.PersonajeCRUD;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -60,7 +63,7 @@ public class DesktopPersonajeView {
 		TabPane tabPane = new TabPane();
 		tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
 
-		// Crear cada pestaña (solo General implementado por ahora)
+		// General
 		Tab generalTab = new Tab("General");
 		generalTab.setOnSelectionChanged(e -> {
 			if (generalTab.isSelected()) {
@@ -69,7 +72,16 @@ public class DesktopPersonajeView {
 			}
 		});
 
-		// Las demás pestañas vacías por ahora
+		// Estado
+		Tab estadoTab = new Tab("Estado");
+		estadoTab.setOnSelectionChanged(e -> {
+			if (estadoTab.isSelected()) {
+				this.personaje = pjCrud.fetchPersonaje(personaje.getId());
+				contentPane.getChildren().setAll(crearEstadoPane());
+			}
+		});
+
+		// Inventario
 		Tab inventarioTab = new Tab("Inventario");
 		inventarioTab.setOnSelectionChanged(e -> {
 			if (inventarioTab.isSelected()) {
@@ -78,6 +90,7 @@ public class DesktopPersonajeView {
 			}
 		});
 
+		// Equipo
 		Tab equipoTab = new Tab("Equipo");
 		equipoTab.setOnSelectionChanged(e -> {
 			if (equipoTab.isSelected()) {
@@ -86,40 +99,26 @@ public class DesktopPersonajeView {
 			}
 		});
 
-		Tab habilidadesTab = new Tab("Habilidades");
+		// Hechizos
+		Tab habilidadesTab = new Tab("Hechizos");
 		habilidadesTab.setOnSelectionChanged(e -> {
 			if (habilidadesTab.isSelected()) {
 				this.personaje = pjCrud.fetchPersonaje(personaje.getId());
-				contentPane.getChildren().setAll(crearGeneralPane());
+				contentPane.getChildren().setAll(crearHechizosPane());
 			}
 		});
 
+		// Rasgos
 		Tab rasgosTab = new Tab("Rasgos");
 		rasgosTab.setOnSelectionChanged(e -> {
 			if (rasgosTab.isSelected()) {
 				this.personaje = pjCrud.fetchPersonaje(personaje.getId());
-				contentPane.getChildren().setAll(crearGeneralPane());
+				contentPane.getChildren().setAll(crearRasgosPane());
 			}
 		});
 
-		Tab ventajasTab = new Tab("Ventajas");
-		ventajasTab.setOnSelectionChanged(e -> {
-			if (ventajasTab.isSelected()) {
-				this.personaje = pjCrud.fetchPersonaje(personaje.getId());
-				contentPane.getChildren().setAll(crearGeneralPane());
-			}
-		});
-
-		Tab donesTab = new Tab("Dones");
-		donesTab.setOnSelectionChanged(e -> {
-			if (donesTab.isSelected()) {
-				this.personaje = pjCrud.fetchPersonaje(personaje.getId());
-				contentPane.getChildren().setAll(crearGeneralPane());
-			}
-		});
-
-		tabPane.getTabs().addAll(generalTab, inventarioTab, equipoTab, habilidadesTab, rasgosTab, ventajasTab,
-				donesTab);
+		// Añadir todas las pestañas al TabPane
+		tabPane.getTabs().addAll(generalTab, estadoTab, inventarioTab, equipoTab, habilidadesTab, rasgosTab);
 
 		// Botones
 		guardarBtn = new Button("Guardar");
@@ -167,6 +166,45 @@ public class DesktopPersonajeView {
 		contenedor.getChildren().addAll(titulo, new Label("Nombre:"), nombreField, claseLabel, subclaseLabel,
 				nivelLabel, new Label("Experiencia:"), experienciaField, new Label("Oro:"), oroField, razaLabel,
 				sexoLabel, religionLabel, nacionLabel, ideologiaLabel);
+
+		return contenedor;
+	}
+
+	private Pane crearEstadoPane() {
+		VBox contenedor = new VBox(10);
+		contenedor.setPadding(new Insets(10));
+
+		Label titulo = new Label(personaje.getNombre());
+		titulo.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+		contenedor.getChildren().add(titulo);
+
+		agregarSeccion(contenedor, "Estadísticas generales",
+				EstadoPjJson.desdeJson(personaje.getEstadoJson()).getStatBase().getStatGeneral().getAll(),
+				List.of("Salud", "Iniciativa", "Aura", "Movimiento"));
+
+		agregarSeccion(contenedor, "Estadísticas de fuerza",
+				EstadoPjJson.desdeJson(personaje.getEstadoJson()).getStatBase().getStatFuerza().getAll(),
+				List.of("Impacto", "Destrozo", "Carga", "Levantamiento", "Vigor", "Atletismo"));
+
+		agregarSeccion(contenedor, "Estadísticas de constitución",
+				EstadoPjJson.desdeJson(personaje.getEstadoJson()).getStatBase().getStatConstitucion().getAll(),
+				List.of("Vitalidad", "Corpulencia", "Regeneración", "Tenacidad", "Resistencia", "Motricidad"));
+
+		agregarSeccion(contenedor, "Estadísticas de destreza",
+				EstadoPjJson.desdeJson(personaje.getEstadoJson()).getStatBase().getStatDestreza().getAll(),
+				List.of("Agilidad", "Presteza", "Reflejos", "Combate", "Sigilo", "Precisión"));
+
+		agregarSeccion(contenedor, "Estadísticas de inteligencia",
+				EstadoPjJson.desdeJson(personaje.getEstadoJson()).getStatBase().getStatInteligencia().getAll(),
+				List.of("Perspicacia", "Intuición", "Investigación", "Estrategia", "Memoria", "comArcana"));
+
+		agregarSeccion(contenedor, "Estadísticas de carisma",
+				EstadoPjJson.desdeJson(personaje.getEstadoJson()).getStatBase().getStatCarisma().getAll(),
+				List.of("Convicción", "Engaño", "Intimidación", "Liderazgo", "Jovialidad", "Seducción"));
+
+		agregarSeccion(contenedor, "Estadísticas de sabiduría",
+				EstadoPjJson.desdeJson(personaje.getEstadoJson()).getStatBase().getStatSabiduria().getAll(),
+				List.of("Conocimiento", "Medicina", "Percepción", "Empatía", "Voluntad", "Supervivencia"));
 
 		return contenedor;
 	}
@@ -310,7 +348,8 @@ public class DesktopPersonajeView {
 							Alert alerta = new Alert(Alert.AlertType.WARNING);
 							alerta.setTitle("Objeto equipado");
 							alerta.setHeaderText(null);
-							alerta.setContentText("No puedes vender este objeto porque está equipado y solo queda uno.");
+							alerta.setContentText(
+									"No puedes vender este objeto porque está equipado y solo queda uno.");
 							alerta.showAndWait();
 							return;
 						}
@@ -359,7 +398,6 @@ public class DesktopPersonajeView {
 				this.personaje = pjCrud.fetchPersonaje(personaje.getId());
 				contentPane.getChildren().setAll(crearInventarioPane());
 			});
-
 
 			botonesBox.getChildren().addAll(modificarBtn, venderBtn, eliminarBtn);
 
@@ -595,6 +633,99 @@ public class DesktopPersonajeView {
 		return contenedor;
 	}
 
+	private VBox crearRasgosPane() {
+		VBox rasgosBox = new VBox(10);
+		rasgosBox.setPadding(new Insets(15));
+		rasgosBox.setStyle("-fx-background-color: #f4f4f4;");
+
+		// Rasgo Racial
+		String nombreRasgoRaza = personaje.getRaza().getRasgo().getHabilidad().getNombre();
+		String descripcionRasgoRaza = personaje.getRaza().getRasgo().getHabilidad().getDescripcion();
+
+		Label labelRasgoRaza = new Label(descripcionRasgoRaza);
+		labelRasgoRaza.setWrapText(true);
+		labelRasgoRaza.setMaxWidth(Double.MAX_VALUE); // Se adapta al ancho disponible
+
+		VBox contenidoRasgoRaza = new VBox(labelRasgoRaza);
+		contenidoRasgoRaza.setFillWidth(true);
+
+		TitledPane rasgoRazaPane = new TitledPane("Rasgo Racial: " + nombreRasgoRaza, contenidoRasgoRaza);
+		rasgoRazaPane.setExpanded(false);
+
+		// Rasgo de Clase
+		String nombreRasgoClase = personaje.getClase().getListaRasgos().get(0).getNombre();
+		String descripcionRasgoClase = personaje.getClase().getListaRasgos().get(0).getDescripcion();
+
+		Label labelRasgoClase = new Label(descripcionRasgoClase);
+		labelRasgoClase.setWrapText(true);
+		labelRasgoClase.setMaxWidth(Double.MAX_VALUE);
+
+		VBox contenidoRasgoClase = new VBox(labelRasgoClase);
+		contenidoRasgoClase.setFillWidth(true);
+
+		TitledPane rasgoClasePane = new TitledPane("Rasgo de Clase: " + nombreRasgoClase, contenidoRasgoClase);
+		rasgoClasePane.setExpanded(false);
+
+		rasgosBox.getChildren().addAll(rasgoRazaPane, rasgoClasePane);
+		return rasgosBox;
+	}
+
+	private VBox crearHechizosPane() {
+		VBox hechizosBox = new VBox(10);
+		hechizosBox.setPadding(new Insets(15));
+		hechizosBox.setStyle("-fx-background-color: #f4f4f4;");
+
+		List<Hechizo> listaHechizos = personaje.getListaHechizos();
+
+		if (listaHechizos.isEmpty()) {
+			Label sinHechizos = new Label("Este personaje aún no conoce ningún hechizo");
+			sinHechizos.setWrapText(true);
+			hechizosBox.getChildren().add(sinHechizos);
+			return hechizosBox;
+		}
+
+		for (Hechizo hechizo : listaHechizos) {
+			// Nombre y descripción
+			Label descripcionLabel = new Label(hechizo.getDescripcion());
+			descripcionLabel.setWrapText(true);
+			descripcionLabel.setMaxWidth(Double.MAX_VALUE);
+
+			// Detalles adicionales del hechizo
+			VBox detallesBox = new VBox(5);
+			detallesBox.setPadding(new Insets(5));
+			detallesBox.setStyle("-fx-background-color: #e8e8e8; -fx-border-color: #cccccc; -fx-border-radius: 5;");
+
+			Label dañoLabel = new Label("Daño: " + hechizo.getDado());
+			Label rangoLabel = new Label("Rango: " + hechizo.getRango() + " metros");
+			Label usosLabel = new Label("Usos: " + hechizo.getUsos());
+			Label costeLabel = new Label("Coste de Aura: " + hechizo.getCosteAura());
+			Label tipoLabel = new Label("Tipo de Lanzamiento: " + tipoLanzamientoTexto(hechizo.getTipoLanzamiento()));
+
+			detallesBox.getChildren().addAll(dañoLabel, rangoLabel, usosLabel, costeLabel, tipoLabel);
+
+			// Contenido del TitledPane
+			VBox contenidoHechizo = new VBox(10, descripcionLabel, detallesBox);
+			contenidoHechizo.setFillWidth(true);
+
+			TitledPane hechizoPane = new TitledPane("Hechizo: " + hechizo.getNombre(), contenidoHechizo);
+			hechizoPane.setExpanded(false);
+
+			hechizosBox.getChildren().add(hechizoPane);
+		}
+
+		return hechizosBox;
+	}
+
+	private String tipoLanzamientoTexto(int tipo) {
+		return switch (tipo) {
+		case -1 -> "Descanso";
+		case 0 -> "Reacción";
+		case 1 -> "Acción";
+		case 2 -> "Completo";
+		default -> "Turno Extra";
+		};
+	}
+
 	private void mostrarVentanaSeleccion(List<Objeto> objetos, String ranura) {
 		Stage popup = new Stage();
 		popup.initModality(Modality.APPLICATION_MODAL);
@@ -649,10 +780,6 @@ public class DesktopPersonajeView {
 				epCrud.eliminarEquipoPersonaje(equipoAEliminar);
 				pjCrud.savePersonaje(personaje);
 
-				// Actualizar mundo
-				mundo.removePersonaje(personaje);
-				mundo.addPersonaje(pjCrud.fetchPersonaje(personaje.getId()));
-
 				// Limpiar visualmente el recuadro
 				VBox itemBox = equipoBoxes.get(ranura);
 				if (itemBox != null) {
@@ -672,67 +799,61 @@ public class DesktopPersonajeView {
 	}
 
 	private void actualizarRecuadroEquipo(String ranura, Objeto objeto) {
-	int ranuraValor = valorRanura(ranura);
+		int ranuraValor = valorRanura(ranura);
 
-	// Buscar si ya hay un objeto equipado en esa ranura
-	EquipoPersonaje equipadoExistente = personaje.getEquipacion().stream()
-		.filter(eq -> eq.getRanura() == ranuraValor)
-		.findFirst()
-		.orElse(null);
+		// Buscar si ya hay un objeto equipado en esa ranura
+		EquipoPersonaje equipadoExistente = personaje.getEquipacion().stream()
+				.filter(eq -> eq.getRanura() == ranuraValor).findFirst().orElse(null);
 
-	// Si hay uno, lo eliminamos de la lista y de la BD
-	if (equipadoExistente != null) {
-		personaje.getEquipacion().remove(equipadoExistente);
-		epCrud.eliminarEquipoPersonaje(equipadoExistente);
-	}
-
-	// Equipar nuevo objeto
-	EquipoPersonaje nuevoEquipo = new EquipoPersonaje(objeto, personaje, ranuraValor);
-	personaje.getEquipacion().add(nuevoEquipo);
-	epCrud.guardarOActualizarEquipoPersonaje(nuevoEquipo);
-
-	// Actualizar personaje
-	pjCrud.savePersonaje(personaje);
-	mundo.removePersonaje(personaje);
-	mundo.addPersonaje(pjCrud.fetchPersonaje(personaje.getId()));
-
-	// Actualizar visualmente el recuadro
-	VBox itemBox = equipoBoxes.get(ranura);
-	if (itemBox == null)
-		return;
-
-	itemBox.getChildren().clear();
-
-	Label label = new Label(ranura);
-	label.setStyle("-fx-font-weight: bold;");
-	itemBox.getChildren().add(label);
-
-	ImageView icono;
-	try {
-		InputStream imgStream = objeto.getToken() != null
-			? getClass().getResourceAsStream(objeto.getToken())
-			: getClass().getResourceAsStream("/icons/default_object.png");
-
-		if (imgStream == null) {
-			imgStream = getClass().getResourceAsStream("/icons/default_object.png");
+		// Si hay uno, lo eliminamos de la lista y de la BD
+		if (equipadoExistente != null) {
+			personaje.getEquipacion().remove(equipadoExistente);
+			epCrud.eliminarEquipoPersonaje(equipadoExistente);
 		}
 
-		icono = new ImageView(new Image(imgStream));
-		icono.setFitWidth(32);
-		icono.setFitHeight(32);
-	} catch (Exception e) {
-		icono = new ImageView();
+		// Equipar nuevo objeto
+		EquipoPersonaje nuevoEquipo = new EquipoPersonaje(objeto, personaje, ranuraValor);
+		personaje.getEquipacion().add(nuevoEquipo);
+		epCrud.guardarOActualizarEquipoPersonaje(nuevoEquipo);
+
+		// Actualizar personaje
+		pjCrud.savePersonaje(personaje);
+
+		// Actualizar visualmente el recuadro
+		VBox itemBox = equipoBoxes.get(ranura);
+		if (itemBox == null)
+			return;
+
+		itemBox.getChildren().clear();
+
+		Label label = new Label(ranura);
+		label.setStyle("-fx-font-weight: bold;");
+		itemBox.getChildren().add(label);
+
+		ImageView icono;
+		try {
+			InputStream imgStream = objeto.getToken() != null ? getClass().getResourceAsStream(objeto.getToken())
+					: getClass().getResourceAsStream("/icons/default_object.png");
+
+			if (imgStream == null) {
+				imgStream = getClass().getResourceAsStream("/icons/default_object.png");
+			}
+
+			icono = new ImageView(new Image(imgStream));
+			icono.setFitWidth(32);
+			icono.setFitHeight(32);
+		} catch (Exception e) {
+			icono = new ImageView();
+		}
+
+		Label nombreLabel = new Label(objeto.getNombre());
+		itemBox.getChildren().addAll(icono, nombreLabel);
+
+		if (objeto instanceof Arma arma) {
+			Label dadoLabel = new Label("Dado: " + arma.getDado());
+			itemBox.getChildren().add(dadoLabel);
+		}
 	}
-
-	Label nombreLabel = new Label(objeto.getNombre());
-	itemBox.getChildren().addAll(icono, nombreLabel);
-
-	if (objeto instanceof Arma arma) {
-		Label dadoLabel = new Label("Dado: " + arma.getDado());
-		itemBox.getChildren().add(dadoLabel);
-	}
-}
-
 
 	private int valorRanura(String etiqueta) {
 		return switch (etiqueta.toLowerCase()) {
@@ -745,7 +866,7 @@ public class DesktopPersonajeView {
 		default -> -1; // Valor inválido
 		};
 	}
-	
+
 	private boolean estaEquipado(Objeto objeto) {
 		for (EquipoPersonaje eq : personaje.getEquipacion()) {
 			if (eq.getObjeto().getIdObjeto() == objeto.getIdObjeto()) {
@@ -753,6 +874,40 @@ public class DesktopPersonajeView {
 			}
 		}
 		return false;
+	}
+
+	private void agregarSeccion(VBox contenedor, String tituloSeccion, List<Integer> valores,
+			List<String> encabezados) {
+		Label seccionLabel = new Label(tituloSeccion);
+		seccionLabel.setStyle("-fx-font-weight: bold;");
+
+		GridPane tabla = new GridPane();
+		tabla.setHgap(0);
+		tabla.setVgap(0);
+		tabla.setPadding(new Insets(5));
+		tabla.setStyle("-fx-grid-lines-visible: true; -fx-border-color: black;");
+
+		int columnas = encabezados.size();
+
+		// Fila 1: encabezados personalizados
+		for (int i = 0; i < columnas; i++) {
+			Label encabezado = new Label(encabezados.get(i));
+			encabezado.setStyle(
+					"-fx-alignment: center; -fx-border-color: black; -fx-padding: 5px; -fx-pref-width: 100px; -fx-text-alignment: center;");
+			GridPane.setHalignment(encabezado, HPos.CENTER);
+			tabla.add(encabezado, i, 0);
+		}
+
+		// Fila 2: valores reales
+		for (int i = 0; i < columnas && i < valores.size(); i++) {
+			Label valor = new Label(String.valueOf(valores.get(i)));
+			valor.setStyle(
+					"-fx-alignment: center; -fx-border-color: black; -fx-padding: 5px; -fx-pref-width: 100px; -fx-text-alignment: center;");
+			GridPane.setHalignment(valor, HPos.CENTER);
+			tabla.add(valor, i, 1);
+		}
+
+		contenedor.getChildren().addAll(seccionLabel, tabla);
 	}
 
 	// Métodos públicos de acceso

@@ -1,5 +1,7 @@
 package clases_estadisticas;
 
+import java.util.ArrayList;
+
 public class StatGeneral {
 	
 	private boolean accion = true;
@@ -21,6 +23,16 @@ public class StatGeneral {
 		this.movimiento = movimiento;
 		this.dado = dado;
 	}
+	
+	public ArrayList<Integer> getAll() {
+		ArrayList<Integer> lista = new ArrayList<Integer>();
+		lista.add(salud);
+		lista.add(iniciativa);
+		lista.add(aura);
+		lista.add(movimiento);
+		return lista;
+	}
+	
 	public boolean isAccion() {
 		return accion;
 	}

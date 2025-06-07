@@ -1,5 +1,7 @@
 package clases_estadisticas;
 
+import java.util.ArrayList;
+
 public class StatConstitucion {
 
 	private int vitalidad;
@@ -21,6 +23,17 @@ public class StatConstitucion {
 		this.tenacidad = tenacidad;
 		this.resistencia = resistencia;
 		this.motricidad = motricidad;
+	}
+	
+	public ArrayList<Integer> getAll() {
+		ArrayList<Integer> lista = new ArrayList<Integer>();
+		lista.add(vitalidad);
+		lista.add(corpulencia);
+		lista.add(regeneracion);
+		lista.add(tenacidad);
+		lista.add(resistencia);
+		lista.add(motricidad);
+		return lista;
 	}
 	
 	//Getters y setters

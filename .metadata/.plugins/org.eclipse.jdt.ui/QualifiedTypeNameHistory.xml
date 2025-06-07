@@ -11,5 +11,9 @@
     <fullyQualifiedTypeName name="java.lang.Integer"/>
     <fullyQualifiedTypeName name="matchPlayer.ActionController"/>
     <fullyQualifiedTypeName name="dbhandlerCRUD.PersonajeCRUD"/>
+    <fullyQualifiedTypeName name="views.InfoCatCriaturasView"/>
+    <fullyQualifiedTypeName name="views.InfoCatNacionesView"/>
+    <fullyQualifiedTypeName name="clases_personaje.Dado"/>
     <fullyQualifiedTypeName name="clases_estadisticas.EstadoPjJson"/>
+    <fullyQualifiedTypeName name="java.io.IOException"/>
 </qualifiedTypeNameHistroy>

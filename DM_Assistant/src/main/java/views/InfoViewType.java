@@ -1,5 +1,15 @@
 package views;
 
 public enum InfoViewType {
-	MUNDO
+	MUNDO,
+	PERSONAJE,
+	NPC,
+	CRIATURA,
+	NACION,
+	REINO,
+	CAT_CRIATURAS,
+	CAT_PERSONAJES,
+	CAT_NPCS,
+	CAT_NACIONES,
+	UBICACION
 }

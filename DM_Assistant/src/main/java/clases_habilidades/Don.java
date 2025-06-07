@@ -33,4 +33,14 @@ public class Don extends Habilidad {
 		
 	}
 
+	public Habilidad getHabilidad() {
+		return habilidad;
+	}
+
+	public void setHabilidad(Habilidad habilidad) {
+		this.habilidad = habilidad;
+	}
+
+	
+	
 }

@@ -131,8 +131,7 @@ public class DesktopUbicacionView {
     contenedor.setStyle("-fx-padding: 10;");
 
     return contenedor;
-}
-
+	}
 
 	public StackPane entornoTienda() {
 		Tienda tienda = (Tienda) ubicacion;

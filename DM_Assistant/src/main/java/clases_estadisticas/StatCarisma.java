@@ -1,5 +1,7 @@
 package clases_estadisticas;
 
+import java.util.ArrayList;
+
 public class StatCarisma {
 	
 	private int conviccion;
@@ -20,6 +22,17 @@ public class StatCarisma {
 		this.liderazgo = liderazgo;
 		this.jovialidad = jovialidad;
 		this.seduccion = seduccion;
+	}
+	
+	public ArrayList<Integer> getAll() {
+		ArrayList<Integer> lista = new ArrayList<Integer>();
+		lista.add(conviccion);
+		lista.add(enganio);
+		lista.add(intimidacion);
+		lista.add(liderazgo);
+		lista.add(jovialidad);
+		lista.add(seduccion);
+		return lista;
 	}
 
 	public int getConviccion() {

@@ -32,13 +32,12 @@ public class ExplorerController {
 	private final DesktopController desktopController;
 
 	public ExplorerController(ExplorerView view, InfoController infoController, DesktopController desktopController) {
-	    this.view = view;
-	    this.infoController = infoController;
-	    this.desktopController = desktopController;
-	    setupEventHandlers();
-	    refreshTreeView();
+		this.view = view;
+		this.infoController = infoController;
+		this.desktopController = desktopController;
+		setupEventHandlers();
+		refreshTreeView();
 	}
-
 
 	private CustomMenuItem crearCustomMenuItem(String texto, Runnable accion, double ancho) {
 		Label label = new Label(texto);
@@ -48,107 +47,137 @@ public class ExplorerController {
 	}
 
 	private void setupEventHandlers() {
-	    TreeView<Object> arbolMundos = view.getTreeView();
-	    TreeItem<Object> raiz = view.getRootItem();
+		TreeView<Object> arbolMundos = view.getTreeView();
+		TreeItem<Object> raiz = view.getRootItem();
 
-	    ContextMenu contextMenuArbol = new ContextMenu();
-	    double anchoMenu = 300;
+		ContextMenu contextMenuArbol = new ContextMenu();
+		double anchoMenu = 300;
 
-	    contextMenuArbol.getItems().addAll(
-	    	    crearCustomMenuItem("Nuevo mundo", this::mostrarDialogoNuevoMundo, anchoMenu),
-	    	    crearCustomMenuItem("Nuevo personaje", () -> crearPersonaje(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
-	    	    crearCustomMenuItem("Nuevo npc", () -> crearNpc(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
-	    	    crearCustomMenuItem("Nueva criatura", () -> crearCriatura(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
-	    	    crearCustomMenuItem("Nueva ubicación", () -> crearZona(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
-	    	    crearCustomMenuItem("Nueva escena", () -> crearEscena(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
-	    	    crearCustomMenuItem("Editar", () -> renombrarMundo(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
-	    	    crearCustomMenuItem("Eliminar", () -> eliminarElementoSeleccionado(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
-	    	    crearCustomMenuItem("Descansos", () -> mostrarDialogoDescansos(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu)  // NUEVO
-	    	);
+		contextMenuArbol.getItems().addAll(
+				crearCustomMenuItem("Nuevo mundo", this::mostrarDialogoNuevoMundo, anchoMenu),
+				crearCustomMenuItem("Nuevo personaje",
+						() -> crearPersonaje(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
+				crearCustomMenuItem("Nuevo npc", () -> crearNpc(arbolMundos.getSelectionModel().getSelectedItem()),
+						anchoMenu),
+				crearCustomMenuItem("Nueva criatura",
+						() -> crearCriatura(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
+				crearCustomMenuItem("Nueva ubicación",
+						() -> crearZona(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
+				crearCustomMenuItem("Nueva escena",
+						() -> crearEscena(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu),
+				crearCustomMenuItem("Editar", () -> renombrarMundo(arbolMundos.getSelectionModel().getSelectedItem()),
+						anchoMenu),
+				crearCustomMenuItem("Eliminar",
+						() -> eliminarElementoSeleccionado(arbolMundos.getSelectionModel().getSelectedItem()),
+						anchoMenu),
+				crearCustomMenuItem("Descansos",
+						() -> mostrarDialogoDescansos(arbolMundos.getSelectionModel().getSelectedItem()), anchoMenu) // NUEVO
+		);
 
-	    arbolMundos.setContextMenu(contextMenuArbol);
+		arbolMundos.setContextMenu(contextMenuArbol);
 
-	    arbolMundos.addEventFilter(javafx.scene.input.MouseEvent.MOUSE_PRESSED, event -> {
-	        if (event.getClickCount() == 2 && event.getButton() == MouseButton.PRIMARY) {
-	            TreeItem<Object> selected = arbolMundos.getSelectionModel().getSelectedItem();
-	            if (selected != null) {
-	                event.consume(); // Bloquea la expansión automática
-	            }
-	        }
-	    });
-	    
-	    arbolMundos.setOnMouseClicked(event -> {
-	        TreeItem<Object> selected = arbolMundos.getSelectionModel().getSelectedItem();
-	        if (selected == null) return;
+		arbolMundos.addEventFilter(javafx.scene.input.MouseEvent.MOUSE_PRESSED, event -> {
+			if (event.getClickCount() == 2 && event.getButton() == MouseButton.PRIMARY) {
+				TreeItem<Object> selected = arbolMundos.getSelectionModel().getSelectedItem();
+				if (selected != null) {
+					event.consume(); // Bloquea la expansión automática
+				}
+			}
+		});
 
-	        if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-	            Object value = selected.getValue();
-	            if (value instanceof Personaje) {
-	                desktopController.cambiarVista(DesktopViewType.PERSONAJE, selected, fetchTreeRoot(selected));
-	            } else if (value instanceof Criatura) {
-	                desktopController.cambiarVista(DesktopViewType.CRIATURA, selected, fetchTreeRoot(selected));
-	            } else if (value instanceof Nacion) {
-	            	if(desktopController.getDesktopNacionController().getNacion() == null) {
-		                desktopController.cambiarVista(DesktopViewType.NACION, selected, fetchTreeRoot(selected));
-	            	} else {
-	            		desktopController.getDesktopNacionController().cambiarVista((Nacion) selected.getValue());
-	            	}
-	            } else if (value instanceof Reino) {
-	                desktopController.cambiarVista(DesktopViewType.REINO, selected, fetchTreeRoot(selected));
-	            } else if (value instanceof Ubicacion) {
-	                desktopController.cambiarVista(DesktopViewType.UBICACION, selected, fetchTreeRoot(selected));
-	            } else if (value instanceof Escena) {
-	                desktopController.cambiarVista(DesktopViewType.ESCENA, selected, fetchTreeRoot(selected));
-	            } else if (value instanceof Mundo) {
-	            	desktopController.cambiarVista(DesktopViewType.MUNDO, selected, fetchTreeRoot(selected));
-	            }
-	        } else if (event.getClickCount() == 1) {
-	        	Object value = selected.getValue();
-	        	if(value instanceof Mundo mundo) {
-		        	infoController.cambiarVista(InfoViewType.MUNDO, selected);
-	        	}
-	        }
-	    });
+		arbolMundos.setOnMouseClicked(event -> {
+			TreeItem<Object> selected = arbolMundos.getSelectionModel().getSelectedItem();
+			if (selected == null)
+				return;
+
+			if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+				Object value = selected.getValue();
+				if (value instanceof Personaje) {
+					desktopController.cambiarVista(DesktopViewType.PERSONAJE, selected, fetchTreeRoot(selected));
+				} else if (value instanceof Criatura) {
+					desktopController.cambiarVista(DesktopViewType.CRIATURA, selected, fetchTreeRoot(selected));
+				} else if (value instanceof Nacion) {
+					if (desktopController.getDesktopNacionController().getNacion() == null) {
+						desktopController.cambiarVista(DesktopViewType.NACION, selected, fetchTreeRoot(selected));
+					} else {
+						desktopController.getDesktopNacionController().cambiarVista((Nacion) selected.getValue());
+					}
+				} else if (value instanceof Reino) {
+					desktopController.cambiarVista(DesktopViewType.REINO, selected, fetchTreeRoot(selected));
+				} else if (value instanceof Ubicacion) {
+					desktopController.cambiarVista(DesktopViewType.UBICACION, selected, fetchTreeRoot(selected));
+				} else if (value instanceof Escena) {
+					desktopController.cambiarVista(DesktopViewType.ESCENA, selected, fetchTreeRoot(selected));
+				} else if (value instanceof Mundo) {
+					desktopController.cambiarVista(DesktopViewType.MUNDO, selected, fetchTreeRoot(selected));
+				}
+			} else if (event.getClickCount() == 1) {
+				Object value = selected.getValue();
+				infoController.setExplorer(this);
+				if (value instanceof Mundo) {
+					infoController.cambiarVista(InfoViewType.MUNDO, selected);
+				} else if (value instanceof String categoria) {
+					if (categoria.equals("Criaturas")) {
+						infoController.cambiarVista(InfoViewType.CAT_CRIATURAS, selected);
+					} else if (categoria.equals("Naciones")) {
+						infoController.cambiarVista(InfoViewType.CAT_NACIONES, selected);
+					} else if (categoria.equals("Npc")) {
+						infoController.cambiarVista(InfoViewType.CAT_NPCS, selected);
+					} else if (categoria.equals("Personajes")) {
+						infoController.cambiarVista(InfoViewType.CAT_PERSONAJES, selected);
+					}
+				} else if (value instanceof Criatura) {
+					infoController.cambiarVista(InfoViewType.CRIATURA, selected);
+				} else if (value instanceof Nacion) {
+					infoController.cambiarVista(InfoViewType.NACION, selected);
+				} else if (value instanceof Reino) {
+					infoController.cambiarVista(InfoViewType.REINO, selected);
+				} else if (value instanceof Ubicacion) {
+					infoController.cambiarVista(InfoViewType.UBICACION, selected);
+				} else if (value instanceof Personaje) {
+					infoController.cambiarVista(InfoViewType.PERSONAJE, selected);
+				}
+			}
+		});
 	}
 
-
 	public void refreshTreeView() {
-	    TreeItem<Object> raizMundos = view.getRootItem();
-	    raizMundos.getChildren().clear();
+		TreeItem<Object> raizMundos = view.getRootItem();
+		raizMundos.getChildren().clear();
 
-	    for (Mundo mundo : mundoCrud.fetchAllMundos()) {
-	        TreeItem<Object> itemMundo = new TreeItem<>(mundo);
-	        TreeItem<Object> itemPj = new TreeItem<>("Personajes");
-	        TreeItem<Object> itemNpc = new TreeItem<>("Npc");
-	        TreeItem<Object> itemCriaturas = new TreeItem<>("Criaturas");
-	        TreeItem<Object> itemNaciones = new TreeItem<>("Naciones");
+		for (Mundo mundo : mundoCrud.fetchAllMundos()) {
+			TreeItem<Object> itemMundo = new TreeItem<>(mundo);
+			TreeItem<Object> itemPj = new TreeItem<>("Personajes");
+			TreeItem<Object> itemNpc = new TreeItem<>("Npc");
+			TreeItem<Object> itemCriaturas = new TreeItem<>("Criaturas");
+			TreeItem<Object> itemNaciones = new TreeItem<>("Naciones");
 
-	        for (Criatura criatura : mundo.getCriaturas())
-	            itemCriaturas.getChildren().add(new TreeItem<>(criatura));
+			for (Criatura criatura : mundo.getCriaturas())
+				itemCriaturas.getChildren().add(new TreeItem<>(criatura));
 
-	        for (Personaje pj : mundo.getNpcs())
-	            itemNpc.getChildren().add(new TreeItem<>(pj));
+			for (Personaje pj : mundo.getNpcs())
+				itemNpc.getChildren().add(new TreeItem<>(pj));
 
-	        for (Personaje pj : mundo.getPersonajes())
-	            itemPj.getChildren().add(new TreeItem<>(pj));
+			for (Personaje pj : mundo.getPersonajes())
+				itemPj.getChildren().add(new TreeItem<>(pj));
 
-	        for (Nacion n : mundo.getNaciones()) {
-	            TreeItem<Object> itemNacion = new TreeItem<>(n);
-	            for (Reino r : n.getReinos()) {
-	            	TreeItem<Object> itemReino = new TreeItem<>(r);
-	            	for (Ubicacion u : r.getUbicaciones()) {
-	            		itemReino.getChildren().add(new TreeItem<>(u));
-	            	}
-	                itemNacion.getChildren().add(itemReino);
-	            }
-	            itemNaciones.getChildren().add(itemNacion);
-	        }
+			for (Nacion n : mundo.getNaciones()) {
+				TreeItem<Object> itemNacion = new TreeItem<>(n);
+				for (Reino r : n.getReinos()) {
+					TreeItem<Object> itemReino = new TreeItem<>(r);
+					for (Ubicacion u : r.getUbicaciones()) {
+						itemReino.getChildren().add(new TreeItem<>(u));
+					}
+					itemNacion.getChildren().add(itemReino);
+				}
+				itemNaciones.getChildren().add(itemNacion);
+			}
 
-	        itemMundo.getChildren().addAll(itemPj, itemNpc, itemCriaturas, itemNaciones);
-	        raizMundos.getChildren().add(itemMundo);
-	    }
-	    
-	    ordenarTreeView(raizMundos);
+			itemMundo.getChildren().addAll(itemPj, itemNpc, itemCriaturas, itemNaciones);
+			raizMundos.getChildren().add(itemMundo);
+		}
+
+		ordenarTreeView(raizMundos);
 	}
 
 	private void mostrarDialogoNuevoMundo() {
@@ -228,10 +257,10 @@ public class ExplorerController {
 					mundoCrud.deleteMundo(mundo);
 				} else if (valor instanceof Personaje pj) {
 					String parent = String.valueOf(item.getParent().getValue());
-					if("Personajes".equals(parent)) {
+					if ("Personajes".equals(parent)) {
 						fetchTreeRoot(item).removePersonaje(pj);
 						pjCrud.deletePersonaje(pj.getId());
-					} else if("Npc".equals(parent)) {
+					} else if ("Npc".equals(parent)) {
 						fetchTreeRoot(item).removeNpc(pj);
 						pjCrud.deletePersonaje(pj.getId());
 					}
@@ -253,25 +282,29 @@ public class ExplorerController {
 	}
 
 	private void crearPersonaje(TreeItem<Object> item) {
-		if (item == null) return;
+		if (item == null)
+			return;
 		Mundo mundo = fetchTreeRoot(item);
 		new CreationWindow(CreationViewType.PERSONAJE, this, mundo);
 	}
 
 	private void crearNpc(TreeItem<Object> item) {
-		if (item == null) return;
+		if (item == null)
+			return;
 		Mundo mundo = fetchTreeRoot(item);
 		new CreationWindow(CreationViewType.NPC, this, mundo);
 	}
 
 	private void crearCriatura(TreeItem<Object> item) {
-		if (item == null) return;
+		if (item == null)
+			return;
 		Mundo mundo = fetchTreeRoot(item);
 		new CreationWindow(CreationViewType.CRIATURA, this, mundo);
 	}
 
 	private void crearZona(TreeItem<Object> item) {
-		if (item == null) return;
+		if (item == null)
+			return;
 		Mundo mundo = fetchTreeRoot(item);
 		new CreationWindow(CreationViewType.UBICACION, this, mundo, item);
 	}
@@ -279,105 +312,129 @@ public class ExplorerController {
 	private void crearEscena(TreeItem<Object> item) {
 	}
 
-	private Mundo fetchTreeRoot(TreeItem<Object> item) {
-	    if (item == null) throw new IllegalArgumentException("Nodo nulo");
-	    TreeItem<Object> current = item;
-	    while (current.getParent() != null) {
-	        if (current.getParent().getValue() instanceof Mundo mundo) {
-	            return mundo;
-	        }
-	        if (current.getValue() instanceof Mundo mundo) {
-	            return mundo;
-	        }
-	        current = current.getParent();
-	    }
-	    throw new IllegalStateException("No se pudo determinar un mundo raíz para el nodo dado");
+	public Mundo fetchTreeRoot(TreeItem<Object> item) {
+		if (item == null)
+			throw new IllegalArgumentException("Nodo nulo");
+		TreeItem<Object> current = item;
+		while (current.getParent() != null) {
+			if (current.getParent().getValue() instanceof Mundo mundo) {
+				return mundo;
+			}
+			if (current.getValue() instanceof Mundo mundo) {
+				return mundo;
+			}
+			current = current.getParent();
+		}
+		throw new IllegalStateException("No se pudo determinar un mundo raíz para el nodo dado");
 	}
-	
+
 	private void ordenarTreeView(TreeItem<Object> item) {
-	    if (item == null || item.getChildren().isEmpty()) return;
+		if (item == null || item.getChildren().isEmpty())
+			return;
 
-	    // Ordenar hijos
-	    item.getChildren().sort((a, b) -> {
-	        String aText = a.getValue().toString();
-	        String bText = b.getValue().toString();
-	        return aText.compareToIgnoreCase(bText);
-	    });
+		// Ordenar hijos
+		item.getChildren().sort((a, b) -> {
+			String aText = a.getValue().toString();
+			String bText = b.getValue().toString();
+			return aText.compareToIgnoreCase(bText);
+		});
 
-	    // Aplicar recursivamente a los hijos
-	    for (TreeItem<Object> child : item.getChildren()) {
-	        ordenarTreeView(child);
-	    }
+		// Aplicar recursivamente a los hijos
+		for (TreeItem<Object> child : item.getChildren()) {
+			ordenarTreeView(child);
+		}
 	}
-	
+
 	private void mostrarDialogoDescansos(TreeItem<Object> seleccionado) {
-	    if (seleccionado == null) return;
+		if (seleccionado == null)
+			return;
 
-	    // Obtener el mundo relacionado al nodo seleccionado
-	    Mundo mundo;
-	    try {
-	        mundo = fetchTreeRoot(seleccionado);
-	    } catch (IllegalStateException e) {
-	        new Alert(AlertType.WARNING, "No se pudo determinar el mundo para el nodo seleccionado.").showAndWait();
-	        return;
-	    }
+		// Obtener el mundo relacionado al nodo seleccionado
+		Mundo mundo;
+		try {
+			mundo = fetchTreeRoot(seleccionado);
+		} catch (IllegalStateException e) {
+			new Alert(AlertType.WARNING, "No se pudo determinar el mundo para el nodo seleccionado.").showAndWait();
+			return;
+		}
 
-	    Stage dialog = new Stage();
-	    dialog.initModality(Modality.APPLICATION_MODAL);
-	    dialog.setTitle("Descansos");
+		Stage dialog = new Stage();
+		dialog.initModality(Modality.APPLICATION_MODAL);
+		dialog.setTitle("Descansos");
 
-	    // Selector de tipo de descanso
-	    Label labelTipo = new Label("Tipo de descanso:");
-	    ChoiceBox<String> choiceTipo = new ChoiceBox<>();
-	    choiceTipo.getItems().addAll("Descanso corto", "Descanso largo");
-	    choiceTipo.getSelectionModel().selectFirst();
+		// Selector de tipo de descanso
+		Label labelTipo = new Label("Tipo de descanso:");
+		ChoiceBox<String> choiceTipo = new ChoiceBox<>();
+		choiceTipo.getItems().addAll("Descanso corto", "Descanso largo");
+		choiceTipo.getSelectionModel().selectFirst();
 
-	    // Selector de personajes (selección múltiple)
-	    Label labelPjs = new Label("Selecciona personajes:");
-	    ListView<Personaje> listViewPjs = new ListView<>();
-	    listViewPjs.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-	    listViewPjs.getItems().addAll(mundo.getPersonajes());
+		// Selector de personajes (selección múltiple)
+		Label labelPjs = new Label("Selecciona personajes:");
+		ListView<Personaje> listViewPjs = new ListView<>();
+		listViewPjs.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		listViewPjs.getItems().addAll(mundo.getPersonajes());
+		listViewPjs.getItems().addAll(mundo.getNpcs());
 
-	    // Botones
-	    Button btnAceptar = new Button("Aceptar");
-	    Button btnCancelar = new Button("Cancelar");
+		// Mostrar nombre + salud actual/salud total
+		listViewPjs.setCellFactory(lv -> new ListCell<>() {
+			@Override
+			protected void updateItem(Personaje personaje, boolean empty) {
+				super.updateItem(personaje, empty);
+				if (empty || personaje == null) {
+					setText(null);
+				} else {
+					EstadoPjJson estado = EstadoPjJson.desdeJson(personaje.getEstadoJson());
+					int saludActual = estado.getStatOnline().getStatGeneral().getSalud();
+					int saludMax = estado.getStatBase().getStatGeneral().getSalud();
+					setText(personaje.getNombre() + " (" + saludActual + "/" + saludMax + ")");
+				}
+			}
+		});
 
-	    btnCancelar.setOnAction(e -> dialog.close());
+		// Botones
+		Button btnAceptar = new Button("Aceptar");
+		Button btnCancelar = new Button("Cancelar");
 
-	    btnAceptar.setOnAction(e -> {
-	        String tipoDescanso = choiceTipo.getSelectionModel().getSelectedItem();
-	        var personajesSeleccionados = listViewPjs.getSelectionModel().getSelectedItems();
+		btnCancelar.setOnAction(e -> dialog.close());
 
-	        for (Personaje pj : personajesSeleccionados) {
-	        	EstadoPjJson estado = EstadoPjJson.desdeJson(pj.getEstadoJson());
-	            if ("Descanso corto".equals(tipoDescanso)) {
-	            	int saludActual = estado.getStatOnline().getStatGeneral().getSalud();
-	            	int saludMax = estado.getStatBase().getStatGeneral().getSalud();
-	            	int saludNueva = saludActual + (saludMax / 2);
-	            	if(saludNueva > saludMax) {
-	            		saludNueva = saludMax;
-	            	}
-	            	estado.getStatOnline().getStatGeneral().setSalud(saludNueva);
-	            	
-	            } else if ("Descanso largo".equals(tipoDescanso)) {
-	            	estado.getStatOnline().getStatGeneral().setSalud(estado.getStatBase().getStatGeneral().getSalud());
-	            	
-	            }
-	            
-	            pj.setEstadoJson(estado.generarJson());
-            	pjCrud.savePersonaje(pj);
-	        }
+		btnAceptar.setOnAction(e -> {
+			String tipoDescanso = choiceTipo.getSelectionModel().getSelectedItem();
+			var personajesSeleccionados = listViewPjs.getSelectionModel().getSelectedItems();
 
-	        dialog.close();
-	    });
+			for (Personaje pj : personajesSeleccionados) {
+				EstadoPjJson estado = EstadoPjJson.desdeJson(pj.getEstadoJson());
 
-	    HBox botones = new HBox(10, btnAceptar, btnCancelar);
-	    VBox layout = new VBox(10, labelTipo, choiceTipo, labelPjs, listViewPjs, botones);
-	    layout.setPadding(new Insets(15));
-	    layout.setPrefWidth(350);
+				if ("Descanso corto".equals(tipoDescanso)) {
+					int saludActual = estado.getStatOnline().getStatGeneral().getSalud();
+					int saludMax = estado.getStatBase().getStatGeneral().getSalud();
+					int auraActual = estado.getStatOnline().getStatGeneral().getAura();
+					int auraMax = estado.getStatBase().getStatGeneral().getAura();
 
-	    dialog.setScene(new Scene(layout));
-	    dialog.showAndWait();
+					int saludNueva = Math.min(saludActual + (saludMax / 2), saludMax);
+					int auraNueva = Math.min(auraActual + (auraMax / 2), auraMax);
+
+					estado.getStatOnline().getStatGeneral().setSalud(saludNueva);
+					estado.getStatOnline().getStatGeneral().setAura(auraNueva);
+
+				} else if ("Descanso largo".equals(tipoDescanso)) {
+					estado.getStatOnline().getStatGeneral().setSalud(estado.getStatBase().getStatGeneral().getSalud());
+					estado.getStatOnline().getStatGeneral().setAura(estado.getStatBase().getStatGeneral().getAura());
+				}
+
+				pj.setEstadoJson(estado.generarJson());
+				pjCrud.savePersonaje(pj);
+			}
+
+			dialog.close();
+		});
+
+		HBox botones = new HBox(10, btnAceptar, btnCancelar);
+		VBox layout = new VBox(10, labelTipo, choiceTipo, labelPjs, listViewPjs, botones);
+		layout.setPadding(new Insets(15));
+		layout.setPrefWidth(350);
+
+		dialog.setScene(new Scene(layout));
+		dialog.showAndWait();
 	}
 
 }

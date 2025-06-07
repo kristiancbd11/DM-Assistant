@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.hibernate.Session;
 
-import clases_roles.Clase;
+import clases_personaje.Clase;
 
 public class ClaseCRUD {
 	

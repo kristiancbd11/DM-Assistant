@@ -61,4 +61,92 @@ public class Hechizo extends Habilidad {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public Habilidad getHabilidad() {
+		return habilidad;
+	}
+
+	public void setHabilidad(Habilidad habilidad) {
+		this.habilidad = habilidad;
+	}
+
+	public int getCosteAura() {
+		return costeAura;
+	}
+
+	public void setCosteAura(int costeAura) {
+		this.costeAura = costeAura;
+	}
+
+	public int getTipoLanzamiento() {
+		return tipoLanzamiento;
+	}
+
+	public void setTipoLanzamiento(int tipoLanzamiento) {
+		this.tipoLanzamiento = tipoLanzamiento;
+	}
+
+	public int getPreparacion() {
+		return preparacion;
+	}
+
+	public void setPreparacion(int preparacion) {
+		this.preparacion = preparacion;
+	}
+
+	public int getRecuperacion() {
+		return recuperacion;
+	}
+
+	public void setRecuperacion(int recuperacion) {
+		this.recuperacion = recuperacion;
+	}
+
+	public int getUsos() {
+		return usos;
+	}
+
+	public void setUsos(int usos) {
+		this.usos = usos;
+	}
+
+	public int getNivel() {
+		return nivel;
+	}
+
+	public void setNivel(int nivel) {
+		this.nivel = nivel;
+	}
+
+	public String getDado() {
+		return dado;
+	}
+
+	public void setDado(String dado) {
+		this.dado = dado;
+	}
+
+	public Dado getDanio() {
+		return danio;
+	}
+
+	public void setDanio(Dado danio) {
+		this.danio = danio;
+	}
+
+	public int getRango() {
+		return rango;
+	}
+
+	public void setRango(int rango) {
+		this.rango = rango;
+	}
+
+	@Override
+	public String toString() {
+		return super.getNombre();
+	}
+	
+	
+	
 }
